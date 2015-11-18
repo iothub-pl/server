@@ -9,7 +9,9 @@
   "author": "Przemysław Płyś",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "mongodb": "^2.0.48",
+    "mongoose": "^4.2.6"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
