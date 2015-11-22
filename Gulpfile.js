@@ -1,9 +1,8 @@
-/**
- * Created by plysiu on 18.11.15.
- */
+'use strict';
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
-
+var mocha = require('gulp-mocha');
+var shell = require('gulp-shell')
 
 gulp.task('default', function() {
     var watcher = gulp.watch('./*.js');
@@ -13,9 +12,13 @@ gulp.task('default', function() {
     gulp.run('run');
 });
 
-gulp.task('run',function(){
+gulp.task('serve',function(){
     nodemon({ script: 'index.js' })
         .on('restart', function () {
-            console.log('restarted!')
+            console.log('Server restarted!')
         });
+});
+
+gulp.task('test',function(){
+   gulp.src('test.js').pipe( mocha({reporter: 'nyan'}));
 });

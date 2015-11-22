@@ -1,30 +1,29 @@
+/**
+ * Created by plysiu on 18.11.15.
+ */
+
 console.log('IoTHuB REST server.');
 
-var express = require('express');
+var app = require('express')(),
+    mongoose = require('mongoose'),
+    config = require('./config/config');
 
-var mongoose = require('mongoose');
-
-
-
-
-var app = express();
-
-var config = {
-  port: 9000,
-    database:{
-        host: 'localhost',
-        port:27017,
-        name: 'IoTHuB',
-        /**
-         * @TODO Add user and password
-         */
-    }
-};
-mongoose.connect('mongodb://'+config.database.host+':'+ config.database.port + '/' +config.database.name);
+mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name);
 
 
-app.get('/', function (req, res) {
-    res.send('IoTHuB REST server.');
+
+/**
+ * Additional routes
+ */
+require('./config/routes')(app);
+
+app.listen(config.server.port, function () {
+    console.log('Server IoTHuB listening on %d', config.server.port);
 });
 
-app.listen(config.host);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+
+db.once('open', function (callback) {
+    console.log('Connection to database established.');
+});
