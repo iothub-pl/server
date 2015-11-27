@@ -1,29 +1,27 @@
-/**
- * Created by plysiu on 18.11.15.
- */
-
-console.log('IoTHuB REST server.');
+'use strict';
 
 var app = require('express')(),
     mongoose = require('mongoose'),
-    config = require('./config/config');
+    config = require('./config/config'),
+    log = require('./log');
+
+log.log('IoTHuB REST server.');
 
 mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name);
 
 
-
-/**
- * Additional routes
- */
 require('./config/routes')(app);
 
-app.listen(config.server.port, function () {
-    console.log('Server IoTHuB listening on %d', config.server.port);
-});
-
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-
-db.once('open', function (callback) {
-    console.log('Connection to database established.');
+db.on('error', () => {
+    console.error.bind(console, 'connection error:');
 });
+
+db.once('open', () => {
+    log.log('Connection to database established.');
+});
+
+app.listen(config.server.port, () => {
+    log.log('Server IoTHuB listening on %d', config.server.port);
+});
+module.exports = app;

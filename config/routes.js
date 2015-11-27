@@ -1,8 +1,10 @@
 'use strict';
+var log = require('./../log');
+
 module.exports = function (app) {
     app.all('/*', function (req, res, next) {
-        console.log('Url:',req.originalUrl);
-        next(); // pass control to the next handler
+       // log.log('Url: ' + req.originalUrl);
+        next();
     });
     app.get('/', function (req, res) {
         res.send('IoTHuB REST server - unknown request.');
@@ -11,3 +13,4 @@ module.exports = function (app) {
     app.use('/things', require('./../mvc/thing/index'));
 
 };
+log.log('Routes loaded.');

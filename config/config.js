@@ -14,5 +14,6 @@ module.exports = {
         /**
          * @TODO Add user and password
          */
-    }
+    },
+    debug: true
 };
