@@ -30,5 +30,5 @@ gulp.task('serve', function () {
 });
 
 gulp.task('test', function () {
-    gulp.src('test.js').pipe(mocha({reporter: 'nyan'}));
+    gulp.src('./mvc/**/*test.js').pipe(mocha());
 });
