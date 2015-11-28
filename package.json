@@ -4,7 +4,8 @@
   "description": "IoTHuB - REST server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "apidoc": "apidoc -i mvc/ -o apidoc/"
   },
   "author": "Przemysław Płyś",
   "license": "ISC",
@@ -14,8 +15,8 @@
     "mongoose": "^4.2.6"
   },
   "devDependencies": {
+    "apidoc": "^0.13.1",
     "gulp": "^3.9.0",
-    "gulp-apidoc": "^0.2.0",
     "gulp-jsdoc": "^0.1.5",
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.4",

@@ -2,6 +2,8 @@
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
 var mocha = require('gulp-mocha');
+var     apidoc = require('gulp-apidoc');
+
 /**
  *
  */
@@ -31,4 +33,14 @@ gulp.task('serve', function () {
 
 gulp.task('test', function () {
     gulp.src('./mvc/**/*test.js').pipe(mocha());
+});
+
+
+gulp.task('apidoc', function(done){
+    apidoc({
+        src: './mvc/**/controller.js',
+        dest: './apidoc/',
+        debug: true,
+
+    },done);
 });
