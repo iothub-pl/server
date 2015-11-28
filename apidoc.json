@@ -1,0 +1,7 @@
+{
+  "name": "IoTHuB",
+  "version": "0.1.0",
+  "description": "IotHuB REST api",
+  "title": "IotHuB REST api",
+  "url" : "https://localhost:9000/api/"
+}
