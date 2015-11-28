@@ -4,8 +4,12 @@
   "description": "IoTHuB - REST server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "apidoc": "apidoc -i mvc/ -o apidoc/"
+    "test": "mocha ./mvc/**/*test.js",
+    "apidoc": "apidoc -i mvc/ -o apidoc/",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "test": "{src,test}/*.js"
   },
   "author": "Przemysław Płyś",
   "license": "ISC",
@@ -21,6 +25,7 @@
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.4",
     "mocha": "^2.3.4",
+    "npm-watch": "0.0.1",
     "supertest": "^1.1.0"
   }
 }

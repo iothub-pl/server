@@ -1,7 +1,6 @@
 'use strict';
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
-var mocha = require('gulp-mocha');
 
 /**
  *
@@ -28,8 +27,4 @@ gulp.task('serve', function () {
         .on('restart', function () {
             console.log('Server restarted!')
         });
-});
-
-gulp.task('test', function () {
-    gulp.src('./mvc/**/*test.js').pipe(mocha());
 });
