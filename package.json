@@ -2,17 +2,18 @@
   "name": "iothub-rest",
   "version": "0.0.0",
   "description": "IoTHuB - REST server.",
+  "author": "Przemysław Płyś",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
+    "serve": "node ./index.js --harmony",
     "test": "mocha ./mvc/**/*test.js",
     "apidoc": "apidoc -i mvc/ -o apidoc/",
     "watch": "npm-watch"
   },
   "watch": {
-    "test": "{src,test}/*.js"
+    "serve": "*/*.js"
   },
-  "author": "Przemysław Płyś",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
     "mongodb": "^2.0.48",
@@ -20,11 +21,8 @@
   },
   "devDependencies": {
     "apidoc": "^0.13.1",
-    "gulp": "^3.9.0",
-    "gulp-jsdoc": "^0.1.5",
-    "gulp-mocha": "^2.2.0",
-    "gulp-nodemon": "^2.0.4",
     "mocha": "^2.3.4",
+    "nodemon": "^1.8.1",
     "npm-watch": "0.0.1",
     "supertest": "^1.1.0"
   }
