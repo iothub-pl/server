@@ -7,7 +7,7 @@ var express = require('express'),
 
 router.get('/', controller.getAll);
 router.get('/:_id', controller.getById);
-router.post('/', controller.create);
 
+router.post('/register', controller.register);
 
 module.exports = router;

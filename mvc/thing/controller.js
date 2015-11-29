@@ -2,16 +2,18 @@
 
 var Thing = require('./model');
 /**
- *
+ * Returns collection of Things (devices) in database
+ * @api {get} /things Returns collection of Things
+ * @apiName Returns collection of Things.
+ * @apiGroup Thing
  * @param req
  * @param res
  */
 exports.getAll = function (req, res) {
-
     Thing.find()
         .exec(function (err, things) {
             if (err) {
-                res.status(500);
+                return res.send(500);
             }
             res.json(things);
         });
@@ -27,17 +29,31 @@ exports.getById = function (req, res) {
         .where('_id').equals(req.params.id)
         .exec(function (err, thing) {
             if (err) {
-                res.status(404);
+                return res.send(404);
             }
             res.json(things);
         });
 };
 
-exports.create = function (req, res) {
+/**
+ * Registers Thing (client) master/slave device in system
+ * @api {post} /things/register Registers Thing (client) master/slave device in system
+ * @apiName Registers Thing (client) master/slave device in system.
+ * @apiGroup Thing
+ * @param req
+ * @param res
+ */
+exports.register = (req, res)=> {
     var thing = new Thing(req.body);
     thing.save(function (err, x) {
-            res.json(x);
+            if (err) {
+                return res.send(500);
+            }
+            res
+                .status(201)
+                .json(x);
         }
     );
 };
+
 
