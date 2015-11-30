@@ -1,6 +1,7 @@
 'use strict';
 
-var Thing = require('./model');
+const Thing = require('./model');
+const Value = require('./../value/model');
 /**
  * Returns collection of Things (devices) in database
  * @api {get} /things Returns collection of Things
@@ -9,11 +10,11 @@ var Thing = require('./model');
  * @param req
  * @param res
  */
-exports.getAll = function (req, res) {
+exports.getAll = (req, res) => {
     Thing.find()
-        .exec(function (err, things) {
+        .exec((err, things) => {
             if (err) {
-                return res.send(500);
+                return res.sendStatus(500);
             }
             res.json(things);
         });
@@ -29,7 +30,7 @@ exports.getAll = function (req, res) {
 exports.count = (req, res)=> {
     Thing.count().exec((err, count)=> {
         if (err) {
-            return res.send(500);
+            return res.sendStatus(500);
 
         }
         res.json(count);
@@ -40,13 +41,13 @@ exports.count = (req, res)=> {
  * @param req
  * @param res
  */
-exports.getById = function (req, res) {
+exports.getById = (req, res)=> {
 
-    Thing.find()
+    Thing.findOne()
         .where('_id').equals(req.params.id)
-        .exec(function (err, thing) {
+        .exec((err, thing)=> {
             if (err) {
-                return res.send(404);
+                return res.sendStatus(404);
             }
             res.json(things);
         });
@@ -61,16 +62,52 @@ exports.getById = function (req, res) {
  * @param res
  */
 exports.register = (req, res)=> {
-    var thing = new Thing(req.body);
-    thing.save(function (err, x) {
+
+    if (!req.body.name) {
+        res.sendStatus(412);
+    }
+    else {
+
+        Thing(req.body).save((err, thing) => {
             if (err) {
-                return res.send(500);
+                return res.sendStatus(500);
             }
-            res
-                .status(201)
-                .json(x);
-        }
-    );
+
+            res.status(201).json(thing);
+        });
+    }
 };
 
+/**
+ * Adds Value when Thing (client) master/salve device exists in system
+ * @api {post} /things/:id/values Adds Value when Thing (client) master/salve device exists in system
+ * @apiName Adds Value when Thing (client) master/salve device exists in system
+ * @apiGroup Thing
+ * @param req
+ * @param res
+ */
+exports.addValue = (req, res)=> {
+
+    if(!req.body.value){
+        res.sendStatus(412);
+    }
+    req.body.thingId = req.params.thingId;
+
+    Thing.findOne({_id: req.body.thingId}, (err, thing)=> {
+        if (err) {
+            return res.sendStatus(500);
+        }
+        if (!thing) {
+            return res.sendStatus(404);
+        }
+        new Value(req.body)
+            .save((err, value) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.status(201).json(value);
+
+            });
+    });
+};
 

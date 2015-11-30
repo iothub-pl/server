@@ -3,11 +3,13 @@ var mongoose = require('mongoose');
 
 var ValueSchema = mongoose.Schema({
     thingId: {
-        type: Schema.ObjectId,
-        ref: 'Value'
+        type: mongoose.Schema.ObjectId,
+        ref: 'Value',
+        required: true
     },
     value: {
-        type: Number
+        type: Number,
+        required: true
     }
 });
 /**
