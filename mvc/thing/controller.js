@@ -19,6 +19,23 @@ exports.getAll = function (req, res) {
         });
 };
 /**
+ * Returns length of collection of Things (devices) in database
+ * @api {get} /things Returns length of collection of Things
+ * @apiName Returns length of collection of Things.
+ * @apiGroup Thing
+ * @param req
+ * @param res
+ */
+exports.count = (req, res)=> {
+    Thing.count().exec((err, count)=> {
+        if (err) {
+            return res.send(500);
+
+        }
+        res.json(count);
+    });
+};
+/**
  *
  * @param req
  * @param res
