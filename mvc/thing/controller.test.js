@@ -215,6 +215,15 @@ describe('ENDPOINT /things', ()=> {
                 });
             });
 
+            beforeEach((done)=> {
+                new Thing().save((err)=> {
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+            });
+
             it('should return HTTP Succesful code 200', ()=> {
                 request(app)
                     .get('/things/count')
@@ -237,14 +246,14 @@ describe('ENDPOINT /things', ()=> {
                         done();
                     });
             });
-            it('should return zero', (done)=> {
+            it('should return one', (done)=> {
 
                 request(app)
                     .get('/things/count')
                     .end((err, res)=> {
                         if (err)
                             return done(err);
-                        res.body.should.be.equal(0);
+                        res.body.should.be.equal(1);
                         done();
                     });
             });
@@ -276,5 +285,103 @@ describe('ENDPOINT /things', ()=> {
                     done();
                 });
         });
+    });
+
+
+    describe('on POST /:id/values request', ()=> {
+
+        describe('when there is no Thing in database', ()=> {
+
+            var thingId = '0000';
+            beforeEach((done)=> {
+                Thing.remove().exec((err)=> {
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+            });
+
+
+            it('should return HTTP Error code 404 when not valid Thing id', (done)=> {
+                request(app)
+                    .post('/things/sdfsdf/values')
+                    .expect(404)
+                    .end((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    })
+            });
+
+
+            it('should return HTTP Error code 404 when valid Thing id', (done)=> {
+                request(app)
+                    .post('/things/4d3ed089fb60ab534684b7ff/values')
+                    .expect(404)
+                    .end((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    })
+            });
+
+
+        });
+        describe('when there is Thing in database', ()=> {
+
+            var thingId;
+            beforeEach((done)=> {
+                Thing.remove().exec((err)=> {
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+            });
+
+
+            beforeEach((done)=> {
+                new Thing().save((err, thing)=> {
+                    if (err) {
+                        return done(err);
+                    }
+                    thingId = thing._id;
+                    done();
+                });
+            });
+
+
+            it('should add Value and return HTTP Succesful status 201', (done)=> {
+                request(app)
+                    .post('/things/' + thingId + '/values')
+                    .expect(201)
+                    .end((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    })
+            });
+
+
+            it('should return content in JSON', (done)=> {
+                request(app)
+                    .post('/things/' + thingId + '/values')
+                    .expect('Content-Type', /json/)
+                    .end((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    })
+            });
+
+
+        });
+
+
     });
 });
