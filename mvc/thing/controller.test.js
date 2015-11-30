@@ -81,7 +81,7 @@ describe('ENDPOINT /things', ()=> {
 
 
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
@@ -90,12 +90,13 @@ describe('ENDPOINT /things', ()=> {
             });
 
             beforeEach((done)=> {
-                new Thing().save((err)=> {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
+                new Thing({name: 'x'})
+                    .save((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
             });
 
             it('should return HTTP Succesful code 200', (done)=> {
@@ -148,12 +149,14 @@ describe('ENDPOINT /things', ()=> {
             });
         });
     });
-
+    /**
+     *
+     */
     describe('on GET /count request', ()           => {
         describe('when there is zero Thing in database', ()=> {
 
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
@@ -200,7 +203,7 @@ describe('ENDPOINT /things', ()=> {
          */
         describe('when there is one Thing in database', ()=> {
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
@@ -209,12 +212,13 @@ describe('ENDPOINT /things', ()=> {
             });
 
             beforeEach((done)=> {
-                new Thing().save((err)=> {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
+                new Thing({name: 'x'})
+                    .save((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
             });
 
             it('should return HTTP Succesful code 200', ()=> {
@@ -256,35 +260,69 @@ describe('ENDPOINT /things', ()=> {
      *
      */
     describe('on POST /register request', ()=> {
+
+        beforeEach((done)=> {
+            Thing.remove((err)=> {
+                if (err) {
+                    return done(err);
+                }
+                done();
+            });
+        });
+
         it('should return HTTP Succesful code 201', (done)=> {
             request(app)
                 .post('/things/register')
+                .send({name: 'x'})
+
                 .expect(201)
                 .end((err)=> {
                     if (err) {
                         return done(err);
                     }
                     done();
-                })
+                });
         });
 
         it('should return content in JSON', (done)=> {
             request(app)
                 .post('/things/register')
-                .expect('Content-Type', /json/)
+                .send({name: 'x'}).expect('Content-Type', /json/)
                 .end((err)=> {
                     if (err)
                         return done(err);
                     done();
                 });
         });
+        describe('when body is not complete', ()=> {
+            it('should return HTTP Error status 412', (done)=> {
+                request(app)
+                    .post('/things/register')
+
+                    .expect(412)
+                    .end((err)=> {
+                        if (err)
+                            return done(err);
+                        done();
+                    });
+            });
+        });
+
+
     });
-
-
+    /**
+     *
+     */
     describe('on POST /:id/values request', ()=> {
-
+        /**
+         *
+         */
         describe('when there is zero Thing in database', ()=> {
 
+            var data = {
+                thingId: '000',
+                value: 0
+            };
             var thingId = '0000';
             beforeEach((done)=> {
                 Thing.remove().exec((err)=> {
@@ -299,14 +337,11 @@ describe('ENDPOINT /things', ()=> {
                     });
                 });
             });
-
-
             it('should return HTTP Error code 500 when not valid Thing id', (done)=> {
                 request(app)
                     .post('/things/y77fyfy/values')
-                    .send({value: 1})
-
-                    .expect(404)
+                    .send(data)
+                    .expect(500)
                     .end((err)=> {
                         if (err) {
                             return done(err);
@@ -317,9 +352,10 @@ describe('ENDPOINT /things', ()=> {
 
 
             it('should return HTTP Error code 404 when valid Thing id', (done)=> {
+                data.thingId = '4d3ed089fb60ab534684b7ff';
                 request(app)
                     .post('/things/4d3ed089fb60ab534684b7ff/values')
-                    .send({value: 1})
+                    .send(data)
                     .expect(404)
                     .end((err)=> {
                         if (err) {
@@ -328,12 +364,14 @@ describe('ENDPOINT /things', ()=> {
                         done();
                     })
             });
-
-
         });
+        /**
+         *
+         */
         describe('when there is one Thing in database', ()=> {
-
-            var thingId;
+            var data = {
+                value: 0
+            };
             beforeEach((done)=> {
                 Thing.remove().exec((err)=> {
                     if (err) {
@@ -343,29 +381,26 @@ describe('ENDPOINT /things', ()=> {
                         if (err) {
                             return done(err);
                         }
-
                         done();
 
                     });
                 });
             });
 
-
             beforeEach((done)=> {
-                new Thing().save((err, thing)=> {
+                new Thing({name: 'x'}).save((err, thing)=> {
                     if (err) {
                         return done(err);
                     }
-                    thingId = thing._id;
+                    data.thingId = thing._id;
                     done();
                 });
             });
 
-
             it('should add Value and return HTTP Succesful status 201', (done)=> {
                 request(app)
-                    .post('/things/' + thingId + '/values')
-                    .send({value: 1})
+                    .post('/things/' + data.thingId + '/values')
+                    .send(data)
                     .expect(201)
                     .end((err)=> {
                         if (err) {
@@ -375,12 +410,10 @@ describe('ENDPOINT /things', ()=> {
                     })
             });
 
-
             it('should return content in JSON', (done)=> {
                 request(app)
-                    .post('/things/' + thingId + '/values')
-                    .send({value: 1})
-
+                    .post('/things/' + data.thingId + '/values')
+                    .send(data)
                     .expect('Content-Type', /json/)
                     .end((err)=> {
                         if (err) {
