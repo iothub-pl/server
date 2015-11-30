@@ -7,8 +7,9 @@ var express = require('express'),
 
 router.get('/', controller.getAll);
 router.get('/count', controller.count);
-router.get('/:id', controller.getById);
-
 router.post('/register', controller.register);
+
+router.get('/:id', controller.getById);
+router.post('/:id/values', controller.addValue);
 
 module.exports = router;
