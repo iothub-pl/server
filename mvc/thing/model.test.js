@@ -19,6 +19,7 @@ describe('Thing model', ()=> {
             done();
         });
     });
+
     it('should read one', (done)=> {
 
         var thing = new Thing();

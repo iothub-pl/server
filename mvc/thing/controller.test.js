@@ -3,6 +3,7 @@ const app = require('../../index');
 const request = require('supertest');
 const should = require('should');
 const Thing = require('./model');
+const Value = require('./../value/model')
 
 
 describe('ENDPOINT /things', ()=> {
@@ -13,7 +14,7 @@ describe('ENDPOINT /things', ()=> {
         /**
          *
          */
-        describe('when there is no Thing in database', ()=> {
+        describe('when there is zero Thing in database', ()=> {
 
             beforeEach((done)=> {
                 Thing.remove().exec((err)=> {
@@ -76,7 +77,7 @@ describe('ENDPOINT /things', ()=> {
         /**
          *
          */
-        describe('when there is zero Thing in database', ()=> {
+        describe('when there is one Thing in database', ()=> {
 
 
             beforeEach((done)=> {
@@ -149,7 +150,7 @@ describe('ENDPOINT /things', ()=> {
     });
 
     describe('on GET /count request', ()           => {
-        describe('when there is one Thing in database', ()=> {
+        describe('when there is zero Thing in database', ()=> {
 
             beforeEach((done)=> {
                 Thing.remove().exec((err)=> {
@@ -160,16 +161,7 @@ describe('ENDPOINT /things', ()=> {
                 });
             });
 
-            beforeEach((done)=> {
-                new Thing().save((err)=> {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
-            });
-
-            it('should return HTTP Succesful code 200', ()=> {
+            it('should return HTTP Succesful code 200', (done)=> {
                 request(app)
                     .get('/things/count')
                     .expect(200)
@@ -198,13 +190,14 @@ describe('ENDPOINT /things', ()=> {
                     .end((err, res)=> {
                         if (err)
                             return done(err);
-                        res.body.should.be.equal(1);
+                        res.body.should.be.equal(0);
                         done();
                     });
             });
         });
-
-
+        /**
+         *
+         */
         describe('when there is one Thing in database', ()=> {
             beforeEach((done)=> {
                 Thing.remove().exec((err)=> {
@@ -290,7 +283,7 @@ describe('ENDPOINT /things', ()=> {
 
     describe('on POST /:id/values request', ()=> {
 
-        describe('when there is no Thing in database', ()=> {
+        describe('when there is zero Thing in database', ()=> {
 
             var thingId = '0000';
             beforeEach((done)=> {
@@ -298,14 +291,21 @@ describe('ENDPOINT /things', ()=> {
                     if (err) {
                         return done(err);
                     }
-                    done();
+                    Value.remove().exec((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
                 });
             });
 
 
-            it('should return HTTP Error code 404 when not valid Thing id', (done)=> {
+            it('should return HTTP Error code 500 when not valid Thing id', (done)=> {
                 request(app)
-                    .post('/things/sdfsdf/values')
+                    .post('/things/y77fyfy/values')
+                    .send({value: 1})
+
                     .expect(404)
                     .end((err)=> {
                         if (err) {
@@ -319,6 +319,7 @@ describe('ENDPOINT /things', ()=> {
             it('should return HTTP Error code 404 when valid Thing id', (done)=> {
                 request(app)
                     .post('/things/4d3ed089fb60ab534684b7ff/values')
+                    .send({value: 1})
                     .expect(404)
                     .end((err)=> {
                         if (err) {
@@ -330,7 +331,7 @@ describe('ENDPOINT /things', ()=> {
 
 
         });
-        describe('when there is Thing in database', ()=> {
+        describe('when there is one Thing in database', ()=> {
 
             var thingId;
             beforeEach((done)=> {
@@ -338,7 +339,14 @@ describe('ENDPOINT /things', ()=> {
                     if (err) {
                         return done(err);
                     }
-                    done();
+                    Value.remove().exec((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        done();
+
+                    });
                 });
             });
 
@@ -357,6 +365,7 @@ describe('ENDPOINT /things', ()=> {
             it('should add Value and return HTTP Succesful status 201', (done)=> {
                 request(app)
                     .post('/things/' + thingId + '/values')
+                    .send({value: 1})
                     .expect(201)
                     .end((err)=> {
                         if (err) {
@@ -370,6 +379,8 @@ describe('ENDPOINT /things', ()=> {
             it('should return content in JSON', (done)=> {
                 request(app)
                     .post('/things/' + thingId + '/values')
+                    .send({value: 1})
+
                     .expect('Content-Type', /json/)
                     .end((err)=> {
                         if (err) {
