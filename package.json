@@ -5,6 +5,9 @@
   "author": "Przemysław Płyś",
   "license": "ISC",
   "main": "index.js",
+  "engines": {
+  "node": "5.1.0"
+},
   "scripts": {
     "serve": "node ./index.js --harmony",
     "test": "mocha ./mvc/**/*test.js",

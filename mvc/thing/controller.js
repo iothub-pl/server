@@ -63,19 +63,15 @@ exports.getById = (req, res)=> {
  */
 exports.register = (req, res)=> {
 
-    if (!req.body.name) {
-        res.sendStatus(412);
-    }
-    else {
+    Thing(req.body).save((err, thing) => {
+        if (err) {
+            return res.sendStatus(500);
+        }
 
-        Thing(req.body).save((err, thing) => {
-            if (err) {
-                return res.sendStatus(500);
-            }
+        res.status(201).json(thing);
+    });
 
-            res.status(201).json(thing);
-        });
-    }
+
 };
 
 /**
@@ -87,27 +83,58 @@ exports.register = (req, res)=> {
  * @param res
  */
 exports.addValue = (req, res)=> {
+    req.body.thingId = req.params.id;
 
-    if(!req.body.value){
-        res.sendStatus(412);
-    }
-    req.body.thingId = req.params.thingId;
 
-    Thing.findOne({_id: req.body.thingId}, (err, thing)=> {
-        if (err) {
-            return res.sendStatus(500);
-        }
-        if (!thing) {
-            return res.sendStatus(404);
-        }
-        new Value(req.body)
-            .save((err, value) => {
-                if (err) {
-                    return res.sendStatus(500);
-                }
-                res.status(201).json(value);
+    Thing.findOne()
+        .where('_id').equals(req.params.id)
+        .exec((err, thing)=> {
 
-            });
-    });
+            if (err) {
+                return res.sendStatus(500);
+            }
+            if (!thing) {
+                return res.sendStatus(404);
+            }
+
+            new Value(req.body)
+                .save((err, value) => {
+                    if (err) {
+                        return res.sendStatus(500);
+                    }
+                    res.status(201).json(value);
+
+                });
+        });
+};
+
+exports.getValues = (req, res)=> {
+
+
+    Thing.findOne()
+        .where('_id').equals(req.params.id)
+        .exec((err, thing)=> {
+            if (err) {
+                res.sendStatus(500);
+            }else{
+
+            if (thing) {
+
+                thing.getValues((err, values)=> {
+                    if (err) {
+                        console.log(err);
+
+                        res.sendStatus(500);
+                    }
+                    res.json(values);
+
+                });
+            }else{
+                res.sendStatus(404);
+
+            }
+            }
+
+        });
 };
 

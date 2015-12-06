@@ -17,7 +17,7 @@ describe('ENDPOINT /things', ()=> {
         describe('when there is zero Thing in database', ()=> {
 
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
@@ -294,19 +294,6 @@ describe('ENDPOINT /things', ()=> {
                     done();
                 });
         });
-        describe('when body is not complete', ()=> {
-            it('should return HTTP Error status 412', (done)=> {
-                request(app)
-                    .post('/things/register')
-
-                    .expect(412)
-                    .end((err)=> {
-                        if (err)
-                            return done(err);
-                        done();
-                    });
-            });
-        });
 
 
     });
@@ -314,22 +301,23 @@ describe('ENDPOINT /things', ()=> {
      *
      */
     describe('on POST /:id/values request', ()=> {
+
+
         /**
          *
          */
         describe('when there is zero Thing in database', ()=> {
 
             var data = {
-                thingId: '000',
                 value: 0
             };
-            var thingId = '0000';
+
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
-                    Value.remove().exec((err)=> {
+                    Value.remove((err)=> {
                         if (err) {
                             return done(err);
                         }
@@ -338,6 +326,7 @@ describe('ENDPOINT /things', ()=> {
                 });
             });
             it('should return HTTP Error code 500 when not valid Thing id', (done)=> {
+
                 request(app)
                     .post('/things/y77fyfy/values')
                     .send(data)
@@ -352,7 +341,6 @@ describe('ENDPOINT /things', ()=> {
 
 
             it('should return HTTP Error code 404 when valid Thing id', (done)=> {
-                data.thingId = '4d3ed089fb60ab534684b7ff';
                 request(app)
                     .post('/things/4d3ed089fb60ab534684b7ff/values')
                     .send(data)
@@ -373,11 +361,11 @@ describe('ENDPOINT /things', ()=> {
                 value: 0
             };
             beforeEach((done)=> {
-                Thing.remove().exec((err)=> {
+                Thing.remove((err)=> {
                     if (err) {
                         return done(err);
                     }
-                    Value.remove().exec((err)=> {
+                    Value.remove((err)=> {
                         if (err) {
                             return done(err);
                         }
@@ -386,20 +374,20 @@ describe('ENDPOINT /things', ()=> {
                     });
                 });
             });
-
+            var thing;
             beforeEach((done)=> {
-                new Thing({name: 'x'}).save((err, thing)=> {
+                thing = new Thing({name: 'x'});
+                thing.save((err)=> {
                     if (err) {
                         return done(err);
                     }
-                    data.thingId = thing._id;
                     done();
                 });
             });
 
             it('should add Value and return HTTP Succesful status 201', (done)=> {
                 request(app)
-                    .post('/things/' + data.thingId + '/values')
+                    .post('/things/' + thing._id + '/values')
                     .send(data)
                     .expect(201)
                     .end((err)=> {
@@ -412,7 +400,7 @@ describe('ENDPOINT /things', ()=> {
 
             it('should return content in JSON', (done)=> {
                 request(app)
-                    .post('/things/' + data.thingId + '/values')
+                    .post('/things/' + thing._id + '/values')
                     .send(data)
                     .expect('Content-Type', /json/)
                     .end((err)=> {
@@ -427,5 +415,81 @@ describe('ENDPOINT /things', ()=> {
         });
 
 
+    });
+
+    describe('on GET /things/:id/values request', ()=> {
+        describe('when there is no Values in database', ()=> {
+
+            beforeEach((done)=> {
+                Thing.remove((err)=> {
+                    if (err) {
+                        return done(err);
+                    }
+                    Value.remove((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
+                });
+            });
+
+            describe('when there is invalid :id', ()=> {
+
+                it('should return HTTP Error code 404 - not Object Id', (done)=> {
+
+                    request(app)
+                        .get('/things/x/values')
+                        .expect(500)
+                        .end((err)=> {
+                            if (err) {
+                                return done(err);
+                            }
+                            done();
+                        })
+                });
+
+                it('should return HTTP Error code 404 - object id', (done)=> {
+
+                    request(app)
+                        .get('/things/4d3ed089fb60ab534684b7ff/values')
+                        .expect(404)
+                        .end((err)=> {
+                            if (err) {
+                                return done(err);
+                            }
+                            done();
+                        })
+                });
+
+            });
+            describe('when id is valid object id', ()=> {
+
+                var thing;
+                beforeEach((done)=> {
+                    thing = new Thing({name: 'x'});
+                    thing.save((err)=> {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
+                });
+
+                it('should return HTTP Succesful code 200', (done) => {
+                    request(app)
+                        .get('/things/' + thing._id + '/values')
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) {
+                                return done(err);
+                            }
+                            done();
+                        });
+                });
+            });
+
+
+        });
     });
 });
