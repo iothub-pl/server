@@ -6,8 +6,8 @@
   "license": "ISC",
   "main": "index.js",
   "engines": {
-  "node": "5.1.0"
-},
+    "node": "5.1.0"
+  },
   "scripts": {
     "serve": "node ./index.js --harmony",
     "test": "mocha ./mvc/**/*test.js",
@@ -21,7 +21,8 @@
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "mongodb": "^2.0.48",
-    "mongoose": "^4.2.6"
+    "mongoose": "^4.2.6",
+    "passport-http-bearer": "^1.0.1"
   },
   "devDependencies": {
     "apidoc": "^0.13.1",
