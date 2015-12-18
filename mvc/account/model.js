@@ -1,14 +1,15 @@
 'use strict';
 var mongoose = require('mongoose');
-var UserSchema = mongose.Schema({
+var AccountSchema = mongoose.Schema({
     login: {
         type: String
+    },
+    password: {
+        type: String
     }
-    ,
-    password: {}
 });
 
 
 //asdas
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Account', AccountSchema);

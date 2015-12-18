@@ -5,6 +5,7 @@ var app = require('express')(),
     config = require('./config/config'),
     log = require('./log'),
     bodyParser = require('body-parser');
+//passport = require('passport');
 
 
 log.log('IoTHuB REST server.');
@@ -12,12 +13,29 @@ log.log('IoTHuB REST server.');
 mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name);
 
 
-
-
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+
+
+//passport.use(new BearerStrategy(
+//    (token, done) => {
+//        User.findOne({token: token}, (err, user)=> {
+//            if (err) {
+//                return done(err);
+//            }
+//            if (!user) {
+//                return done(null, false);
+//            }
+//            if (!sufficientScope(user, token)) {
+//                return done(new bearer.AuthenticationError('', 'insufficient_scope'));
+//            }
+//            return done(null, user);
+//        });
+//    }
+//));
+
 
 require('./config/routes')(app);
 

@@ -3,7 +3,7 @@ var log = require('./../log');
 
 module.exports = function (app) {
     app.all('/*', function (req, res, next) {
-       // log.log('Url: ' + req.originalUrl);
+        // log.log('Url: ' + req.originalUrl);
         next();
     });
     app.get('/', function (req, res) {
@@ -11,6 +11,7 @@ module.exports = function (app) {
     });
 
     app.use('/things', require('./../mvc/thing/index'));
+    app.use('/accounts', require('./../mvc/account/routes'));
 
 };
 log.log('Routes loaded.');
