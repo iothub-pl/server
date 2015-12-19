@@ -6,8 +6,8 @@ var express = require('express'),
     router = express.Router();
 
 router.get('/', controller.getAll);
-//router.get('/:id', controller.getById);
-router.post('/', controller.register);
+router.get('/:_id', controller.getById);
+router.post('/', controller.create);
 //router.post('/login', controller.login);
 //router.get('/logout', controller.logout);
 
