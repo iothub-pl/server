@@ -10,7 +10,7 @@
   },
   "scripts": {
     "serve": "node ./index.js --harmony",
-    "test": "mocha ./mvc/**/*test.js",
+    "test": "mocha ./mvc/**/*test.js -t 2000",
     "apidoc": "apidoc -i mvc/ -o apidoc/",
     "watch": "npm-watch"
   },
