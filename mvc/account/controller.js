@@ -38,9 +38,9 @@ exports.create = (req, res)=> {
 };
 
 /**
- * Updates account with specific _id
- * @api {put} /accounts/:_id Update account with _id
- * @apiName Update account
+ * Returns account with specific _id
+ * @api {put} /accounts/:_id Returns account with _id
+ * @apiName Returns account
  * @apiGroup Account
  * @todo add api params
  * @param req
