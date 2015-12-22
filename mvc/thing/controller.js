@@ -116,23 +116,23 @@ exports.getValues = (req, res)=> {
         .exec((err, thing)=> {
             if (err) {
                 res.sendStatus(500);
-            }else{
+            } else {
 
-            if (thing) {
+                if (thing) {
 
-                thing.getValues((err, values)=> {
-                    if (err) {
-                        console.log(err);
+                    thing.getValues((err, values)=> {
+                        if (err) {
+                            console.log(err);
 
-                        res.sendStatus(500);
-                    }
-                    res.json(values);
+                            res.sendStatus(500);
+                        }
+                        res.json(values);
 
-                });
-            }else{
-                res.sendStatus(404);
+                    });
+                } else {
+                    res.sendStatus(404);
 
-            }
+                }
             }
 
         });

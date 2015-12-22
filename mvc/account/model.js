@@ -1,15 +1,30 @@
 'use strict';
 var mongoose = require('mongoose');
 var AccountSchema = mongoose.Schema({
-    login: {
-        type: String
+    email: {
+        type: String,
+        require: true
     },
     password: {
-        type: String
+        type: String,
+        select: false
     }
 });
 
-
-//asdas
+AccountSchema.methods = {
+    /**
+     *
+     * @param str
+     * @return boolean
+     */
+    authenticate: (str)=> {
+        return str === password;
+    }
+}
+;
+/**
+ * @todo  salting an hashing password
+ * @type {*|Model|Aggregate}
+ */
 
 module.exports = mongoose.model('Account', AccountSchema);

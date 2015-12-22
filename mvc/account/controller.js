@@ -14,11 +14,15 @@ exports.getAll = (req, res)=> {
     Account.find().exec((err, accounts)=> {
         if (err) {
             res.status(500).send(err);
+        } else {
+            res.json(accounts);
         }
-        res.json(accounts);
     });
 };
+//https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
+//https://scotch.io/quick-tips/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
 /**
+ * @todo createaccount when isAuthenticated
  * Creates Account and returns it
  * @api {post} /accounts Create account
  * @apiName Creates account
@@ -31,16 +35,19 @@ exports.getAll = (req, res)=> {
 exports.create = (req, res)=> {
     new Account(req.body)
         .save((err, account)=> {
-            if (err)
+            if (err) {
                 res.status(500).send(err);
-            res.status(201).json(account);
+            }
+            else {
+                res.status(201).json(account);
+            }
         });
 };
 
 /**
- * Returns account with specific _id
- * @api {put} /accounts/:_id Returns account with _id
- * @apiName Returns account
+ * Return account with specific _id
+ * @api {get} /accounts/:_id Return account with _id
+ * @apiName Return account
  * @apiGroup Account
  * @todo add api params
  * @param req
@@ -50,8 +57,57 @@ exports.getById = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params._id)
         .exec((err, account)=> {
-            if (err)
+            if (err) {
                 res.status(404).send(err);
-            res.json(account);
+            } else {
+                res.json(account);
+            }
+        });
+};
+
+/**
+ * Update account with specyfic _id
+ * @api {put} /accounts/:_id Update account with _id
+ * @apiName Update account
+ * @apiGroup Account
+ * @param req
+ * @param res
+ */
+exports.update = (req, res)=> {
+    delete req.body._id;
+    delete req.body.login;
+
+    Account.findOne()
+        .where('_id').equals(req.params._id)
+        .exec((err, account)=> {
+            if (err) {
+                res.status(404).send(err);
+            } else {
+                account.password = req.body.password;
+                account.save((err, account)=> {
+                    if (err)
+                        res.status(500).send(err);
+                    res.json(account);
+                });
+            }
+        });
+};
+
+exports.delete = (req, res)=> {
+    Account.findOne()
+        .where('_id').equals(req.params._id)
+        .exec((err, account)=> {
+            if (err) {
+                res.status(404).send(err);
+            }
+            else {
+                account.remove((err)=> {
+                    if (err) {
+                        res.status(500).send(err);
+                    } else {
+                        res.status(204).send();
+                    }
+                });
+            }
         });
 };
