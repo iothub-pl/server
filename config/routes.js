@@ -13,5 +13,6 @@ module.exports = function (app) {
     app.use('/things', require('./../mvc/thing/index'));
     app.use('/accounts', require('./../mvc/account/routes'));
 
+    app.use('/authentication', require('./../mvc/authentication/routes'));
 };
 log.log('Routes loaded.');

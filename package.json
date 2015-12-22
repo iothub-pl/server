@@ -10,7 +10,7 @@
   },
   "scripts": {
     "serve": "node ./index.js --harmony",
-    "test": "mocha ./mvc/**/*test.js -t 2000",
+    "test": "mocha ./mvc/**/*test.js -t 20000",
     "apidoc": "apidoc -i mvc/ -o apidoc/",
     "watch": "npm-watch"
   },
@@ -22,6 +22,7 @@
     "express": "^4.13.3",
     "mongodb": "^2.0.48",
     "mongoose": "^4.2.6",
+    "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1"
   },
   "devDependencies": {

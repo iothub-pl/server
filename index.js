@@ -4,9 +4,8 @@ var app = require('express')(),
     mongoose = require('mongoose'),
     config = require('./config/config'),
     log = require('./log'),
-    bodyParser = require('body-parser');
-//passport = require('passport');
-
+    bodyParser = require('body-parser'),
+    passport = require('passport');
 
 log.log('IoTHuB REST server.');
 
@@ -19,6 +18,10 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
+
+
+require('./mvc/authentication/passport').setup(app);
+//
 //passport.use(new BearerStrategy(
 //    (token, done) => {
 //        User.findOne({token: token}, (err, user)=> {
