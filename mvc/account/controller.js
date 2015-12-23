@@ -35,12 +35,8 @@ exports.getAll = (req, res)=> {
 exports.create = (req, res)=> {
     new Account(req.body)
         .save((err, account)=> {
-            if (err) {
-                res.status(500).send(err);
-            }
-            else {
-                res.status(201).json(account);
-            }
+            if (err) res.status(500).send(err);
+            res.status(201).json(account);
         });
 };
 
