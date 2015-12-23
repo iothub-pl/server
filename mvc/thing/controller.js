@@ -62,16 +62,11 @@ exports.getById = (req, res)=> {
  * @param res
  */
 exports.register = (req, res)=> {
-
-    Thing(req.body).save((err, thing) => {
-        if (err) {
-            return res.sendStatus(500);
-        }
-
-        res.status(201).json(thing);
-    });
-
-
+    new Thing(req.body)
+        .save((err, thing) => {
+            if (err) return res.status(500).send(err);
+            res.status(201).json(thing);
+        });
 };
 
 /**

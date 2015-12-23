@@ -10,7 +10,7 @@ module.exports = function (app) {
         res.send('IoTHuB REST server - unknown request.');
     });
 
-    app.use('/things', require('./../mvc/thing/index'));
+    app.use('/things', require('./../mvc/thing/routes'));
     app.use('/accounts', require('./../mvc/account/routes'));
 
     app.use('/authentication', require('./../mvc/authentication/routes'));
