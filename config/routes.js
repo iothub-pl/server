@@ -4,7 +4,7 @@ var log = require('./../log');
 module.exports = function (app) {
     app.all('/*', function (req, res, next) {
         // log.log('Url: ' + req.originalUrl);
-        next();
+            next();
     });
     app.get('/', function (req, res) {
         res.send('IoTHuB REST server - unknown request.');
@@ -14,4 +14,3 @@ module.exports = function (app) {
     app.use('/accounts', require('./../mvc/account/routes'));
     app.use('/authentication', require('./../mvc/authentication/routes'));
 };
-log.log('Routes loaded.');
