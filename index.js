@@ -9,6 +9,11 @@ var app = require('express')(),
 
 log.log('IoTHuB REST server.');
 
+if (!config.debug) {
+    var morgan = require('morgan');
+    app.use(morgan('combined'));
+}
+
 mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name);
 
 
@@ -16,8 +21,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
-
-
 
 
 require('./mvc/authentication/passport').setup(app);
