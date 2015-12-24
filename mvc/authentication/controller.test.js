@@ -6,7 +6,6 @@ const Account = require('./../account/model');
 
 
 describe('ENDPOINT /authentication', ()=> {
-
     describe('when POST request', ()=> {
         beforeEach('Deletes all accounts', (done)=> {
             Account.remove((err)=> {

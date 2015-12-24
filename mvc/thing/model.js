@@ -21,7 +21,14 @@ ThingSchema.methods = {
         Value.find()
             .where('thingId').equals(this._id)
             .exec(callback);
-
     }
 };
+ThingSchema.pre('save', function (next) {
+    this.wasNew = this.isNew;
+    next();
+});
+ThingSchema.post('save', function () {
+    if (this.wasNew) {
+    }
+});
 module.exports = mongoose.model('Thing', ThingSchema);

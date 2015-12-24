@@ -12,13 +12,9 @@ exports.token = (req, res)=> {
         .select(' +password')
         .where('email').equals(req.body.email)
         .exec((err, account)=> {
-
-            if (err) {
-                //@todo check code
-                res.status(404).send(err);
-            }
+            if (err) res.status(404).send(err);
             else {
-                if (account.password === req.body.password) {
+                if (account.authenticate(req.body.password)) {
                     res.json({token: account._id});
                 }
                 else {

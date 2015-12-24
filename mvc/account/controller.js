@@ -12,9 +12,8 @@ var Account = require('./model');
  */
 exports.getAll = (req, res)=> {
     Account.find().exec((err, accounts)=> {
-        if (err) {
-            res.status(500).send(err);
-        } else {
+        if (err) res.status(500).send(err);
+        else {
             res.json(accounts);
         }
     });
@@ -36,7 +35,8 @@ exports.create = (req, res)=> {
     new Account(req.body)
         .save((err, account)=> {
             if (err) res.status(500).send(err);
-            res.status(201).json(account);
+            else
+                res.status(201).json(account);
         });
 };
 
@@ -53,11 +53,10 @@ exports.getById = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params._id)
         .exec((err, account)=> {
-            if (err) {
-                res.status(404).send(err);
-            } else {
+            if (err) res.status(404).send(err);
+            else
                 res.json(account);
-            }
+
         });
 };
 
@@ -76,16 +75,16 @@ exports.update = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params._id)
         .exec((err, account)=> {
-            if (err) {
-                res.status(404).send(err);
-            } else {
-                account.password = req.body.password;
-                account.save((err, account)=> {
-                    if (err)
-                        res.status(500).send(err);
-                    res.json(account);
-                });
-            }
+            if (err) res.status(404).send(err);
+            else
+                account
+                    .setPassword(req.body.password)
+                    .save((err, account) => {
+                        if (err) res.status(500).send(err);
+                        else
+                            res.json(account);
+                    });
+
         });
 };
 

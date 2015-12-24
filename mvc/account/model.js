@@ -7,21 +7,56 @@ var AccountSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        select: false
+        select: false,
+        require: true
     }
 });
-
 AccountSchema.methods = {
+    /**
+     * @returns {AccountSchema.email|{type, require}|string|Person.email|{type, required, index}|string|*}
+     */
+    getEmail: function () {
+        return this.email;
+    },
     /**
      *
      * @param str
+     * @returns {*}
+     */
+    setEmail: function (str) {
+        return this.set('email', str);
+    },
+    /**
+     *
+     * @returns {AccountSchema.password|{type, select, require}|string|string|string}
+     */
+    getPassword: function () {
+        return this.password;
+    },
+    /**
+     *
+     * @param str
+     * @returns {*}
+     */
+    setPassword: function (str) {
+        return this.set('password', str);
+    },
+    /**
+     * @param str
      * @return boolean
      */
-    authenticate: (str)=> {
-        return str === password;
+    authenticate: function (str) {
+        return str === this.getPassword();
     }
-}
-;
+};
+AccountSchema.pre('save', function (next) {
+    this.wasNew = this.isNew;
+    next();
+});
+AccountSchema.post('save', function () {
+    if (this.wasNew) {
+    }
+});
 /**
  * @todo  salting an hashing password
  * @type {*|Model|Aggregate}
