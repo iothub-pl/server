@@ -7,8 +7,6 @@ var Account = require('./model');
  * @apiName Returns collection of Accounts
  * @apiDescription Returns collection of all accounts.
  * @apiGroup Account
- * @param req
- * @param res
  */
 exports.getAll = (req, res)=> {
     Account.find().exec((err, accounts)=> {
@@ -27,12 +25,11 @@ exports.getAll = (req, res)=> {
  * @apiName Creates account
  * @apiDescription Creates and returns account.
  * @apiGroup Account
- * @param req
- * @param res
  * @TODO  get from req.body only field login and password
  */
 exports.create = (req, res)=> {
-    new Account(req.body)
+    var acc =  Account(req.body);
+        acc.setPassword(req.body.password)
         .save((err, account)=> {
             if (err) res.status(500).send(err);
             else
@@ -46,8 +43,6 @@ exports.create = (req, res)=> {
  * @apiName Return account
  * @apiGroup Account
  * @todo add api params
- * @param req
- * @param res
  */
 exports.getById = (req, res)=> {
     Account.findOne()
@@ -61,16 +56,14 @@ exports.getById = (req, res)=> {
 };
 
 /**
- * Update account with specyfic _id
+ * Update account with specific _id
  * @api {put} /accounts/:_id Update account with _id
  * @apiName Update account
  * @apiGroup Account
- * @param req
- * @param res
  */
 exports.update = (req, res)=> {
     delete req.body._id;
-    delete req.body.login;
+    delete req.body.email;
 
     Account.findOne()
         .where('_id').equals(req.params._id)
@@ -81,28 +74,27 @@ exports.update = (req, res)=> {
                     .setPassword(req.body.password)
                     .save((err, account) => {
                         if (err) res.status(500).send(err);
-                        else
-                            res.json(account);
+                        else res.json(account);
                     });
-
         });
 };
-
+/**
+ * Delete account with specific _id
+ * @api {delete} /accounts/:_id Delete acount with _id
+ * @apiName Delete account with _id
+ * @apiGroup Account
+ */
 exports.delete = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params._id)
         .exec((err, account)=> {
-            if (err) {
-                res.status(404).send(err);
-            }
-            else {
-                account.remove((err)=> {
-                    if (err) {
-                        res.status(500).send(err);
-                    } else {
-                        res.status(204).send();
-                    }
-                });
-            }
+            if (err) res.status(404).send(err);
+            else
+                account
+                    .remove((err)=> {
+                        if (err) res.status(500).send(err);
+                        else res.status(204).send();
+                    });
+
         });
 };

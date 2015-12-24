@@ -17,21 +17,22 @@ exports.setup = (app)=> {
         //    passwordField: 'password'
         //},
         (token, done) => {
-            Account.findOne({
-                _id: token
-            }, (err, account) => {
-                if (err) {
-                    return done(err);
-                }
-                if (!account) {
-                    return done(null, false, {message: 'This email is not registered.'});
-                }
-                //if (!account.authenticate(password)) {
-                //    return done(null, false, {message: 'This password is not correct.'});
-                //}
+            Account.findOne()
+                //.select('_id')
+                //.select('email')
+                .select('password')
+                .select('salt')
+                .where('_id').equals(token)
+                .exec((err, account) => {
+                    if (err) return done(err);
+                    if (!account) return done(null, false, {message: 'This email is not registered.'});
 
-                return done(null, account);
-            });
+                    //if (!account.authenticate(password)) {
+                    //    return done(null, false, {message: 'This password is not correct.'});
+                    //}
+
+                    return done(null, account);
+                });
         }
     ));
 };

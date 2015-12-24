@@ -591,7 +591,11 @@ describe('ENDPOINT /accounts', () => {
                     .send(data)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        res.body.password.should.be.equal(data.password);
+                        Account.findOne({_id:account._id}).select('password').exec((err, acc)=>{
+                            if(err) return done(err);
+                            acc.password.should.be.equal(res.body.password);
+
+                        })
                         done();
                     });
             });
