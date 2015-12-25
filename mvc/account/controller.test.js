@@ -5,14 +5,72 @@ const should = require('should');
 const Account = require('./model');
 
 describe('ENDPOINT /accounts', () => {
-    var userAuthenticationToken;
-    describe('when GET request', ()=> {
-        beforeEach('Deletes all accounts', (done)=> {
-            Account.remove((err)=> {
+    var userAlphaAuthenticationToken;
+    var userBetaAuthenticationToken;
+    var account;
+    var alphaData = {
+        email: 'alpha@alpha.alpha',
+        password: 'alpha',
+    };
+    var betaData = {
+        email: 'beta@beta.beta',
+        password: 'beta',
+    };
+    beforeEach('Deletes all accounts', (done)=> {
+        Account.remove((err)=> {
+            if (err) return done(err);
+            done();
+        });
+    });
+
+    beforeEach('Creates alpha account', (done)=> {
+        request(app)
+            .post('/accounts')
+            .send(alphaData)
+            .end((err, res)=> {
                 if (err) return done(err);
+                account = res.body;
+                Account.update({_id: account._id}, {group: 1}, (err)=> {
+                    if (err) return done(err);
+                    done();
+                });
+            });
+    });
+    beforeEach('Obtains alpha authentication token', (done)=> {
+        request(app)
+            .post('/authentication')
+            .send(alphaData)
+            .end((err, res)=> {
+                if (err) return done(err);
+                userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
+                res.body.token;
                 done();
             });
-        });
+    });
+    beforeEach('Creates beta account', (done)=> {
+        request(app)
+            .post('/accounts')
+            .send(betaData)
+            .end((err, res)=> {
+                if (err) return done(err);
+                account = res.body;
+                done();
+            });
+    });
+    beforeEach('Obtains alpha authentication token', (done)=> {
+        request(app)
+            .post('/authentication')
+            .send(betaData)
+            .end((err, res)=> {
+                if (err) return done(err);
+                userBetaAuthenticationToken = 'Bearer ' + res.body.token;
+                res.body.token;
+                done();
+            });
+    });
+
+    describe('when GET request', ()=> {
+
         describe('when account not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -24,83 +82,68 @@ describe('ENDPOINT /accounts', () => {
                     });
             });
         });
-        describe('when account authenticated', ()=> {
-            var data = {
-                email: 'test@test.test',
-                password: 'test'
-            };
-            var account;
 
-            beforeEach('Creates account', (done)=> {
-                request(app)
-                    .post('/accounts')
-                    .send(data)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        account = res.body;
-                        done();
-                    });
+        describe('when authenticated', ()=> {
+
+            describe('when not authorized', ()=> {
+                it('should return HTTP 403 Forbidden', (done) => {
+                    request(app)
+                        .get('/accounts')
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
             });
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(data)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
+
+            describe('when authorized', ()=> {
+                it('should return HTTP 200 OK', (done) => {
+                    request(app)
+                        .get('/accounts')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return JSON content', (done) => {
+                    request(app)
+                        .get('/accounts')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return Array', (done) => {
+                    request(app)
+                        .get('/accounts')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.instanceOf(Array);
+                            done();
+                        });
+                });
+                it('should return Array with two elements', (done) => {
+                    request(app)
+                        .get('/accounts')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.length.should.equal(2);
+                            done();
+                        });
+                });
             });
-            it('should return HTTP 200 OK', (done) => {
-                request(app)
-                    .get('/accounts')
-                    .set('Authorization', userAuthenticationToken)
-                    .expect(200)
-                    .end((err)=> {
-                        if (err) return done(err);
-                        done();
-                    });
-            });
-            it('should return JSON content', (done) => {
-                request(app)
-                    .get('/accounts')
-                    .set('Authorization', userAuthenticationToken)
-                    .expect('Content-Type', /json/)
-                    .end((err)=> {
-                        if (err) return done(err);
-                        done();
-                    });
-            });
-            it('should return Array', (done) => {
-                request(app)
-                    .get('/accounts')
-                    .set('Authorization', userAuthenticationToken)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        res.body.should.be.instanceOf(Array);
-                        done();
-                    });
-            });
-            it('should return Array with one element', (done) => {
-                request(app)
-                    .get('/accounts')
-                    .set('Authorization', userAuthenticationToken)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        res.body.length.should.equal(1);
-                        done();
-                    });
-            });
+
         });
     });
     describe('when POST request', ()=> {
-        beforeEach('Deletes all accounts', (done)=> {
-            Account.remove((err)=> {
-                if (err) return done(err);
-                done();
-            });
-        });
         describe('when not authenticated', ()=> {
             var data = {
                 email: 'test@test.test',
@@ -171,6 +214,7 @@ describe('ENDPOINT /accounts', () => {
                 });
             });
         });
+
         describe('when authenticated', ()=> {
             var data = {
                 email: 'test@test.test',
@@ -199,7 +243,7 @@ describe('ENDPOINT /accounts', () => {
                     .send(dataAccount)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
+                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
                         res.body.token;
                         done();
                     });
@@ -207,7 +251,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 201 Created', (done)=> {
                 request(app)
                     .post('/accounts')
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
 
                     .send(data)
                     .expect(201)
@@ -219,7 +263,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return JSON content', (done) => {
                 request(app)
                     .post('/accounts')
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .expect('Content-Type', /json/)
                     .end((err)=> {
@@ -232,7 +276,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object', (done)=> {
                     request(app)
                         .post('/accounts')
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
@@ -243,7 +287,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object with field _id', (done)=> {
                     request(app)
                         .post('/accounts')
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
@@ -254,7 +298,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object with field email', (done)=> {
                     request(app)
                         .post('/accounts')
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
@@ -265,7 +309,7 @@ describe('ENDPOINT /accounts', () => {
                 it('field email should equal', (done)=> {
                     request(app)
                         .post('/accounts')
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
@@ -284,12 +328,6 @@ describe('ENDPOINT /accounts', () => {
             };
             var account;
 
-            beforeEach('Deletes all accounts', (done)=> {
-                Account.remove((err)=> {
-                    if (err) return done(err);
-                    done();
-                });
-            });
             beforeEach('Creates account', (done)=> {
                 request(app)
                     .post('/accounts')
@@ -324,15 +362,6 @@ describe('ENDPOINT /accounts', () => {
                 email: 'test@test.test',
                 password: 'test'
             };
-            beforeEach('Deletes all accounts', (done)=> {
-                Account.remove((err)=> {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
-            });
-
             var dataAccount = {
                 email: 'testA@test.test',
                 password: 'testA'
@@ -355,7 +384,7 @@ describe('ENDPOINT /accounts', () => {
                     .send(dataAccount)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
+                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
                         res.body.token;
                         done();
                     });
@@ -365,7 +394,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .get('/accounts/' + 23452345)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .expect(404)
                     .end((err)=> {
                         if (err) return done(err);
@@ -375,7 +404,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 200 OK', (done)=> {
                 request(app)
                     .get('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .expect(200)
                     .end((err)=> {
                         if (err) return done(err);
@@ -385,7 +414,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return JSON content', (done) => {
                 request(app)
                     .get('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
 
                     .expect('Content-Type', /json/)
                     .end((err)=> {
@@ -401,7 +430,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object', (done)=> {
                     request(app)
                         .get('/accounts/' + account._id)
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
@@ -414,7 +443,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object with field _id', (done)=> {
                     request(app)
                         .get('/accounts/' + account._id)
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
@@ -426,7 +455,7 @@ describe('ENDPOINT /accounts', () => {
                 it('field _id should equal', (done)=> {
                     request(app)
                         .get('/accounts/' + account._id)
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
@@ -438,7 +467,7 @@ describe('ENDPOINT /accounts', () => {
                 it('should return object with field email', (done)=> {
                     request(app)
                         .get('/accounts/' + account._id)
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
@@ -450,7 +479,7 @@ describe('ENDPOINT /accounts', () => {
                 it('field email should equal', (done)=> {
                     request(app)
                         .get('/accounts/' + account._id)
-                        .set('Authorization', userAuthenticationToken)
+                        .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
@@ -477,14 +506,6 @@ describe('ENDPOINT /accounts', () => {
             password: 'testA'
         };
         var account;
-        beforeEach('Deletes all accounts', (done)=> {
-            Account.remove((err)=> {
-                if (err) {
-                    return done(err);
-                }
-                done();
-            });
-        });
         beforeEach('Creates account', (done)=> {
             request(app)
                 .post('/accounts')
@@ -524,7 +545,7 @@ describe('ENDPOINT /accounts', () => {
                     .send(dataAccount)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
+                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
                         res.body.token;
                         done();
                     });
@@ -532,7 +553,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .put('/accounts/' + 23452345)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .expect(404)
                     .end((err)=> {
@@ -543,7 +564,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 200 OK', (done)=> {
                 request(app)
                     .put('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .expect(200)
                     .end((err)=> {
@@ -554,7 +575,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return JSON content', (done) => {
                 request(app)
                     .put('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .expect('Content-Type', /json/)
                     .end((err)=> {
@@ -565,7 +586,7 @@ describe('ENDPOINT /accounts', () => {
             it('should not change _id field', (done) => {
                 request(app)
                     .put('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .end((err, res)=> {
                         if (err) return done(err);
@@ -576,7 +597,7 @@ describe('ENDPOINT /accounts', () => {
             it('should not change email field', (done) => {
                 request(app)
                     .put('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .end((err, res)=> {
                         if (err) return done(err);
@@ -587,12 +608,12 @@ describe('ENDPOINT /accounts', () => {
             it('should change password field', (done) => {
                 request(app)
                     .put('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        Account.findOne({_id:account._id}).select('password').exec((err, acc)=>{
-                            if(err) return done(err);
+                        Account.findOne({_id: account._id}).select('password').exec((err, acc)=> {
+                            if (err) return done(err);
                             acc.password.should.be.equal(res.body.password);
 
                         })
@@ -603,18 +624,10 @@ describe('ENDPOINT /accounts', () => {
     });
     describe('when DELETE request with param', ()=> {
         var account;
-        var dataAccount ={
+        var dataAccount = {
             email: 'test@test.test',
             password: 'test'
         };
-        beforeEach('Deletes all accounts', (done)=> {
-            Account.remove((err)=> {
-                if (err) {
-                    return done(err);
-                }
-                done();
-            });
-        });
         beforeEach('Creates account', (done)=> {
             request(app)
                 .post('/accounts')
@@ -653,7 +666,7 @@ describe('ENDPOINT /accounts', () => {
                     .send(dataAccount)
                     .end((err, res)=> {
                         if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
+                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
                         res.body.token;
                         done();
                     });
@@ -661,7 +674,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .delete('/accounts/' + 12323)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .expect(404)
                     .end((err, res)=> {
                         if (err) return done(err);
@@ -672,7 +685,7 @@ describe('ENDPOINT /accounts', () => {
             it('should return HTTP Successful code 204', (done)=> {
                 request(app)
                     .delete('/accounts/' + account._id)
-                    .set('Authorization', userAuthenticationToken)
+                    .set('Authorization', userAlphaAuthenticationToken)
                     .expect(204)
                     .end((err, res)=> {
                         if (err) return done(err);
