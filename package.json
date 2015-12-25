@@ -21,6 +21,7 @@
     "body-parser": "^1.14.1",
     "crypto": "0.0.3",
     "express": "^4.13.3",
+    "jsonwebtoken": "^5.4.1",
     "mongodb": "^2.0.48",
     "mongoose": "^4.2.6",
     "morgan": "^1.6.1",
