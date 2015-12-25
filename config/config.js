@@ -15,5 +15,6 @@ module.exports = {
          * @TODO Add user and password
          */
     },
+    secret: 'secret',
     debug: true
 };
