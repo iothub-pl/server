@@ -15,76 +15,78 @@ var AccountSchema = mongoose.Schema({
         type: String,
         select: false,
         require: true
+    },
+    role: {
+        type: Number,
+        default: 0
     }
 });
-
+AccountSchema.virtual('token').get(function () {
+    return {
+        _id: this._id,
+        email: this.email,
+        role: this.role
+    };
+});
 
 AccountSchema.methods = {
     /**
-     * @returns {AccountSchema.email|{type, require}|string|Person.email|{type, required, index}|string|*}
+     * @returns {*}
      */
     getEmail: function () {
         return this.get('email');
     },
     /**
-     *
-     * @param str
+     * @param {String} email
      * @returns {*}
      */
     setEmail: function (str) {
         return this.set('email', str);
     },
     /**
-     *
+     * @returns {*}
      */
     generateSalt: function () {
         return this.set('salt', crypto.randomBytes(16)
             .toString('base64'));
     },
     /**
-     *
      * @returns {*}
      */
     getSalt: function () {
-        if (!this.salt) {
-            return this.generateSalt().getSalt();
-        } else
-            return this.get('salt');
+        if (!this.salt) return this.generateSalt().getSalt();
+        else return this.get('salt');
     },
-
+    /**
+     * @param {String} password
+     * @returns {*}
+     */
     encryptPassword: function (password) {
-
         return crypto
             .pbkdf2Sync(password, new Buffer(this.getSalt(), 'base64'), 10000, 64)
             .toString('base64');
     },
     /**
-     *
-     * @returns {AccountSchema.password|{type, select, require}|string|string|string}
+     * @returns {*}
      */
     getPassword: function () {
         return this.get('password');
     },
     /**
-     *
-     * @param str
+     * @param {String} password
      * @returns {*}
      */
     setPassword: function (password) {
-        this.generateSalt();
         return this.set('password', this.encryptPassword(password));
     },
-
     /**
-     * @param str
-     * @return boolean
+     * @param {String} password
+     * @returns {boolean}
      */
     authenticate: function (password) {
         return this.encryptPassword(password) === this.getPassword();
     }
 };
-
-
 AccountSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
     next();
@@ -94,8 +96,6 @@ AccountSchema.post('save', function () {
     }
 });
 /**
- * @todo  salting an hashing password
  * @type {*|Model|Aggregate}
  */
-
 module.exports = mongoose.model('Account', AccountSchema);
