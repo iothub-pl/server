@@ -1,6 +1,8 @@
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const Account = require('./../account/model');
+var jwt = require('jsonwebtoken');
+var config = require('./../../config/config');
 
 /**
  *
@@ -17,12 +19,15 @@ exports.setup = (app)=> {
         //    passwordField: 'password'
         //},
         (token, done) => {
+            token = jwt.verify(token, config.secret);
+            console.log('Token: ',token);
             Account.findOne()
                 //.select('_id')
                 //.select('email')
                 .select('password')
                 .select('salt')
-                .where('_id').equals(token)
+                .select('role')
+                .where('_id').equals(token._id)
                 .exec((err, account) => {
                     if (err) return done(err);
                     if (!account) return done(null, false, {message: 'This email is not registered.'});

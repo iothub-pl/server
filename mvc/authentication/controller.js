@@ -2,6 +2,9 @@
 
 
 var Account = require('./../account/model');
+var jwt = require('jsonwebtoken');
+var config = require('./../../config/config');
+
 /**
  * @todo add jsonwebtoken
  * Obtain authentication token
@@ -20,7 +23,7 @@ exports.token = (req, res)=> {
             if (err) res.status(404).send(err);
             else {
                 if (account.authenticate(req.body.password)) {
-                    res.json({token: account._id});
+                    res.json({token:jwt.sign(account.token, config.secret)});
                 }
                 else {
                     //@todo check code

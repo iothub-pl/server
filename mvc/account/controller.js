@@ -9,6 +9,8 @@ var Account = require('./model');
  * @apiGroup Account
  */
 exports.getAll = (req, res)=> {
+
+    console.log(req.user);
     Account.find().exec((err, accounts)=> {
         if (err) res.status(500).send(err);
         else {
