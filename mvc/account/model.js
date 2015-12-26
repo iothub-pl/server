@@ -16,18 +16,20 @@ var AccountSchema = mongoose.Schema({
         select: false,
         require: true
     },
+    /**
+     * @todo need to think about it, how to design authorization
+     */
     role: {
         type: Number,
         default: 0
     }
 });
-AccountSchema.virtual('token').get(function () {
-    return {
-        _id: this._id,
-        email: this.email,
-        role: this.role
-    };
-});
+AccountSchema.virtual('token')
+    .get(function () {
+        return {
+            _id: this._id
+        };
+    });
 
 AccountSchema.methods = {
     /**

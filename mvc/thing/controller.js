@@ -1,14 +1,12 @@
 'use strict';
 
-const Thing = require('./model');
-const Value = require('./../value/model');
+const Thing = require('./model'),
+    Value = require('./../value/model');
 /**
- * Returns collection of Things (devices) in database
+ * Returns collection of Things
  * @api {get} /things Returns collection of Things
- * @apiName Returns collection of Things.
+ * @apiName Returns collection of Things
  * @apiGroup Thing
- * @param req
- * @param res
  */
 exports.getAll = (req, res) => {
     Thing.find()
@@ -20,9 +18,9 @@ exports.getAll = (req, res) => {
         });
 };
 /**
- * Returns length of collection of Things (devices) in database
+ * Returns length of collection of Things
  * @api {get} /things Returns length of collection of Things
- * @apiName Returns length of collection of Things.
+ * @apiName Returns length of collection of Things
  * @apiGroup Thing
  * @param req
  * @param res
@@ -37,9 +35,10 @@ exports.count = (req, res)=> {
     });
 };
 /**
- *
- * @param req
- * @param res
+ * Returns thing with specific _id
+ * @api {get} /things/:_id Returns thing with specific _id
+ * @apiName Returns thing with specific _id
+ * @apiGroup Thing
  */
 exports.getById = (req, res)=> {
 
@@ -54,12 +53,10 @@ exports.getById = (req, res)=> {
 };
 
 /**
- * Registers Thing (client) master/slave device in system
- * @api {post} /things/register Registers Thing (client) master/slave device in system
- * @apiName Registers Thing (client) master/slave device in system.
+ * Registers Thing
+ * @api {post} /things/register Registers Thing in system
+ * @apiName Registers Thing in system.
  * @apiGroup Thing
- * @param req
- * @param res
  */
 exports.register = (req, res)=> {
     new Thing(req.body)
@@ -70,17 +67,13 @@ exports.register = (req, res)=> {
 };
 
 /**
- * Adds Value when Thing (client) master/salve device exists in system
- * @api {post} /things/:id/values Adds Value when Thing (client) master/salve device exists in system
- * @apiName Adds Value when Thing (client) master/salve device exists in system
+ * Adds Value when Thing exists in system
+ * @api {post} /things/:_id/values Adds Value when Thing exists in system
+ * @apiName Adds Value when Thing exists in system
  * @apiGroup Thing
- * @param req
- * @param res
  */
 exports.addValue = (req, res)=> {
     req.body.thingId = req.params.id;
-
-
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .exec((err, thing)=> {
@@ -102,10 +95,13 @@ exports.addValue = (req, res)=> {
                 });
         });
 };
-
+/**
+ * Returns Values from Thing with specific id
+ * @api {get} /things/:id/values Returns Values from Thing with specific id
+ * @apiName Returns Values from Thing with specific id
+ * @apiGroup Thing
+ */
 exports.getValues = (req, res)=> {
-
-
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .exec((err, thing)=> {
@@ -126,7 +122,6 @@ exports.getValues = (req, res)=> {
                     });
                 } else {
                     res.sendStatus(404);
-
                 }
             }
 

@@ -29,9 +29,12 @@ describe('ENDPOINT /accounts', () => {
             .send(alphaData)
             .end((err, res)=> {
                 if (err) return done(err);
-                account = res.body;
-                Account.update({_id: account._id}, {group: 1}, (err)=> {
+                /**
+                 * Assign alpha user role 1
+                 */
+                Account.update({_id: res.body._id}, {role: 1}, (err, res)=> {
                     if (err) return done(err);
+                    account = res;
                     done();
                 });
             });

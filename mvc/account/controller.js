@@ -9,17 +9,16 @@ var Account = require('./model');
  * @apiGroup Account
  */
 exports.getAll = (req, res)=> {
-
-    console.log(req.user);
-    Account.find().exec((err, accounts)=> {
-        if (err) res.status(500).send(err);
-        else {
-            res.json(accounts);
-        }
-    });
+    if (req.user.role == 0)
+        res.status(403).send();
+    else
+        Account.find().exec((err, accounts)=> {
+            if (err) res.status(500).send(err);
+            else {
+                res.json(accounts);
+            }
+        });
 };
-//https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
-//https://scotch.io/quick-tips/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
 /**
  * @todo createaccount when isAuthenticated
  * Creates Account and returns it
@@ -27,11 +26,15 @@ exports.getAll = (req, res)=> {
  * @apiName Creates account
  * @apiDescription Creates and returns account.
  * @apiGroup Account
+ * @apiParam {String} email User email.
+ * @apiParam {String} password User password.
  * @TODO  get from req.body only field login and password
  */
 exports.create = (req, res)=> {
-    var acc =  Account(req.body);
-        acc.setPassword(req.body.password)
+    var acc = Account();
+    acc
+        .setEmail(req.body.email)
+        .setPassword(req.body.password)
         .save((err, account)=> {
             if (err) res.status(500).send(err);
             else
@@ -40,15 +43,16 @@ exports.create = (req, res)=> {
 };
 
 /**
- * Return account with specific _id
- * @api {get} /accounts/:_id Return account with _id
+ * Return account with specific id
+ * @api {get} /accounts/:id Return account with id
  * @apiName Return account
  * @apiGroup Account
+ * @apiParam {Number} id Users id.
  * @todo add api params
  */
 exports.getById = (req, res)=> {
     Account.findOne()
-        .where('_id').equals(req.params._id)
+        .where('_id').equals(req.params.id)
         .exec((err, account)=> {
             if (err) res.status(404).send(err);
             else
@@ -58,17 +62,19 @@ exports.getById = (req, res)=> {
 };
 
 /**
- * Update account with specific _id
- * @api {put} /accounts/:_id Update account with _id
- * @apiName Update account
+ * Updates account with specific id
+ * @api {put} /accounts/:id Update account with id
+ * @apiName Updates account
+ * @apiParam {Number} id User id.
+ * @apiParam {String} password User password.
  * @apiGroup Account
  */
 exports.update = (req, res)=> {
-    delete req.body._id;
+    delete req.body.id;
     delete req.body.email;
 
     Account.findOne()
-        .where('_id').equals(req.params._id)
+        .where('_id').equals(req.params.id)
         .exec((err, account)=> {
             if (err) res.status(404).send(err);
             else
@@ -81,14 +87,15 @@ exports.update = (req, res)=> {
         });
 };
 /**
- * Delete account with specific _id
- * @api {delete} /accounts/:_id Delete acount with _id
- * @apiName Delete account with _id
+ * Deletes account with specific id
+ * @api {delete} /accounts/:id Deletes account with id
+ * @apiName Deletes account with id
+ * @apiParam {Number} id User id.
  * @apiGroup Account
  */
 exports.delete = (req, res)=> {
     Account.findOne()
-        .where('_id').equals(req.params._id)
+        .where('_id').equals(req.params.id)
         .exec((err, account)=> {
             if (err) res.status(404).send(err);
             else
