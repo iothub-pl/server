@@ -9,15 +9,16 @@ var Account = require('./model');
  * @apiGroup Account
  */
 exports.getAll = (req, res)=> {
-    if (req.user.role == 0)
-        res.status(403).send();
-    else
+    if (req.user.role === 1) {
         Account.find().exec((err, accounts)=> {
             if (err) res.status(500).send(err);
             else {
                 res.json(accounts);
             }
         });
+    } else {
+        res.status(403).send();
+    }
 };
 /**
  * @todo createaccount when isAuthenticated
@@ -51,6 +52,7 @@ exports.create = (req, res)=> {
  * @todo add api params
  */
 exports.getById = (req, res)=> {
+
     Account.findOne()
         .where('_id').equals(req.params.id)
         .exec((err, account)=> {

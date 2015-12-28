@@ -3,7 +3,6 @@
 var express = require('express'),
     controller = require('./controller'),
     router = express.Router(),
-    auth = require('./../authentication/service'),
     passport = require('passport');
 
 router.get('/', passport.authenticate('bearer', {session: false}), controller.getAll);
