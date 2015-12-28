@@ -1,7 +1,4 @@
 'use strict';
-
-var express = require('express'),
-    controller = require('./controller'),
-    router = express.Router();
-router.post('/', controller.token);
-module.exports = router;
+module.exports = require('express')
+    .Router()
+    .post('/', require('./controller').token);

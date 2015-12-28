@@ -8,13 +8,13 @@ exports.setup = (app)=> {
     app.use(passport.initialize());
     passport.use(new BearerStrategy((token, done) => {
         try {
-            var token = jwt.verify(token, config.secret);
+            var token = jwt.verify(token, config.JWT.SECRET);
         } catch (err) {
             if (err) return done(err);
         }
         Account.findOne()
-            .select('salt')
-            .select('password')
+            .select('+salt')
+            .select('+password')
             .where('_id').equals(token._id)
             .exec((err, account) => {
                 if (err) return done(err);

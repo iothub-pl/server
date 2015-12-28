@@ -13,16 +13,16 @@ var Account = require('./../account/model'),
  */
 exports.token = (req, res)=> {
     Account.findOne({email: req.body.email})
-        .select('password')
-        .select('salt')
+        .select('+password')
+        .select('+salt')
         .where('email').equals(req.body.email)
         .exec((err, account)=> {
             if (err) res.status(404).send(err);
             else {
                 if (account.authenticate(req.body.password))
                     res.json({
-                        token: jwt.sign(account.token, config.secret, {
-                            expiresInMinutes: 60 * 24 * 7
+                        token: jwt.sign(account.token, config.JWT.SECRET, {
+                            expiresIn: 60 * 60 * 24 * 7
                         })
                     });
                 else res.status(401).send();
