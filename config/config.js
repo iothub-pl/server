@@ -3,15 +3,26 @@
  *
  * @type {{server: {port: (*|number)}, database: {host: string, port: number, name: string}, secret: (*|string), debug: boolean}}
  */
+
+var ENVIROMENT;
+if (process.env.ENVIROMENT === 'production' || process.env.ENVIROMENT === 'developement') {
+    ENVIROMENT = process.env.ENVIROMENT || 'development';
+}
+else {
+    ENVIROMENT = 'development';
+}
 module.exports = {
-    server: {
-        port: process.env.port || 9000
+    ENVIROMENT: ENVIROMENT,
+    SERVER: {
+        PORT: process.env.port || 9000
     },
-    database: {
-        host: 'localhost',
-        port: 27017,
-        name: 'IoTHuB'
+    DATABASE: {
+        HOST: 'localhost',
+        PORT: 27017,
+        DB: 'IoTHuB' + (ENVIROMENT === 'development')
+            ? '-development' : ''
     },
-    secret: process.env.secret || 'secret',
-    debug: true
+    JWT: {
+        SECRET: process.env.SECRET || 'secret'
+    }
 };
