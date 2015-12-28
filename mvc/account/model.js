@@ -62,8 +62,12 @@ AccountSchema.methods = {
     /**
      * @param {String} password
      * @returns {*}
+     * @todo przetestować
      */
     encryptPassword: function (password) {
+        if (typeof(password) !== "string") {
+            password = '';
+        }
         return crypto
             .pbkdf2Sync(password, new Buffer(this.getSalt(), 'base64'), 10000, 64)
             .toString('base64');
