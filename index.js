@@ -7,6 +7,8 @@ var app = require('express')(),
     passport = require('passport');
 
 if (config.ENVIROMENT === 'developement') {
+    app.use(require('cors')());
+
     var morgan = require('morgan');
     app.use(morgan('combined'));
 }
