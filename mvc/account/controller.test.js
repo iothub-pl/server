@@ -147,12 +147,17 @@ describe('ENDPOINT /accounts', () => {
 
         });
     });
+    /**
+     * @todo Zrobić testy jeśli nie ma jednego z pól
+     */
     describe('when POST request', ()=> {
         describe('when not authenticated', ()=> {
             var data = {
                 email: 'test@test.test',
                 password: 'test'
             };
+
+
             it('should return HTTP 201 Created', (done)=> {
                 request(app)
                     .post('/accounts')

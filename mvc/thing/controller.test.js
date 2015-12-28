@@ -292,38 +292,6 @@ describe('ENDPOINT /things', (done)=> {
         });
 
         describe('when authenticated', ()=> {
-            var account;
-            var dataAccount = {
-                email: 'test@test.test',
-                password: 'test'
-            };
-            beforeEach('Deletes all accounts', (done)=> {
-                Account.remove((err)=> {
-                    if (err) return done(err);
-                    done();
-                });
-            });
-            beforeEach('Creates account', (done)=> {
-                request(app)
-                    .post('/accounts')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        account = res.body;
-                        done();
-                    });
-            });
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
-            });
             it('should return HTTP Succesful code 201', (done)=> {
                 request(app)
                     .post('/things/register')
