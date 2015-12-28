@@ -7,7 +7,8 @@ const Account = require('./model');
 describe('ENDPOINT /accounts', () => {
     var userAlphaAuthenticationToken;
     var userBetaAuthenticationToken;
-    var account;
+    var accountAlpha;
+    var accountBeta;
     var alphaData = {
         email: 'alpha@alpha.alpha',
         password: 'alpha',
@@ -32,9 +33,10 @@ describe('ENDPOINT /accounts', () => {
                 /**
                  * Assign alpha user role 1
                  */
+                accountAlpha = res.body;
                 Account.update({_id: res.body._id}, {role: 1}, (err, res)=> {
                     if (err) return done(err);
-                    account = res;
+                    accountAlpha.role = res.role;
                     done();
                 });
             });
@@ -46,7 +48,6 @@ describe('ENDPOINT /accounts', () => {
             .end((err, res)=> {
                 if (err) return done(err);
                 userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
-                res.body.token;
                 done();
             });
     });
@@ -56,7 +57,7 @@ describe('ENDPOINT /accounts', () => {
             .send(betaData)
             .end((err, res)=> {
                 if (err) return done(err);
-                account = res.body;
+                accountBeta = res.body;
                 done();
             });
     });
@@ -175,6 +176,7 @@ describe('ENDPOINT /accounts', () => {
 
             //piękny description ^^
             describe('when there is content', ()=> {
+
                 it('should return object', (done)=> {
                     request(app)
                         .post('/accounts')
@@ -223,34 +225,6 @@ describe('ENDPOINT /accounts', () => {
                 email: 'test@test.test',
                 password: 'test'
             };
-
-            var dataAccount = {
-                email: 'testA@test.test',
-                password: 'testA'
-            };
-            var account;
-
-            beforeEach('Creates account', (done)=> {
-                request(app)
-                    .post('/accounts')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        account = res.body;
-                        done();
-                    });
-            });
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
-            });
             it('should return HTTP 201 Created', (done)=> {
                 request(app)
                     .post('/accounts')
@@ -280,7 +254,7 @@ describe('ENDPOINT /accounts', () => {
                     request(app)
                         .post('/accounts')
                         .set('Authorization', userAlphaAuthenticationToken)
-                        .send(data)
+                        .send()
                         .end((err, res)=> {
                             if (err) return done(err);
                             res.body.should.be.instanceOf(Object);
@@ -331,16 +305,6 @@ describe('ENDPOINT /accounts', () => {
             };
             var account;
 
-            beforeEach('Creates account', (done)=> {
-                request(app)
-                    .post('/accounts')
-                    .send(data)
-                    .end((err, res)=> {
-                        if (err)  return done(err);
-                        account = res.body;
-                        done();
-                    });
-            });
             it('should return HTTP 401 Unauthorized when invalid id', (done)=> {
                 request(app)
                     .get('/accounts/' + 23452345)
@@ -352,7 +316,7 @@ describe('ENDPOINT /accounts', () => {
             });
             it('should return HTTP 401 Unauthorized when valid id', (done)=> {
                 request(app)
-                    .get('/accounts/' + account._id)
+                    .get('/accounts/' + accountAlpha._id)
                     .expect(401)
                     .end((err)=> {
                         if (err) return done(err);
@@ -361,39 +325,6 @@ describe('ENDPOINT /accounts', () => {
             });
         });
         describe('when authenticated', ()=> {
-            var data = {
-                email: 'test@test.test',
-                password: 'test'
-            };
-            var dataAccount = {
-                email: 'testA@test.test',
-                password: 'testA'
-            };
-            var account;
-            beforeEach('Creates account', (done)=> {
-                request(app)
-                    .post('/accounts')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err)
-                            return done(err);
-                        account = res.body;
-                        done();
-                    });
-            });
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
-            });
-
-
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .get('/accounts/' + 23452345)
@@ -406,7 +337,7 @@ describe('ENDPOINT /accounts', () => {
             });
             it('should return HTTP 200 OK', (done)=> {
                 request(app)
-                    .get('/accounts/' + account._id)
+                    .get('/accounts/' + accountAlpha._id)
                     .set('Authorization', userAlphaAuthenticationToken)
                     .expect(200)
                     .end((err)=> {
@@ -416,28 +347,22 @@ describe('ENDPOINT /accounts', () => {
             });
             it('should return JSON content', (done) => {
                 request(app)
-                    .get('/accounts/' + account._id)
+                    .get('/accounts/' + accountAlpha._id)
                     .set('Authorization', userAlphaAuthenticationToken)
-
                     .expect('Content-Type', /json/)
                     .end((err)=> {
-                        if (err)
-                            return done(err);
+                        if (err) return done(err);
                         done();
                     });
             });
             //piękny description ^^
             describe('when there is content', ()=> {
-
-
                 it('should return object', (done)=> {
                     request(app)
-                        .get('/accounts/' + account._id)
+                        .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
-
                         .end((err, res)=> {
-                            if (err)
-                                return done(err);
+                            if (err) return done(err);
                             res.body.should.be.instanceOf(Object);
                             done();
                         });
@@ -445,31 +370,27 @@ describe('ENDPOINT /accounts', () => {
 
                 it('should return object with field _id', (done)=> {
                     request(app)
-                        .get('/accounts/' + account._id)
+                        .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
-
                         .end((err, res)=> {
-                            if (err)
-                                return done(err);
+                            if (err) return done(err);
                             res.body.should.have.property('_id');
                             done();
                         });
                 });
                 it('field _id should equal', (done)=> {
                     request(app)
-                        .get('/accounts/' + account._id)
+                        .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
-
                         .end((err, res)=> {
-                            if (err)
-                                return done(err);
-                            res.body._id.should.equal(account._id);
+                            if (err) return done(err);
+                            res.body._id.should.equal(accountAlpha._id);
                             done();
                         });
                 });
                 it('should return object with field email', (done)=> {
                     request(app)
-                        .get('/accounts/' + account._id)
+                        .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
@@ -481,13 +402,13 @@ describe('ENDPOINT /accounts', () => {
                 });
                 it('field email should equal', (done)=> {
                     request(app)
-                        .get('/accounts/' + account._id)
+                        .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
 
                         .end((err, res)=> {
                             if (err)
                                 return done(err);
-                            res.body.email.should.equal(account.email);
+                            res.body.email.should.equal(accountAlpha.email);
                             done();
                         });
                 });
