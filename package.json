@@ -22,12 +22,16 @@
     "cors": "^2.7.1",
     "crypto": "0.0.3",
     "express": "^4.13.3",
+    "install": "^0.4.1",
     "jsonwebtoken": "^5.4.1",
     "mongodb": "^2.0.48",
     "mongoose": "^4.2.6",
+    "mongoose-unique-validator": "^0.6.2",
     "morgan": "^1.6.1",
+    "npm": "^3.5.2",
     "passport": "^0.3.2",
-    "passport-http-bearer": "^1.0.1"
+    "passport-http-bearer": "^1.0.1",
+    "validator": "^4.4.0"
   },
   "devDependencies": {
     "apidoc": "^0.13.1",

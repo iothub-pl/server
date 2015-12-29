@@ -1,16 +1,28 @@
 'use strict';
-var mongoose = require('mongoose');
-var crypto = require('crypto');
+var mongoose = require('mongoose'),
+    crypto = require('crypto'),
+    validator = require('validator'),
+    uniqueValidator = require('mongoose-unique-validator');
 var AccountSchema = mongoose.Schema({
     email: {
         type: String,
-        require: true
+        lowercase: true,
+        trim: true,
+        require: true,
+        unique: true,
+        validate: {
+            validator: validator.isEmail,
+            message: '{VALUE} is not a valid e-mail!'
+        }
     },
     salt: {
         type: String,
         select: false,
         require: true
     },
+    /**
+     * TODO validate password
+     */
     password: {
         type: String,
         select: false,
@@ -101,6 +113,7 @@ AccountSchema.post('save', function () {
     if (this.wasNew) {
     }
 });
+AccountSchema.plugin(uniqueValidator);
 /**
  * @type {*|Model|Aggregate}
  */
