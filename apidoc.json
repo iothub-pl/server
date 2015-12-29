@@ -3,5 +3,6 @@
   "version": "0.1.0",
   "description": "IotHuB REST api",
   "title": "IotHuB REST api",
-  "url": "http://api.iothub.pl"
+  "url": "http://api.iothub.pl",
+  "sampleUrl": "http://api.iothub.pl"
 }
