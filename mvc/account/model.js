@@ -42,6 +42,14 @@ AccountSchema.virtual('token')
             _id: this._id
         };
     });
+AccountSchema.virtual('profil')
+    .get(function () {
+        return {
+            _id: this._id,
+            email: this.email,
+            role: this.role
+        };
+    });
 
 AccountSchema.methods = {
     /**
@@ -56,6 +64,19 @@ AccountSchema.methods = {
      */
     setEmail: function (str) {
         return this.set('email', str);
+    },
+    /**
+     * @returns {*}
+     */
+    getRole: function () {
+        return this.get('role');
+    },
+    /**
+     * @param {Number} role
+     * @returns {*}
+     */
+    setRole: function (role) {
+        return this.set('role', role);
     },
     /**
      * @returns {*}

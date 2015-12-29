@@ -157,6 +157,45 @@ describe('ENDPOINT /accounts', () => {
                 password: 'test'
             };
 
+            it('should return HTTP 400 Bad Request - wrong email format', (done)=> {
+                request(app)
+                    .post('/accounts')
+                    .send({
+                        email: 'sdfsd',
+                        password: 's'
+                    })
+                    .expect(400)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+
+            it('should return HTTP 400 Bad Request - duplicate email', (done)=> {
+                request(app)
+                    .post('/accounts')
+                    .send({
+                        email: 'alpha@alpha.alpha',
+                        password: 's'
+                    })
+                    .expect(400)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return HTTP 400 Bad Request', (done)=> {
+                request(app)
+                    .post('/accounts')
+                    .send({
+                        email: 'sdfsd'
+                    })
+                    .expect(400)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
 
             it('should return HTTP 201 Created', (done)=> {
                 request(app)

@@ -19,12 +19,13 @@ exports.token = (req, res)=> {
         .exec((err, account)=> {
             if (err) res.status(404).send(err);
             else {
-                if (account.authenticate(req.body.password))
+                if (account.authenticate(req.body.password)) {
                     res.json({
                         token: jwt.sign(account.token, config.JWT.SECRET, {
                             expiresIn: 60 * 60 * 24 * 7
                         })
                     });
+                }
                 else res.status(401).send();
             }
         });
