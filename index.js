@@ -7,7 +7,6 @@ var app = require('express')(),
     passport = require('passport');
 
 if (config.ENVIROMENT === 'developement') {
-
     var morgan = require('morgan');
     app.use(morgan('combined'));
 }

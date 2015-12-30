@@ -14,13 +14,12 @@ else {
 module.exports = {
     ENVIROMENT: ENVIROMENT,
     SERVER: {
-        PORT: process.env.port || 9000
+        PORT: process.env.PORT || 9000
     },
     DATABASE: {
         HOST: 'localhost',
         PORT: 27017,
-        DB: 'IoTHuB' + (ENVIROMENT === 'development')
-            ? '-development' : ''
+        DB: (ENVIROMENT === 'development') ? 'iothub-development' : 'itohub-production'
     },
     JWT: {
         SECRET: process.env.SECRET || 'secret'
