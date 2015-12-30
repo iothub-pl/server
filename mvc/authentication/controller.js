@@ -17,14 +17,10 @@ exports.token = (req, res)=> {
         .select('+salt')
         .where('email').equals(req.body.email)
         .exec((err, account)=> {
-            if (err) res.status(404).send(err);
+            if (err) res.status(404).send();
             else {
                 if (account.authenticate(req.body.password)) {
-                    res.json({
-                        token: jwt.sign(account.token, config.JWT.SECRET, {
-                            expiresIn: 60 * 60 * 24 * 7
-                        })
-                    });
+                    res.json({token: jwt.sign(account.token, config.JWT.SECRET, {expiresIn: 60 * 60 * 24 * 7})});
                 }
                 else res.status(401).send();
             }
