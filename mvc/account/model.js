@@ -4,38 +4,43 @@ var mongoose = require('mongoose'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator');
 var AccountSchema = mongoose.Schema({
-    email: {
-        type: String,
-        lowercase: true,
-        trim: true,
-        require: true,
-        unique: true,
-        validate: {
-            validator: validator.isEmail,
-            message: '{VALUE} is not a valid e-mail!'
+        email: {
+            type: String,
+            lowercase: true,
+            trim: true,
+            require: true,
+            unique: true,
+            validate: {
+                validator: function (v) {
+                    return validator.isEmail(v);
+                },
+                message: '{VALUE} is not a valid e-mail!'
+            }
+        },
+        salt: {
+            type: String,
+            select: false,
+            require: true
         }
-    },
-    salt: {
-        type: String,
-        select: false,
-        require: true
-    },
-    /**
-     * TODO validate password
-     */
-    password: {
-        type: String,
-        select: false,
-        require: true
-    },
-    /**
-     * @todo need to think about it, how to design authorization
-     */
-    role: {
-        type: Number,
-        default: 0
-    }
-});
+        ,
+        /**
+         * TODO validate password
+         */
+        password: {
+            type: String,
+            select: false,
+            require: true
+        }
+        ,
+        /**
+         * @todo need to think about it, how to design authorization
+         */
+        role: {
+            type: Number,
+            default: 0
+        }
+    })
+    ;
 AccountSchema.virtual('token')
     .get(function () {
         return {

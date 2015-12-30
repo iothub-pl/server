@@ -369,6 +369,31 @@ describe('ENDPOINT /accounts', () => {
             });
         });
         describe('when authenticated', ()=> {
+            describe('when accesing userBeta with userAlphaToken', function () {
+                it('should return HTTP 200 OK  ', (done)=> {
+                    request(app)
+                        .get('/accounts/' + accountBeta._id)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+            });
+            describe('when accesing userAlpha with userBetaToken', ()=> {
+                it('should return HTTP 403 Forbidden', (done)=> {
+                    request(app)
+                        .get('/accounts/' + accountAlpha._id)
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+            });
+
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .get('/accounts/' + 23452345)
@@ -436,7 +461,6 @@ describe('ENDPOINT /accounts', () => {
                     request(app)
                         .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
-
                         .end((err, res)=> {
                             if (err)
                                 return done(err);
@@ -507,17 +531,7 @@ describe('ENDPOINT /accounts', () => {
             });
         });
         describe('when authenticated', ()=> {
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
-            });
+
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .put('/accounts/' + 23452345)
@@ -531,7 +545,7 @@ describe('ENDPOINT /accounts', () => {
             });
             it('should return HTTP 200 OK', (done)=> {
                 request(app)
-                    .put('/accounts/' + account._id)
+                    .put('/accounts/' + accountAlpha._id)
                     .set('Authorization', userAlphaAuthenticationToken)
                     .send(data)
                     .expect(200)
@@ -592,20 +606,7 @@ describe('ENDPOINT /accounts', () => {
     });
     describe('when DELETE request with param', ()=> {
         var account;
-        var dataAccount = {
-            email: 'test@test.test',
-            password: 'test'
-        };
-        beforeEach('Creates account', (done)=> {
-            request(app)
-                .post('/accounts')
-                .send(dataAccount)
-                .end((err, res)=> {
-                    if (err) return done(err);
-                    account = res.body;
-                    done();
-                });
-        });
+
         describe('when not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized when invalid id', (done)=> {
                 request(app)
@@ -618,7 +619,7 @@ describe('ENDPOINT /accounts', () => {
             });
             it('should return HTTP 401 Unauthorized when valid id', (done)=> {
                 request(app)
-                    .delete('/accounts/' + account._id)
+                    .delete('/accounts/' + accountAlpha._id)
                     .expect(401)
                     .end((err, res)=> {
                         if (err) return done(err);
@@ -628,17 +629,7 @@ describe('ENDPOINT /accounts', () => {
         });
 
         describe('when authenticated', ()=> {
-            beforeEach('Obtains authentication token', (done)=> {
-                request(app)
-                    .post('/authentication')
-                    .send(dataAccount)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        userAlphaAuthenticationToken = 'Bearer ' + res.body.token;
-                        res.body.token;
-                        done();
-                    });
-            });
+
             it('should return HTTP 404 Not Found', (done)=> {
                 request(app)
                     .delete('/accounts/' + 12323)
@@ -652,7 +643,7 @@ describe('ENDPOINT /accounts', () => {
 
             it('should return HTTP Successful code 204', (done)=> {
                 request(app)
-                    .delete('/accounts/' + account._id)
+                    .delete('/accounts/' + accountAlpha._id)
                     .set('Authorization', userAlphaAuthenticationToken)
                     .expect(204)
                     .end((err, res)=> {

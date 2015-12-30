@@ -1,5 +1,7 @@
 'use strict';
-var Account = require('./model');
+var Account = require('./model'),
+    validator = require('validator');
+
 
 /**
  * @api {get} /accounts Returns list of users
@@ -88,7 +90,7 @@ exports.create = (req, res)=> {
                 }
             }
             else {
-                res.status(201).json(account.profil);
+                res.status(201).json(account);
             }
         });
 };
@@ -102,7 +104,6 @@ exports.create = (req, res)=> {
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.
  *
- * @apiParam {Number} id User id.
  * @apiParamExample {json} Request-Example:
  * {
  *  "id": "5682773c21ba9d9736e8237b"
@@ -132,10 +133,10 @@ exports.getById = (req, res)=> {
                 res.status(404).send();
             }
             else {
-                if (req.user._id !== account._id && req.user.role === 0) {
-                    res.status(403).send();
+                if (req.user._id === account._id || req.user.role === 1) {
+                    res.json(account);
                 } else {
-                    res.json(account.profil);
+                    res.status(403).send();
                 }
             }
         });
@@ -181,37 +182,43 @@ exports.update = (req, res)=> {
     delete req.body.id;
     delete req.body.email;
 
-    Account.findOne()
-        .where('_id').equals(req.params.id)
-        .exec((err, account)=> {
-            if (err) {
-                res.status(500).send();
-            }
-            else {
-                if (req.user._id !== account._id && req.user.role === 0) {
-                    res.status(403).send();
-                } else {
-                    if (!account) {
-                        res.status(404).send();
+    if (validator.isMongoId(req.params.id)) {
+        Account.findOne()
+            .where('_id').equals(req.params.id)
+            .exec((err, account)=> {
+                if (err) {
+                    res.status(500).send();
+                }
+                else {
+                    if (req.user._id === account._id || req.user.role === 1) {
+
+                        if (!account) {
+                            res.status(404).send();
+                        } else {
+                            if (req.body.role && req.user.role === 1) {
+                                account.setRole(req.body.role);
+                            }
+                            if (req.body.password) {
+                                account.setPassword(req.body.password);
+                            }
+                            account.save((err, account) => {
+                                if (err) {
+                                    res.status(500).send();
+                                }
+                                else {
+                                    res.json(account);
+                                }
+                            });
+                        }
                     } else {
-                        if (req.body.role && req.user.role === 1 && req.body.role) {
-                            account.setRole(req.body.role);
-                        }
-                        if (req.body.password) {
-                            account.setPassword(req.body.password);
-                        }
-                        account.save((err, account) => {
-                            if (err) {
-                                res.status(500).send(err);
-                            }
-                            else {
-                                res.json(account);
-                            }
-                        });
+                        res.status(403).send();
                     }
                 }
-            }
-        });
+            });
+    } else {
+        res.status(404).send();
+    }
+
 };
 /**
  * @api {delete} /accounts/:id Deletes account with id
@@ -238,27 +245,32 @@ exports.update = (req, res)=> {
  */
 exports.delete = (req, res)=> {
 
-    Account.findOne()
-        .where('_id').equals(req.params.id)
-        .exec((err, account)=> {
-            if (err) {
-                res.status(500).send();
-            } else {
-                if (req.user._id !== account._id && req.user.role === 0) {
-                    res.status(403).send();
+    if (validator.isMongoId(req.params.id)) {
+
+        Account.findOne()
+            .where('_id').equals(req.params.id)
+            .exec((err, account)=> {
+                if (err) {
+                    res.status(500).send();
                 } else {
-                    if (!account) {
-                        res.status(404).send();
+                    if (req.user._id !== account._id && req.user.role === 0) {
+                        res.status(403).send();
                     } else {
-                        account.remove((err)=> {
-                            if (err) {
-                                res.status(500).send();
-                            } else {
-                                res.status(204).send();
-                            }
-                        });
+                        if (!account) {
+                            res.status(404).send();
+                        } else {
+                            account.remove((err)=> {
+                                if (err) {
+                                    res.status(500).send();
+                                } else {
+                                    res.status(204).send();
+                                }
+                            });
+                        }
                     }
                 }
-            }
-        });
+            });
+    } else {
+        res.status(404).send();
+    }
 };
