@@ -184,11 +184,23 @@ describe('ENDPOINT /accounts', () => {
                         done();
                     });
             });
-            it('should return HTTP 400 Bad Request', (done)=> {
+            it('should return HTTP 400 Bad Request - missing password', (done)=> {
                 request(app)
                     .post('/accounts')
                     .send({
                         email: 'sdfsd'
+                    })
+                    .expect(400)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return HTTP 400 Bad Request - missing email', (done)=> {
+                request(app)
+                    .post('/accounts')
+                    .send({
+                        password: 'sdfsd'
                     })
                     .expect(400)
                     .end((err)=> {

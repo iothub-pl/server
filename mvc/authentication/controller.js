@@ -12,7 +12,7 @@ var Account = require('./../account/model'),
  * @TODO coś z tym zrobić nie podoba mi się (findOne)
  */
 exports.token = (req, res)=> {
-    Account.findOne({email: req.body.email})
+    Account.findOne()
         .select('+password')
         .select('+salt')
         .where('email').equals(req.body.email)

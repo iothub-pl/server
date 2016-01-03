@@ -1,8 +1,6 @@
 'use strict';
 var Account = require('./model'),
     validator = require('validator');
-
-
 /**
  * @api {get} /accounts Returns list of users
  * @apiDescription Returns list of users.
@@ -75,26 +73,28 @@ exports.getAll = (req, res)=> {
  */
 exports.create = (req, res)=> {
     var acc = Account();
-
-    if (req.user && req.user.role === 1 && req.body.role) {
-        acc.setRole(req.body.role);
-    }
-    acc.setEmail(req.body.email)
-        .setPassword(req.body.password)
-        .save((err, account)=> {
-            if (err) {
-                if (err.errors) {
-                    res.status(400).send();
-                } else {
-                    res.status(500).send();
+    if (validator.isEmail(req.body.email)) {
+        if (req.user && req.user.role === 1 && req.body.role) {
+            acc.setRole(req.body.role);
+        }
+        acc.setEmail(req.body.email)
+            .setPassword(req.body.password)
+            .save((err, account)=> {
+                if (err) {
+                    if (err.errors) {
+                        res.status(400).send();
+                    } else {
+                        res.status(500).send();
+                    }
                 }
-            }
-            else {
-                res.status(201).json(account);
-            }
-        });
+                else {
+                    res.status(201).json(account);
+                }
+            });
+    } else {
+        res.status(400).send();
+    }
 };
-
 /**
  * @api {get} /accounts/:id Returns account with id
  * @apiDescription Returns account with id.
@@ -141,7 +141,6 @@ exports.getById = (req, res)=> {
             }
         });
 };
-
 /**
  * @api {put} /accounts/:id Updates account with id
  * @apiDescription Updates account with id
@@ -181,7 +180,6 @@ exports.getById = (req, res)=> {
 exports.update = (req, res)=> {
     delete req.body.id;
     delete req.body.email;
-
     if (validator.isMongoId(req.params.id)) {
         Account.findOne()
             .where('_id').equals(req.params.id)
@@ -191,7 +189,6 @@ exports.update = (req, res)=> {
                 }
                 else {
                     if (req.user._id === account._id || req.user.role === 1) {
-
                         if (!account) {
                             res.status(404).send();
                         } else {
@@ -218,7 +215,6 @@ exports.update = (req, res)=> {
     } else {
         res.status(404).send();
     }
-
 };
 /**
  * @api {delete} /accounts/:id Deletes account with id
@@ -244,9 +240,7 @@ exports.update = (req, res)=> {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.delete = (req, res)=> {
-
     if (validator.isMongoId(req.params.id)) {
-
         Account.findOne()
             .where('_id').equals(req.params.id)
             .exec((err, account)=> {
