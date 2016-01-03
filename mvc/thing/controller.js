@@ -41,7 +41,6 @@ exports.count = (req, res)=> {
  * @apiGroup Thing
  */
 exports.getById = (req, res)=> {
-
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .exec((err, thing)=> {
@@ -59,7 +58,8 @@ exports.getById = (req, res)=> {
  * @apiGroup Thing
  */
 exports.register = (req, res)=> {
-    new Thing(req.body)
+    var thing = new Thing(req.body);
+    thing.setOwner(req.user)
         .save((err, thing) => {
             if (err) return res.status(500).send(err);
             res.status(201).json(thing);

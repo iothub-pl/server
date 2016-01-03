@@ -19,7 +19,7 @@ var Account = require('./model'),
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
  *   "email": "test@test.test",
- *   "role": 0
+ *   "role": "USER"
  *  }
  * ]
  *
@@ -28,7 +28,7 @@ var Account = require('./model'),
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res)=> {
-    if (req.user.role !== 1) {
+    if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {
         Account.find().exec((err, accounts)=> {
@@ -54,7 +54,7 @@ exports.getAll = (req, res)=> {
  * {
  *  "email": "test@test.test",
  *  "password": "test",
- *  "role":  0
+ *  "role":  "USER"
  * }
  *
  * @apiSuccess (201) {String} _id Id of the User.
@@ -65,7 +65,7 @@ exports.getAll = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": 0
+ *  "role": "USER"
  * }
  *
  * @apiError (400) BadRequest Bad Request.
@@ -74,7 +74,7 @@ exports.getAll = (req, res)=> {
 exports.create = (req, res)=> {
     var acc = Account();
     if (validator.isEmail(req.body.email)) {
-        if (req.user && req.user.role === 1 && req.body.role) {
+        if (req.user && req.user.role === 'ADMIN' && req.body.role) {
             acc.setRole(req.body.role);
         }
         acc.setEmail(req.body.email)
@@ -117,7 +117,7 @@ exports.create = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": 0
+ *  "role": "USER"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -133,7 +133,7 @@ exports.getById = (req, res)=> {
                 res.status(404).send();
             }
             else {
-                if (req.user._id === account._id || req.user.role === 1) {
+                if (req.user._id === account._id || req.user.role === 'ADMIN') {
                     res.json(account);
                 } else {
                     res.status(403).send();
@@ -150,15 +150,15 @@ exports.getById = (req, res)=> {
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.
  *
- * @apiParam {Number} id User id.
+ * @apiParam {String} id User id.
  * @apiParam {String} [password] User password.
- * @apiParam {Number} [role] User role.
+ * @apiParam {String} [role] User role.
  * @apiParamExample {json} Request-Example:
  *     {
  *       "id":  "5682773c21ba9d9736e8237b",
  *       "email": "test@test.test",
  *       "test": "test",
- *       "role": 0
+ *       "role": "USER"
  *     }
  *
  * @apiSuccess (200) {String} _id   Id of the User.
@@ -169,7 +169,7 @@ exports.getById = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": 0
+ *  "role": "USER"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -188,11 +188,11 @@ exports.update = (req, res)=> {
                     res.status(500).send();
                 }
                 else {
-                    if (req.user._id === account._id || req.user.role === 1) {
+                    if (req.user._id === account._id || req.user.role === 'ADMIN') {
                         if (!account) {
                             res.status(404).send();
                         } else {
-                            if (req.body.role && req.user.role === 1) {
+                            if (req.body.role && req.user.role === 'ADMIN') {
                                 account.setRole(req.body.role);
                             }
                             if (req.body.password) {
@@ -225,7 +225,7 @@ exports.update = (req, res)=> {
  * @apiPermission admin
  * @apiHeader {String} Authorization bearer Users unique access-key.
  *
- * @apiParam {Number} id User id.
+ * @apiParam {String} id User id.
  * @apiParamExample {json} Request-Example:
  * {
  *  "id": "5682773c21ba9d9736e8237b"
@@ -247,7 +247,7 @@ exports.delete = (req, res)=> {
                 if (err) {
                     res.status(500).send();
                 } else {
-                    if (req.user._id !== account._id && req.user.role === 0) {
+                    if (req.user._id !== account._id && req.user.role === 'USER') {
                         res.status(403).send();
                     } else {
                         if (!account) {

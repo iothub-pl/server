@@ -3,13 +3,30 @@ var Account = require('./../account/model'),
     jwt = require('jsonwebtoken'),
     config = require('./../../config/config');
 /**
- * Get authentication token
- * @api {post} /authentication Get authentication token
- * @apiName Get authentication token
+ * @api {post} /authentication Creates authentication token
+ * @apiDescription Creates authentication token.
+ * @apiName AuthenticationToken
  * @apiGroup Authentication
+ *
+ * @apiPermission none
+ *
  * @apiParam {String} email User email.
  * @apiParam {String} password User password.
- * @TODO coś z tym zrobić nie podoba mi się (findOne)
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "password": "test",
+ *  "role":  0
+ * }
+ *
+ * @apiSuccess (200) {String} token Authentication token.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 201 Created
+ * {
+ *  "token": "5682773c21ba9d9736e8237b"
+ * }
+ *
+ * @apiError (400) BadRequest Bad Request.
+ * @apiError (401) Unauthorized Unauthorized.
  */
 exports.token = (req, res)=> {
     Account.findOne()
@@ -17,12 +34,16 @@ exports.token = (req, res)=> {
         .select('+salt')
         .where('email').equals(req.body.email)
         .exec((err, account)=> {
-            if (err) res.status(404).send();
+            if (err) res.status(500).send();
             else {
-                if (account.authenticate(req.body.password)) {
-                    res.json({token: jwt.sign(account.token, config.JWT.SECRET, {expiresIn: 60 * 60 * 24 * 7})});
+                if (!account) {
+                    res.status(400).send();
+                } else {
+                    if (account.authenticate(req.body.password)) {
+                        res.json({token: jwt.sign(account.token, config.JWT.SECRET, {expiresIn: 60 * 60 * 24 * 7})});
+                    }
+                    else res.status(401).send();
                 }
-                else res.status(401).send();
             }
         });
 };

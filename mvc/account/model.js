@@ -30,21 +30,23 @@ var AccountSchema = mongoose.Schema({
             type: String,
             select: false,
             require: true
-        }
-        ,
-        /**
-         * @todo need to think about it, how to design authorization
-         */
+        },
         role: {
-            type: Number,
-            default: 0
+            type: String,
+            require: true,
+            default: 'USER',
+            enum: [
+                'USER',
+                'ADMIN'
+            ]
         }
     })
     ;
 AccountSchema.virtual('token')
     .get(function () {
         return {
-            _id: this._id
+            _id: this._id,
+            role: this.role
         };
     });
 AccountSchema.virtual('profil')

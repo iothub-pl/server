@@ -34,7 +34,7 @@ describe('ENDPOINT /accounts', () => {
                  * Assign alpha user role 1
                  */
                 accountAlpha = res.body;
-                Account.update({_id: res.body._id}, {role: 1}, (err, res)=> {
+                Account.update({_id: res.body._id}, {role: 'ADMIN'}, (err, res)=> {
                     if (err) return done(err);
                     accountAlpha.role = res.role;
                     done();

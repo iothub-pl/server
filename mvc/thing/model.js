@@ -1,23 +1,43 @@
 'use strict';
 var mongoose = require('mongoose');
 var Value = require('./../value/model');
-/**
- *
- */
+
 var ThingSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        require: true,
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        require: true,
+    },
+    type: {
+        type: String,
+        require: true,
+        enum: [
+            'RECEPTOR',
+            'EFFECTOR'
+        ],
+        default: 'RECEPTOR'
     }
 });
 ThingSchema.methods = {
-    getId: ()=> {
-        return this._id;
+    getId: function () {
+        return this.get('_id');
     },
-    getName: ()=> {
-        return this.name;
+    getName: function () {
+        return this.get('name');
     },
-    getValues: (callback)=> {
+    setName: function (name) {
+        return this.set('name', name);
+    },
+    setOwnerId: function (userId) {
+        return this.set('owner', userId);
+    },
+    setOwner: function (user) {
+        return this.set('owner', user._id);
+    },
+    getValues: function (callback) {
         Value.find()
             .where('thingId').equals(this._id)
             .exec(callback);
