@@ -11,4 +11,6 @@ module.exports = function (app) {
     app.use('/things', require('./../mvc/thing/routes'));
     app.use('/accounts', require('./../mvc/account/routes'));
     app.use('/authentication', require('./../mvc/authentication/routes'));
+    app.use('/my', require('./../mvc/my/routes'));
+
 };
