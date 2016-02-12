@@ -12,10 +12,11 @@
     "serve": "node ./index.js --harmony",
     "test": "mocha ./mvc/**/*test.js -t 20000",
     "apidoc": "apidoc -i mvc/ -o apidoc/",
-    "watch": "npm-watch"
+    "watch": "npm-watch",
+    "install" : "npm update && npm build"
   },
   "watch": {
-    "serve": "*/*.js"
+    "test": "*/*.js"
   },
   "dependencies": {
     "body-parser": "^1.14.1",

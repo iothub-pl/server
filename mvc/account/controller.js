@@ -49,12 +49,10 @@ exports.getAll = (req, res)=> {
  *
  * @apiParam {String} email User email.
  * @apiParam {String} password User password.
- * @apiParam {String} [role] User role.
  * @apiParamExample {json} Request-Example:
  * {
  *  "email": "test@test.test",
  *  "password": "test",
- *  "role":  "USER"
  * }
  *
  * @apiSuccess (201) {String} _id Id of the User.
@@ -74,9 +72,6 @@ exports.getAll = (req, res)=> {
 exports.create = (req, res)=> {
     var acc = Account();
     if (validator.isEmail(req.body.email)) {
-        if (req.user && req.user.role === 'ADMIN' && req.body.role) {
-            acc.setRole(req.body.role);
-        }
         acc.setEmail(req.body.email)
             .setPassword(req.body.password)
             .save((err, account)=> {

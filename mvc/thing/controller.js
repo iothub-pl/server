@@ -1,55 +1,129 @@
-'use strict';
-
+'use strict'
 const Thing = require('./model'),
     Value = require('./../value/model');
 /**
- * Returns collection of Things
- * @api {get} /things Returns collection of Things
- * @apiName Returns collection of Things
+ * @api {get} /things Returns list of things
+ * @apiDescription Returns list of things.
+ * @apiName GetThings
  * @apiGroup Thing
+ *
+ * @apiPermission admin
+ * @apiHeader {String} Authorization bearer Users unique access-key.
+ *
+ * @apiSuccess (200) {String} _id Id of the Thing.
+ * @apiSuccess (200) {String} name  Name of the Thing.
+ * @apiSuccess (200) {String} owner  Id of the User.
+ * @apiSuccess (200) {String} type  Type of the Thing.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * [
+ *  {
+ *   "_id": "5682773c21ba9d9736e8237b",
+ *   "name": "Sensor A",
+ *   "owner": "5682773c21ba9d9736e8237c",
+ *   "type": "RECEPTOR"
+ *  }
+ * ]
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res) => {
-    Thing.find()
-        .exec((err, things) => {
-            if (err) {
-                return res.sendStatus(500);
-            }
-            res.json(things);
-        });
+    if (req.user.role !== 'ADMIN') {
+        res.status(403).send();
+    } else {
+        Thing.find()
+            .exec((err, things) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.json(things);
+            });
+    }
 };
 /**
- * Returns length of collection of Things
- * @api {get} /things Returns length of collection of Things
- * @apiName Returns length of collection of Things
+ * @api {get} /things/count Returns length of things
+ * @apiDescription Returns length of things.
+ * @apiName GetThingsCount
  * @apiGroup Thing
- * @param req
- * @param res
+ *
+ * @apiPermission admin
+ * @apiHeader {String} Authorization bearer Users unique access-key.
+ *
+ * @apiSuccess (200) {String} count Length of the Thing.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ *  {
+ *   "length": "5",
+
+ *  }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.count = (req, res)=> {
-    Thing.count().exec((err, count)=> {
-        if (err) {
-            return res.sendStatus(500);
+    if (req.user.role !== 'ADMIN') {
+        res.status(403).send();
+    } else {
 
-        }
-        res.json(count);
-    });
+        Thing.count().exec((err, count)=> {
+            if (err) {
+                return res.sendStatus(500);
+
+            }
+            res.json(count);
+        });
+    }
 };
 /**
- * Returns thing with specific _id
- * @api {get} /things/:_id Returns thing with specific _id
- * @apiName Returns thing with specific _id
+ * @api {get} /things/:id Returns thing with id
+ * @apiDescription Returns thing with id.
+ * @apiName GetThingById
  * @apiGroup Thing
+ *
+ * @apiPermission user
+ * @apiHeader {String} Authorization bearer User unique access-key.
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "id": "5682773c21ba9d9736e8237b"
+ * }
+ *
+ * @apiSuccess (200) {String} _id Id of the Thing.
+ * @apiSuccess (200) {String} name  Name of the Thing.
+ * @apiSuccess (200) {String} owner  Id of the User.
+ * @apiSuccess (200) {String} type  Type of the Thing.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ *  {
+ *   "_id": "5682773c21ba9d9736e8237b",
+ *   "name": "Sensor A",
+ *   "owner": "5682773c21ba9d9736e8237c",
+ *   "type": "RECEPTOR"
+ *  }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (404) NotFound Not Found.
+ * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getById = (req, res)=> {
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .exec((err, thing)=> {
             if (err) {
-                return res.sendStatus(404);
+                return res.status(404).send();
             }
-            res.json(things);
-        });
-};
+            
+            if (req.user.role === 'ADMIN' || req.user._id === thing.owner) {
+                res.json(thing);
+            }else{
+            return res.status(403).send();
+        }
+    });
+}
 
 /**
  * Registers Thing

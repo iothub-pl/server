@@ -14,8 +14,8 @@ var Account = require('./../account/model'),
  * @apiParam {String} password User password.
  * @apiParamExample {json} Request-Example:
  * {
- *  "password": "test",
- *  "role":  0
+ *  "email": "test@test.test",
+ *  "password": "test"
  * }
  *
  * @apiSuccess (200) {String} token Authentication token.

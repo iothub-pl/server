@@ -9,7 +9,7 @@ var express = require('express'),
 
 router.get('/', passport.authenticate('bearer', {session: false}), controller.getAll);
 router.get('/count', passport.authenticate('bearer', {session: false}), controller.count);
-router.post('/register', passport.authenticate('bearer', {session: false}), controller.register);
+router.post('/', passport.authenticate('bearer', {session: false}), controller.register);
 
 router.get('/:id', passport.authenticate('bearer', {session: false}), controller.getById);
 router.post('/:id/values', passport.authenticate('bearer', {session: false}), controller.addValue);
