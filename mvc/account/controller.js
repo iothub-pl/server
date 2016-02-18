@@ -28,6 +28,8 @@ var Account = require('./model'),
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res)=> {
+
+
     if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {

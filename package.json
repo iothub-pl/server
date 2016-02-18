@@ -6,20 +6,21 @@
   "license": "ISC",
   "main": "index.js",
   "engines": {
-    "node": "5.1.0"
+    "node": "5.6.0"
   },
   "scripts": {
     "serve": "node ./index.js --harmony",
     "test": "mocha ./mvc/**/*test.js -t 20000",
     "apidoc": "apidoc -i mvc/ -o apidoc/",
     "watch": "npm-watch",
-    "install" : "npm update && npm build"
+    "install": "npm update && npm build"
   },
   "watch": {
     "test": "*/*.js"
   },
   "dependencies": {
     "body-parser": "^1.14.1",
+    "bufferutil": "^1.2.1",
     "compression": "^1.6.0",
     "cors": "^2.7.1",
     "crypto": "0.0.3",
@@ -35,7 +36,9 @@
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "response-time": "^2.3.1",
-    "validator": "^4.4.0"
+    "utf-8-validate": "^1.2.1",
+    "validator": "^4.4.0",
+    "ws": "^1.0.1"
   },
   "devDependencies": {
     "apidoc": "^0.13.1",
