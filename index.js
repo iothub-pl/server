@@ -19,22 +19,15 @@ var WebSocketServer = require('ws').Server,
 app.locals.websocket = [];
 wss.on('connection', function connection(ws) {
     app.locals.websocket.push(ws);
-
-    console.log('WebSocket Client connected:', ws);
-
     // you might use location.query.access_token to authenticate or share sessions
     // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
     ws.on('message', function incoming(message) {
         console.log('received: %s', message);
     });
-
-
     ws.on('error', function incoming(message) {
         console.log('received: %s', message);
     });
-
-
     var x = setInterval(()=> {
         try {
             ws.send('something');
