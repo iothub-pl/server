@@ -19,6 +19,9 @@ var WebSocketServer = require('ws').Server,
 app.locals.websocket = [];
 wss.on('connection', function connection(ws) {
     app.locals.websocket.push(ws);
+    /**
+     * @TODO fix error when ssl ...received: reserved fields must be empty
+     */
     // you might use location.query.access_token to authenticate or share sessions
     // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
