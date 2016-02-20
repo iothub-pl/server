@@ -2,6 +2,8 @@
 var Account = require('./../account/model'),
     jwt = require('jsonwebtoken'),
     config = require('./../../config/config');
+var Token = require('./../token/model');
+
 /**
  * @api {post} /authentication Creates authentication token
  * @apiDescription Creates authentication token.
@@ -40,7 +42,16 @@ exports.token = (req, res)=> {
                     res.status(400).send();
                 } else {
                     if (account.authenticate(req.body.password)) {
-                        res.json({token: jwt.sign(account.token, config.JWT.SECRET, {expiresIn: 60 * 60 * 24 * 7})});
+
+                        var token = new Token();
+                        token.token = jwt.sign(account.token, config.JWT.SECRET);
+                        token.owner = account._id;
+                        token.save((err, data)=> {
+                            if (err) res.status(500).send();
+
+                            res.json({token:data.token});
+                        });
+
                     }
                     else res.status(401).send();
                 }

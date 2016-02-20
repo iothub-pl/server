@@ -49,11 +49,11 @@ wss.on('connection', function connection(ws) {
 });
 
 
-/**
- * * https://github.com/expressjs/morgan
- */
-var morgan = require('morgan');
-app.use(morgan('combined'));
+// /**
+//  * * https://github.com/expressjs/morgan
+//  */
+// var morgan = require('morgan');
+// app.use(morgan('combined'));
 /**
  * https://github.com/expressjs/cors
  */
