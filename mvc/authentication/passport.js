@@ -12,15 +12,12 @@ exports.setup = (app)=> {
         try {
 
             Token.findOne()
-                .where('token').equals(token)
+                .where('content').equals(token)
                 .where('valid').equals(true)
                 .exec((err, data)=> {
                     if (err) return done(err);
-
-                    jwt.verify(data.token, config.JWT.SECRET, (err, decoded) => {
+                    jwt.verify(data.content, config.JWT.SECRET, (err, decoded) => {
                         if (err) return done(err);
-
-
                         Account.findOne()
                             .select('+salt')
                             .select('+password')
@@ -30,16 +27,10 @@ exports.setup = (app)=> {
                                 if (!account) return done(null, false, {message: 'Unknown account.'});
                                 return done(null, account);
                             });
-
                     });
-
-
                 });
-
-
         } catch (err) {
             if (err) return done(err);
         }
-
     }));
 };

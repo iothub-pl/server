@@ -8,5 +8,7 @@ var express = require('express'),
 
 router.get('/', passport.authenticate('bearer', {session: false}), require('./controller').getAll);
 
+router.get('/:id', passport.authenticate('bearer', {session: false}), require('./controller').getById);
+
 
 module.exports = router;

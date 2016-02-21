@@ -3,20 +3,19 @@ var mongoose = require('mongoose');
 var Account = require('./../account/model');
 
 var TokenSchema = mongoose.Schema({
-    token: {
+    content: {
         type: String,
-        require: true,
+        require: true
     },
-
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        require: true,
+        require: true
     },
     valid: {
         type: Boolean,
         require: true,
         enum: [
-          true,
+            true,
             false
         ],
         default: true

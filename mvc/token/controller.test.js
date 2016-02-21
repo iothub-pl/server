@@ -12,12 +12,14 @@ describe('ENDPOINT /tokens', () => {
     var accountBeta;
     var alphaData = {
         email: 'alpha@alpha.alpha',
-        password: 'alpha',
+        password: 'alpha'
     };
     var betaData = {
         email: 'beta@beta.beta',
-        password: 'beta',
+        password: 'beta'
     };
+    var tokenId;
+
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {
             if (err) return done(err);
@@ -75,7 +77,17 @@ describe('ENDPOINT /tokens', () => {
             .end((err, res)=> {
                 if (err) return done(err);
                 userBetaAuthenticationToken = 'Bearer ' + res.body.token;
-                res.body.token;
+                done();
+            });
+    });
+
+    beforeEach('Get token id', (done)=> {
+        request(app)
+            .get('/my/tokens')
+            .set('Authorization', userAlphaAuthenticationToken)
+            .end((err, res)=> {
+                if (err) return done(err);
+                tokenId = res.body[0]._id;
                 done();
             });
     });
@@ -93,9 +105,6 @@ describe('ENDPOINT /tokens', () => {
                     });
             });
         });
-
-
-
 
         describe('when authenticated', ()=> {
 
@@ -159,4 +168,28 @@ describe('ENDPOINT /tokens', () => {
             });
         });
     });
+
+
+    describe('when GET request with param', ()=> {
+
+
+        describe('not authenticated', ()=> {
+            it('should return HTTP 401 Unauthorized', (done) => {
+                request(app)
+                    .get('/tokens/' + tokenId)
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            describe('when not authorized', ()=> {
+
+            });
+
+        });
+    });
+
 });

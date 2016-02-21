@@ -3,6 +3,7 @@ const app = require('../../index');
 const request = require('supertest');
 const should = require('should');
 const Account = require('./../account/model');
+const Token = require('./../token/model');
 
 
 describe('ENDPOINT /me', () => {
@@ -16,6 +17,12 @@ describe('ENDPOINT /me', () => {
     };
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {
+            if (err) return done(err);
+            done();
+        });
+    });
+    beforeEach('Deletes all tokens', (done)=> {
+        Token.remove((err)=> {
             if (err) return done(err);
             done();
         });
@@ -198,5 +205,62 @@ describe('ENDPOINT /me', () => {
                 });
             });
         });
+    });
+    describe('when GET /my/tokens request', ()=> {
+        describe('when not authenticated', ()=> {
+            it('should return HTTP 401 code', (done)=> {
+                request(app)
+                    .get('/my/tokens')
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            it('should return HTTP 200 code', (done)=> {
+                request(app)
+                    .get('/my/tokens')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect(200)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return JSON content', (done)=> {
+                request(app)
+                    .get('/my/tokens')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect('Content-Type', /json/)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return Array', (done)=> {
+                request(app)
+                    .get('/my/tokens')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.should.be.instanceOf(Array);
+                        done();
+                    });
+            });
+            it('should return Array with one element', (done)=> {
+                request(app)
+                    .get('/my/tokens')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.length.should.be.equal(1);
+                        done();
+                    });
+            });
+
+        });
+
     });
 });

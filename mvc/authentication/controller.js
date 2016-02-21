@@ -44,12 +44,12 @@ exports.token = (req, res)=> {
                     if (account.authenticate(req.body.password)) {
 
                         var token = new Token();
-                        token.token = jwt.sign(account.token, config.JWT.SECRET);
+                        token.content = jwt.sign(account.token, config.JWT.SECRET);
                         token.owner = account._id;
                         token.save((err, data)=> {
                             if (err) res.status(500).send();
 
-                            res.json({token:data.token});
+                            res.json({token:data.content});
                         });
 
                     }

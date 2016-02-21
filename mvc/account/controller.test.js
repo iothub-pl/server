@@ -11,11 +11,11 @@ describe('ENDPOINT /accounts', () => {
     var accountBeta;
     var alphaData = {
         email: 'alpha@alpha.alpha',
-        password: 'alpha',
+        password: 'alpha'
     };
     var betaData = {
         email: 'beta@beta.beta',
-        password: 'beta',
+        password: 'beta'
     };
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {
@@ -68,7 +68,6 @@ describe('ENDPOINT /accounts', () => {
             .end((err, res)=> {
                 if (err) return done(err);
                 userBetaAuthenticationToken = 'Bearer ' + res.body.token;
-                res.body.token;
                 done();
             });
     });

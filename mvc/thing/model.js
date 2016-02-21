@@ -5,11 +5,11 @@ var Value = require('./../value/model');
 var ThingSchema = mongoose.Schema({
     name: {
         type: String,
-        require: true,
+        require: true
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        require: true,
+        require: true
     },
     type: {
         type: String,

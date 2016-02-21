@@ -1,6 +1,7 @@
 'use strict';
 var Account = require('./../account/model'),
-    Thing = require('./../thing/model');
+    Thing = require('./../thing/model'),
+    Token = require('./../token/model');
 /**
  * @api {get} /my/account Returns authenticated account
  * @apiDescription Returns authenticated account
@@ -71,5 +72,42 @@ exports.getThings = (req, res)=> {
                 res.status(500).send();
             }
             res.send(things);
+        });
+};
+
+/**
+ * @api {get} /my/tokens Returns all tokens related to authenticated account
+ * @apiDescription Returns all tokens related to authenticated account
+ * @apiName GetTokens
+ * @apiGroup My
+ *
+ * @apiPermission user
+ * @apiHeader {String} Authorization bearer User unique access-key.
+ *
+ * @apiSuccess (200) {String} _id   Id of the Token.
+ * @apiSuccess (200) {String} content  Content of the Token.
+ * @apiSuccess (200) {String} owner  Owner id of the Token.
+ * @apiSuccess (200) {Boolean} valid  Validation of the Token.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *  "_id": "5682773c21ba9d9736e8237b",
+ *  "content": "c21ba9d9736e8237b.c21ba9d9736e8237b.c21ba9d9736e8237b",
+ *  "owner": "5682773c21ba9d9736e8237b"
+ *  "valid": true
+ * }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (404) NotFound Not Found.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
+exports.getTokens = (req, res)=> {
+    Token.find()
+        .where('owner').equals(req.user._id)
+        .exec((err, data)=> {
+            if (err) {
+                res.status(500).send();
+            }
+            res.send(data);
         });
 };
