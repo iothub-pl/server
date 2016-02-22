@@ -22,4 +22,5 @@ ratings:
   - "**.py"
   - "**.rb"
 exclude_paths:
-- *.test.js
+ - "**/*.test.js"
+ - "mvc/account/controller.test.js"
