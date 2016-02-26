@@ -32,9 +32,10 @@ exports.getAccount = (req, res)=> {
         .where('_id').equals(req.user._id)
         .then((data)=> {
             res.send(data.profil);
-        }).catch((err)=> {
-        return res.statusStatus(500);
-    });
+        })
+        .catch((err)=> {
+            return res.statusStatus(500);
+        });
 };
 /**
  * @api {get} /my/things Returns all things related to authenticated account
@@ -68,9 +69,10 @@ exports.getThings = (req, res)=> {
         .where('owner').equals(req.user._id)
         .then((data)=> {
             res.send(data);
-        }).catch((err)=> {
-        res.sendStatus(500);
-    })
+        })
+        .catch((err)=> {
+            res.sendStatus(500);
+        })
 };
 
 /**
@@ -104,7 +106,8 @@ exports.getTokens = (req, res)=> {
         .where('owner').equals(req.user._id)
         .then((data)=> {
             res.send(data);
-        }).catch((err)=> {
-        res.sendStatus(500);
-    })
+        })
+        .catch((err)=> {
+            res.sendStatus(500);
+        })
 };

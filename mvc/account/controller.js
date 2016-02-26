@@ -31,12 +31,14 @@ exports.getAll = (req, res)=> {
     if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {
-        Account.find().then((data)=> {
-            res.json(data);
-
-        }).catch((err)=> {
-            res.sendStatus(500);
-        });
+        Account
+            .find()
+            .then((data)=> {
+                res.json(data);
+            })
+            .catch((err)=> {
+                res.sendStatus(500);
+            });
     }
 };
 /**
@@ -77,13 +79,14 @@ exports.create = (req, res)=> {
             .save()
             .then((data)=> {
                 res.status(201).json(data);
-            }).catch((err)=> {
-            if (err.errors) {
-                res.sendStatus(400);
-            } else {
-                res.sendStatus(500);
-            }
-        });
+            })
+            .catch((err)=> {
+                if (err.errors) {
+                    res.sendStatus(400);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
     } else {
         res.sendStatus(400);
     }
@@ -174,37 +177,35 @@ exports.update = (req, res)=> {
     if (validator.isMongoId(req.params.id)) {
         Account.findOne()
             .where('_id').equals(req.params.id)
-            .exec((err, account)=> {
-                if (err) {
-                    res.status(500).send();
-                }
-                else {
-                    if (req.user._id === account._id || req.user.role === 'ADMIN') {
-                        if (!account) {
-                            res.status(404).send();
-                        } else {
-                            if (req.body.role && req.user.role === 'ADMIN') {
-                                account.setRole(req.body.role);
-                            }
-                            if (req.body.password) {
-                                account.setPassword(req.body.password);
-                            }
-                            account.save((err, account) => {
-                                if (err) {
-                                    res.status(500).send();
-                                }
-                                else {
-                                    res.json(account);
-                                }
-                            });
-                        }
+            .then((account)=> {
+                if (req.user._id === account._id || req.user.role === 'ADMIN') {
+                    if (!account) {
+                        res.sendStatus(404);
                     } else {
-                        res.status(403).send();
+                        if (req.body.role && req.user.role === 'ADMIN') {
+                            account.setRole(req.body.role);
+                        }
+                        if (req.body.password) {
+                            account.setPassword(req.body.password);
+                        }
+                        account
+                            .save()
+                            .then((account) => {
+                                res.json(account);
+                            })
+                            .catch((err)=> {
+                                res.sendStatus(500);
+                            });
                     }
+                } else {
+                    res.sendStatus(403);
                 }
+            })
+            .catch((err)=> {
+                res.sendStatus(500);
             });
     } else {
-        res.status(404).send();
+        res.sendStatus(404);
     }
 };
 /**
@@ -251,10 +252,10 @@ exports.delete = (req, res)=> {
                             });
                     }
                 }
-
-            }).catch((err)=> {
-            res.sendStatus(500);
-        });
+            })
+            .catch((err)=> {
+                res.sendStatus(500);
+            });
     } else {
         res.status(404).send();
     }

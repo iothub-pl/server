@@ -34,11 +34,12 @@ exports.getAll = (req, res) => {
         res.status(403).send();
     } else {
         Thing.find()
-            .exec((err, things) => {
-                if (err) {
-                    return res.sendStatus(500);
-                }
-                res.json(things);
+            .then((data) => {
+                res.json(data);
+            })
+            .catch((err)=> {
+                return res.sendStatus(500);
+
             });
     }
 };
@@ -67,14 +68,14 @@ exports.count = (req, res)=> {
     if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {
-
-        Thing.count().exec((err, count)=> {
-            if (err) {
+        Thing
+            .count()
+            .then((data)=> {
+                res.json(data);
+            })
+            .catch((err)=> {
                 return res.sendStatus(500);
-
-            }
-            res.json(count);
-        });
+            });
     }
 };
 /**
@@ -112,17 +113,16 @@ exports.count = (req, res)=> {
 exports.getById = (req, res)=> {
     Thing.findOne()
         .where('_id').equals(req.params.id)
-        .exec((err, thing)=> {
-            if (err) {
-                return res.status(404).send();
+        .then((data)=> {
+            if (req.user.role === 'ADMIN' || req.user._id === data.owner) {
+                res.json(data);
+            } else {
+                return res.sendStatus(403);
             }
-            
-            if (req.user.role === 'ADMIN' || req.user._id === thing.owner) {
-                res.json(thing);
-            }else{
-            return res.status(403).send();
-        }
-    });
+        })
+        .catch((err)=> {
+            res.sendStatus(404);
+        });
 }
 
 /**
@@ -134,9 +134,12 @@ exports.getById = (req, res)=> {
 exports.register = (req, res)=> {
     var thing = new Thing(req.body);
     thing.setOwner(req.user)
-        .save((err, thing) => {
-            if (err) return res.status(500).send(err);
-            res.status(201).json(thing);
+        .save()
+        .then((data) => {
+            res.status(201).json(data);
+        })
+        .catch((err)=> {
+            res.sendStatus(500);
         });
 };
 
@@ -150,23 +153,22 @@ exports.addValue = (req, res)=> {
     req.body.thingId = req.params.id;
     Thing.findOne()
         .where('_id').equals(req.params.id)
-        .exec((err, thing)=> {
-
-            if (err) {
-                return res.sendStatus(500);
-            }
+        .then((thing)=> {
             if (!thing) {
                 return res.sendStatus(404);
             }
-
             new Value(req.body)
-                .save((err, value) => {
-                    if (err) {
-                        return res.sendStatus(500);
-                    }
+                .save()
+                .then((value) => {
                     res.status(201).json(value);
-
+                })
+                .catch((err)=> {
+                    return res.sendStatus(500);
                 });
+        })
+        .catch((err)=> {
+            return res.sendStatus(500);
+
         });
 };
 /**
@@ -178,27 +180,20 @@ exports.addValue = (req, res)=> {
 exports.getValues = (req, res)=> {
     Thing.findOne()
         .where('_id').equals(req.params.id)
-        .exec((err, thing)=> {
-            if (err) {
-                res.sendStatus(500);
-            } else {
-
-                if (thing) {
-
-                    thing.getValues((err, values)=> {
-                        if (err) {
-                            console.log(err);
-
-                            res.sendStatus(500);
-                        }
+        .then((thing)=> {
+            if (thing) {
+                thing.getValues()
+                    .then((values)=> {
                         res.json(values);
-
+                    })
+                    .catch((err)=> {
+                        res.sendStatus(500);
                     });
-                } else {
-                    res.sendStatus(404);
-                }
+            } else {
+                res.sendStatus(404);
             }
-
+        })
+        .catch((err)=> {
+            res.sendStatus(500);
         });
 };
-

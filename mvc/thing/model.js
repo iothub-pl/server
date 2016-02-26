@@ -37,10 +37,10 @@ ThingSchema.methods = {
     setOwner: function (user) {
         return this.set('owner', user._id);
     },
-    getValues: function (callback) {
-        Value.find()
+    getValues: function () {
+        return Value.find()
             .where('thingId').equals(this._id)
-            .exec(callback);
+            .exec();
     }
 };
 ThingSchema.pre('save', function (next) {

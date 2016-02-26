@@ -52,7 +52,8 @@ exports.token = (req, res)=> {
                 }
                 else res.sendStatus(401);
             }
-        }).catch((err)=> {
-        res.sendStatus(500);
-    });
+        })
+        .catch((err)=> {
+            res.sendStatus(500);
+        });
 };
