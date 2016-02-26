@@ -1,5 +1,5 @@
 'use strict'
-const Thing = require('./model'),
+var Thing = require('./model'),
     Value = require('./../value/model');
 /**
  * @api {get} /things Returns list of things
@@ -167,11 +167,12 @@ exports.addValue = (req, res)=> {
                     res.status(201).json(value);
                 })
                 .catch((err)=> {
+                    console.log('POST /things' + req.params.id + '/values when saving new value', err);
                     return res.sendStatus(500);
                 });
         })
         .catch((err)=> {
-            console.log('POST /things' + req.params.id + '/values', err);
+            console.log('POST /things' + req.params.id + '/values when finding thing', err);
             res.sendStatus(500);
 
         });
@@ -192,6 +193,7 @@ exports.getValues = (req, res)=> {
                         res.json(values);
                     })
                     .catch((err)=> {
+                        console.log('GET /things' + req.params.id + '/values when finding values', err);
                         res.sendStatus(500);
                     });
             } else {
@@ -199,7 +201,7 @@ exports.getValues = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('GET /things' + req.params.id + '/values', err);
+            console.log('GET /things' + req.params.id + '/values when finding thing', err);
             res.sendStatus(500);
         });
 };
