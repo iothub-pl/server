@@ -21,8 +21,7 @@ var AccountSchema = mongoose.Schema({
             type: String,
             select: false,
             require: true
-        }
-        ,
+        },
         /**
          * TODO validate password
          */

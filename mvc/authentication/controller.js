@@ -35,26 +35,28 @@ exports.token = (req, res)=> {
         .select('+password')
         .select('+salt')
         .where('email').equals(req.body.email)
-        .exec((err, account)=> {
-            if (err) res.status(500).send();
-            else {
-                if (!account) {
-                    res.status(400).send();
-                } else {
-                    if (account.authenticate(req.body.password)) {
+        .then(account => {
 
-                        var token = new Token();
-                        token.content = jwt.sign(account.token, config.JWT.SECRET);
-                        token.owner = account._id;
-                        token.save((err, data)=> {
-                            if (err) res.status(500).send();
 
-                            res.json({token:data.content});
-                        });
+            if (!account) {
+                res.status(400).send();
+            } else {
+                if (account.authenticate(req.body.password)) {
 
-                    }
-                    else res.status(401).send();
+                    var token = new Token();
+                    token.content = jwt.sign(account.token, config.JWT.SECRET);
+                    token.owner = account._id;
+                    token.save((err, data)=> {
+                        if (err) res.status(500).send();
+
+                        res.json({token: data.content});
+                    });
+
                 }
+                else res.status(401).send();
             }
-        });
+
+        }).catch((err)=> {
+        res.status(500).send();
+    });
 };

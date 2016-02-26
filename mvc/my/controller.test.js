@@ -13,7 +13,7 @@ describe('ENDPOINT /me', () => {
     var accountBeta;
     var alphaData = {
         email: 'alpha@alpha.alpha',
-        password: 'alpha',
+        password: 'alpha'
     };
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {

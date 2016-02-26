@@ -1,7 +1,5 @@
 'use strict';
 var Token = require('./model');
-
-
 /**
  * @api {get} /tokens Returns list of tokens
  * @apiDescription Returns list of tokens.
@@ -20,7 +18,7 @@ var Token = require('./model');
  * [
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
- *   "content": "test@test.test",
+ *   "content": "efqewrqw2r334r34.23r4r234r23r.234r23r4",
  *   "valid": "true",
  *   "owner": "5682773c21ba9d9736e8237b",
  *  }
@@ -34,14 +32,12 @@ exports.getAll = (req, res) => {
     if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {
-        Token
-            .find()
-            .exec((err, data)=> {
-                if (err) {
-                    return res.sendStatus(500);
-                }
+        Token.find()
+            .then((data)=> {
                 res.json(data);
-            });
+            }).catch((err)=> {
+            return res.sendStatus(500);
+        });
     }
 }
 
@@ -62,7 +58,7 @@ exports.getAll = (req, res) => {
  * HTTP/1.1 200 OK
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
- *   "content": "test@test.test",
+ *   "content": "efqewrqw2r334r34.23r4r234r23r.234r23r4",
  *   "valid": "true",
  *   "owner": "5682773c21ba9d9736e8237b",
  *  }
@@ -76,10 +72,7 @@ exports.getById = (req, res) => {
     Token
         .findOne()
         .where('_id').equals(req.params.id)
-        .exec((err, data)=> {
-            if (err) {
-                return res.sendStatus(500);
-            }
+        .then((data)=> {
             if (!data) {
                 res.sendStatus(404);
             }
@@ -87,8 +80,10 @@ exports.getById = (req, res) => {
                 res.json(data);
             } else {
                 res.status(403).send();
-
             }
-        });
+        })
+        .catch((err)=> {
+            return res.sendStatus(500);
 
+        });
 }
