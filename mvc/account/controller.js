@@ -28,16 +28,14 @@ var Account = require('./model'),
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res)=> {
-
-
     if (req.user.role !== 'ADMIN') {
         res.status(403).send();
     } else {
-        Account.find().exec((err, accounts)=> {
-            if (err) res.status(500).send();
-            else {
-                res.json(accounts);
-            }
+        Account.find().then((data)=> {
+            res.json(data);
+
+        }).catch((err)=> {
+            res.sendStatus(500);
         });
     }
 };
@@ -72,24 +70,22 @@ exports.getAll = (req, res)=> {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.create = (req, res)=> {
-    var acc = Account();
     if (validator.isEmail(req.body.email)) {
-        acc.setEmail(req.body.email)
+        Account()
+            .setEmail(req.body.email)
             .setPassword(req.body.password)
-            .save((err, account)=> {
-                if (err) {
-                    if (err.errors) {
-                        res.status(400).send();
-                    } else {
-                        res.status(500).send();
-                    }
-                }
-                else {
-                    res.status(201).json(account);
-                }
-            });
+            .save()
+            .then((data)=> {
+                res.status(201).json(data);
+            }).catch((err)=> {
+            if (err.errors) {
+                res.sendStatus(400);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     } else {
-        res.status(400).send();
+        res.sendStatus(400);
     }
 };
 /**
@@ -125,17 +121,15 @@ exports.create = (req, res)=> {
 exports.getById = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params.id)
-        .exec((err, account)=> {
-            if (err) {
-                res.status(404).send();
+        .then((data)=> {
+            if (req.user._id === data._id || req.user.role === 'ADMIN') {
+                res.json(data);
+            } else {
+                res.sendStatus(403);
             }
-            else {
-                if (req.user._id === account._id || req.user.role === 'ADMIN') {
-                    res.json(account);
-                } else {
-                    res.status(403).send();
-                }
-            }
+        })
+        .catch((err)=> {
+            res.sendStatus(404);
         });
 };
 /**
@@ -240,27 +234,27 @@ exports.delete = (req, res)=> {
     if (validator.isMongoId(req.params.id)) {
         Account.findOne()
             .where('_id').equals(req.params.id)
-            .exec((err, account)=> {
-                if (err) {
-                    res.status(500).send();
+            .then((data)=> {
+                if (req.user._id !== data._id && req.user.role === 'USER') {
+                    res.sendStatus(403);
                 } else {
-                    if (req.user._id !== account._id && req.user.role === 'USER') {
-                        res.status(403).send();
+                    if (!data) {
+                        res.sendStatus(404);
                     } else {
-                        if (!account) {
-                            res.status(404).send();
-                        } else {
-                            account.remove((err)=> {
-                                if (err) {
-                                    res.status(500).send();
-                                } else {
-                                    res.status(204).send();
-                                }
+                        data
+                            .remove()
+                            .then((data)=> {
+                                res.sendStatus(204);
+                            })
+                            .catch((err)=> {
+                                res.sendStatus(500);
                             });
-                        }
                     }
                 }
-            });
+
+            }).catch((err)=> {
+            res.sendStatus(500);
+        });
     } else {
         res.status(404).send();
     }

@@ -1,8 +1,8 @@
 'use strict';
 var Account = require('./../account/model'),
+    Token = require('./../token/model'),
     jwt = require('jsonwebtoken'),
     config = require('./../../config/config');
-var Token = require('./../token/model');
 
 /**
  * @api {post} /authentication Creates authentication token
@@ -36,27 +36,23 @@ exports.token = (req, res)=> {
         .select('+salt')
         .where('email').equals(req.body.email)
         .then(account => {
-
-
             if (!account) {
-                res.status(400).send();
+                res.sendStatus(400);
             } else {
                 if (account.authenticate(req.body.password)) {
 
                     var token = new Token();
                     token.content = jwt.sign(account.token, config.JWT.SECRET);
                     token.owner = account._id;
-                    token.save((err, data)=> {
-                        if (err) res.status(500).send();
-
+                    token.save().then((data)=> {
                         res.json({token: data.content});
+                    }).catch((err)=> {
+                        res.sendStatus(500);
                     });
-
                 }
-                else res.status(401).send();
+                else res.sendStatus(401);
             }
-
         }).catch((err)=> {
-        res.status(500).send();
+        res.sendStatus(500);
     });
 };
