@@ -30,12 +30,11 @@ var Account = require('./../account/model'),
 exports.getAccount = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.user._id)
-        .exec((err, account)=> {
-            if (err) {
-                return res.status(500).send();
-            }
-            res.send(account.profil);
-        });
+        .then((data)=> {
+            res.send(data.profil);
+        }).catch((err)=> {
+        return res.statusStatus(500);
+    });
 };
 /**
  * @api {get} /my/things Returns all things related to authenticated account
@@ -67,12 +66,11 @@ exports.getAccount = (req, res)=> {
 exports.getThings = (req, res)=> {
     Thing.find()
         .where('owner').equals(req.user._id)
-        .exec((err, things)=> {
-            if (err) {
-                res.status(500).send();
-            }
-            res.send(things);
-        });
+        .then((data)=> {
+            res.send(data);
+        }).catch((err)=> {
+        res.sendStatus(500);
+    })
 };
 
 /**
@@ -104,10 +102,9 @@ exports.getThings = (req, res)=> {
 exports.getTokens = (req, res)=> {
     Token.find()
         .where('owner').equals(req.user._id)
-        .exec((err, data)=> {
-            if (err) {
-                res.status(500).send();
-            }
+        .then((data)=> {
             res.send(data);
-        });
+        }).catch((err)=> {
+        res.sendStatus(500);
+    })
 };
