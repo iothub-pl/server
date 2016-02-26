@@ -35,9 +35,11 @@ exports.getAll = (req, res) => {
         Token.find()
             .then((data)=> {
                 res.json(data);
-            }).catch((err)=> {
-            return res.sendStatus(500);
-        });
+            })
+            .catch((err)=> {
+                console.log('GET /tokens', err);
+                res.sendStatus(500);
+            });
     }
 }
 
@@ -83,7 +85,7 @@ exports.getById = (req, res) => {
             }
         })
         .catch((err)=> {
-            return res.sendStatus(500);
-
+            console.log('GET /tokens/' + req.params.id + 'when finding token', err);
+            res.sendStatus(500);
         });
 }

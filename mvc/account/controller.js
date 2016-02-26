@@ -37,6 +37,7 @@ exports.getAll = (req, res)=> {
                 res.json(data);
             })
             .catch((err)=> {
+                console.log('GET /accounts when finding accounts', err);
                 res.sendStatus(500);
             });
     }
@@ -81,6 +82,8 @@ exports.create = (req, res)=> {
                 res.status(201).json(data);
             })
             .catch((err)=> {
+                console.log('POST /accounts when creating account', err);
+
                 if (err.errors) {
                     res.sendStatus(400);
                 } else {
@@ -125,6 +128,9 @@ exports.getById = (req, res)=> {
     Account.findOne()
         .where('_id').equals(req.params.id)
         .then((data)=> {
+            if (!data) {
+                res.sendStatus(404);
+            }
             if (req.user._id === data._id || req.user.role === 'ADMIN') {
                 res.json(data);
             } else {
@@ -132,7 +138,8 @@ exports.getById = (req, res)=> {
             }
         })
         .catch((err)=> {
-            res.sendStatus(404);
+            console.log('GET /accounts/' + req.params.id + 'when finding account', err);
+            res.sendStatus(500);
         });
 };
 /**
@@ -202,6 +209,8 @@ exports.update = (req, res)=> {
                 }
             })
             .catch((err)=> {
+                console.log('PUT /accounts/' + req.params.id + 'when updating account', err);
+
                 res.sendStatus(500);
             });
     } else {
@@ -254,6 +263,7 @@ exports.delete = (req, res)=> {
                 }
             })
             .catch((err)=> {
+                console.log('DELETE /accounts/' + req.params.id + 'when deleting account', err);
                 res.sendStatus(500);
             });
     } else {

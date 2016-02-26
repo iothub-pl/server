@@ -54,6 +54,7 @@ exports.token = (req, res)=> {
             }
         })
         .catch((err)=> {
+            console.log('POST /authentication when authenticating', err);
             res.sendStatus(500);
         });
 };
