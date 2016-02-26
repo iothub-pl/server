@@ -38,6 +38,7 @@ exports.getAll = (req, res) => {
                 res.json(data);
             })
             .catch((err)=> {
+                console.log('GET /things', err);
                 return res.sendStatus(500);
 
             });
@@ -74,6 +75,7 @@ exports.count = (req, res)=> {
                 res.json(data);
             })
             .catch((err)=> {
+                console.log('GET /things/count', err);
                 return res.sendStatus(500);
             });
     }
@@ -121,6 +123,7 @@ exports.getById = (req, res)=> {
             }
         })
         .catch((err)=> {
+            console.log('GET /things/' + req.params.id, err);
             res.sendStatus(404);
         });
 }
@@ -139,6 +142,7 @@ exports.register = (req, res)=> {
             res.status(201).json(data);
         })
         .catch((err)=> {
+            console.log('POST /things', err);
             res.sendStatus(500);
         });
 };
@@ -167,7 +171,8 @@ exports.addValue = (req, res)=> {
                 });
         })
         .catch((err)=> {
-            return res.sendStatus(500);
+            console.log('POST /things' + req.params.id + '/values', err);
+            res.sendStatus(500);
 
         });
 };
@@ -194,6 +199,7 @@ exports.getValues = (req, res)=> {
             }
         })
         .catch((err)=> {
+            console.log('GET /things' + req.params.id + '/values', err);
             res.sendStatus(500);
         });
 };
