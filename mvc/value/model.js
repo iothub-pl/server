@@ -20,8 +20,8 @@ ValueSchema.pre('save', function (next) {
     next();
 });
 ValueSchema.post('save', function () {
-    if (this.wasNew) {
-    }
+    // if (this.wasNew) {
+    // }
 });
 /**
  *

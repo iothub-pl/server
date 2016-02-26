@@ -48,7 +48,7 @@ ThingSchema.pre('save', function (next) {
     next();
 });
 ThingSchema.post('save', function () {
-    if (this.wasNew) {
-    }
+    // if (this.wasNew) {
+    // }
 });
 module.exports = mongoose.model('Thing', ThingSchema);

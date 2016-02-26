@@ -137,8 +137,8 @@ AccountSchema.pre('save', function (next) {
     next();
 });
 AccountSchema.post('save', function () {
-    if (this.wasNew) {
-    }
+    // if (this.wasNew) {
+    // }
 });
 AccountSchema.plugin(uniqueValidator);
 /**

@@ -201,6 +201,7 @@ exports.update = (req, res)=> {
                                 res.json(account);
                             })
                             .catch((err)=> {
+                                console.log('PUT /accounts/' + req.params.id + 'when updating account', err);
                                 res.sendStatus(500);
                             });
                     }
@@ -209,8 +210,7 @@ exports.update = (req, res)=> {
                 }
             })
             .catch((err)=> {
-                console.log('PUT /accounts/' + req.params.id + 'when updating account', err);
-
+                console.log('PUT /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {
@@ -257,13 +257,14 @@ exports.delete = (req, res)=> {
                                 res.sendStatus(204);
                             })
                             .catch((err)=> {
+                                console.log('DELETE /accounts/' + req.params.id + 'when deleting account', err);
                                 res.sendStatus(500);
                             });
                     }
                 }
             })
             .catch((err)=> {
-                console.log('DELETE /accounts/' + req.params.id + 'when deleting account', err);
+                console.log('DELETE /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {

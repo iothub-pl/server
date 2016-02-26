@@ -44,9 +44,11 @@ exports.token = (req, res)=> {
                     var token = new Token();
                     token.content = jwt.sign(account.token, config.JWT.SECRET);
                     token.owner = account._id;
-                    token.save().then((data)=> {
+                    token.save()
+                        .then((data)=> {
                         res.json({token: data.content});
                     }).catch((err)=> {
+                        console.log('POST /authentication when saving token', err);
                         res.sendStatus(500);
                     });
                 }
@@ -54,7 +56,7 @@ exports.token = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('POST /authentication when authenticating', err);
+            console.log('POST /authentication when finding account', err);
             res.sendStatus(500);
         });
 };

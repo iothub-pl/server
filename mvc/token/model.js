@@ -28,7 +28,7 @@ TokenSchema.pre('save', function (next) {
     next();
 });
 TokenSchema.post('save', function () {
-    if (this.wasNew) {
-    }
+    // if (this.wasNew) {
+    // }
 });
 module.exports = mongoose.model('Token', TokenSchema);
