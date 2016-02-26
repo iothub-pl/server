@@ -31,7 +31,7 @@ var Thing = require('./model'),
  */
 exports.getAll = (req, res) => {
     if (req.user.role !== 'ADMIN') {
-        res.status(403).send();
+        res.sendStatus(403);
     } else {
         Thing.find()
             .then((data) => {
@@ -67,7 +67,7 @@ exports.getAll = (req, res) => {
  */
 exports.count = (req, res)=> {
     if (req.user.role !== 'ADMIN') {
-        res.status(403).send();
+        res.sendStatus(403);
     } else {
         Thing
             .count()
@@ -154,13 +154,13 @@ exports.register = (req, res)=> {
  * @apiGroup Thing
  */
 exports.addValue = (req, res)=> {
-    req.body.thingId = req.params.id;
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .then((thing)=> {
             if (!thing) {
                 return res.sendStatus(404);
             }
+            req.body.thingId = req.params.id;
             new Value(req.body)
                 .save()
                 .then((value) => {
