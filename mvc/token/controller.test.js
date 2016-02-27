@@ -140,7 +140,6 @@ describe('ENDPOINT /tokens', () => {
                         .expect('Content-Type', /json/)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.be.instanceof(Array);
                             done();
                         });
                 });
@@ -171,8 +170,6 @@ describe('ENDPOINT /tokens', () => {
 
 
     describe('when GET request with param', ()=> {
-
-
         describe('not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -186,8 +183,89 @@ describe('ENDPOINT /tokens', () => {
         });
         describe('when authenticated', ()=> {
             describe('when not authorized', ()=> {
-
+                it('should return HTTP 403 Forbidden', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
             });
+            describe('when authorized', () => {
+                it('should return HTTP 200 OK', (done)=> {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                })
+                it('should return content in JSON', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return JSON Object', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.instanceof(Object);
+                            done();
+                        });
+                });
+                it('should return JSON Object with _id field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('_id');
+                            done();
+                        });
+                });
+                it('should return JSON Object with content field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('content');
+                            done();
+                        });
+                });
+                it('should return JSON Object with owner field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('owner');
+                            done();
+                        });
+                });
+                it('should return JSON Object with valid field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('valid');
+                            done();
+                        });
+                });
+            })
 
         });
     });

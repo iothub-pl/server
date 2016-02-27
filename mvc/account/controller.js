@@ -1,6 +1,7 @@
 'use strict';
 var Account = require('./model'),
-    validator = require('validator');
+    validator = require('validator'),
+    winston = require('winston');
 /**
  * @api {get} /accounts Returns list of users
  * @apiDescription Returns list of users.
@@ -37,7 +38,7 @@ exports.getAll = (req, res)=> {
                 res.json(data);
             })
             .catch((err)=> {
-                console.log('GET /accounts when finding accounts', err);
+                winston.debug('GET /accounts when finding accounts', err);
                 res.sendStatus(500);
             });
     }
@@ -82,7 +83,7 @@ exports.create = (req, res)=> {
                 res.status(201).json(data);
             })
             .catch((err)=> {
-                console.log('POST /accounts when creating account', err);
+                 winston.debug('POST /accounts when creating account', err);
 
                 if (err.errors) {
                     res.sendStatus(400);
@@ -138,8 +139,8 @@ exports.getById = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('GET /accounts/' + req.params.id + 'when finding account', err);
-            res.sendStatus(500);
+             winston.debug('GET /accounts/' + req.params.id + 'when finding account', err);
+            res.sendStatus(404);
         });
 };
 /**
@@ -201,7 +202,7 @@ exports.update = (req, res)=> {
                                 res.json(account);
                             })
                             .catch((err)=> {
-                                console.log('PUT /accounts/' + req.params.id + 'when updating account', err);
+                                 winston.debug('PUT /accounts/' + req.params.id + 'when updating account', err);
                                 res.sendStatus(500);
                             });
                     }
@@ -210,7 +211,7 @@ exports.update = (req, res)=> {
                 }
             })
             .catch((err)=> {
-                console.log('PUT /accounts/' + req.params.id + 'when finding account', err);
+                 winston.debug('PUT /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {
@@ -253,18 +254,18 @@ exports.delete = (req, res)=> {
                     } else {
                         data
                             .remove()
-                            .then((data)=> {
+                            .then(()=> {
                                 res.sendStatus(204);
                             })
                             .catch((err)=> {
-                                console.log('DELETE /accounts/' + req.params.id + 'when deleting account', err);
+                                 winston.debug('DELETE /accounts/' + req.params.id + 'when deleting account', err);
                                 res.sendStatus(500);
                             });
                     }
                 }
             })
             .catch((err)=> {
-                console.log('DELETE /accounts/' + req.params.id + 'when finding account', err);
+                 winston.debug('DELETE /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {

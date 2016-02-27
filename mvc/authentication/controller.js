@@ -2,7 +2,9 @@
 var Account = require('./../account/model'),
     Token = require('./../token/model'),
     jwt = require('jsonwebtoken'),
-    config = require('./../../config/config');
+    config = require('./../../config/config'),
+    winston = require('winston');
+
 
 /**
  * @api {post} /authentication Creates authentication token
@@ -46,9 +48,9 @@ exports.token = (req, res)=> {
                     token.owner = account._id;
                     token.save()
                         .then((data)=> {
-                        res.json({token: data.content});
-                    }).catch((err)=> {
-                        console.log('POST /authentication when saving token', err);
+                            res.json({token: data.content});
+                        }).catch((err)=> {
+                        winston.debug('POST /authentication when saving token', err);
                         res.sendStatus(500);
                     });
                 }
@@ -56,7 +58,7 @@ exports.token = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('POST /authentication when finding account', err);
+            winston.debug('POST /authentication when finding account', err);
             res.sendStatus(500);
         });
 };

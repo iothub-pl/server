@@ -1,6 +1,8 @@
 'use strict'
 var Thing = require('./model'),
-    Value = require('./../value/model');
+    Value = require('./../value/model'),
+    winston = require('winston');
+
 /**
  * @api {get} /things Returns list of things
  * @apiDescription Returns list of things.
@@ -38,7 +40,7 @@ exports.getAll = (req, res) => {
                 res.json(data);
             })
             .catch((err)=> {
-                console.log('GET /things', err);
+                winston.debug('GET /things', err);
                 return res.sendStatus(500);
 
             });
@@ -75,7 +77,7 @@ exports.count = (req, res)=> {
                 res.json(data);
             })
             .catch((err)=> {
-                console.log('GET /things/count', err);
+                winston.debug('GET /things/count', err);
                 return res.sendStatus(500);
             });
     }
@@ -123,7 +125,7 @@ exports.getById = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('GET /things/' + req.params.id, err);
+            winston.debug('GET /things/' + req.params.id, err);
             res.sendStatus(404);
         });
 }
@@ -142,7 +144,7 @@ exports.register = (req, res)=> {
             res.status(201).json(data);
         })
         .catch((err)=> {
-            console.log('POST /things', err);
+            winston.debug('POST /things', err);
             res.sendStatus(500);
         });
 };
@@ -167,12 +169,12 @@ exports.addValue = (req, res)=> {
                     res.status(201).json(value);
                 })
                 .catch((err)=> {
-                    console.log('POST /things' + req.params.id + '/values when saving new value', err);
+                    winston.debug('POST /things' + req.params.id + '/values when saving new value', err);
                     return res.sendStatus(500);
                 });
         })
         .catch((err)=> {
-            console.log('POST /things' + req.params.id + '/values when finding thing', err);
+            winston.debug('POST /things' + req.params.id + '/values when finding thing', err);
             res.sendStatus(500);
 
         });
@@ -193,7 +195,7 @@ exports.getValues = (req, res)=> {
                         res.json(values);
                     })
                     .catch((err)=> {
-                        console.log('GET /things' + req.params.id + '/values when finding values', err);
+                        winston.debug('GET /things' + req.params.id + '/values when finding values', err);
                         res.sendStatus(500);
                     });
             } else {
@@ -201,7 +203,7 @@ exports.getValues = (req, res)=> {
             }
         })
         .catch((err)=> {
-            console.log('GET /things' + req.params.id + '/values when finding thing', err);
+            winston.debug('GET /things' + req.params.id + '/values when finding thing', err);
             res.sendStatus(500);
         });
 };

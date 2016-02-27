@@ -1,7 +1,9 @@
 'use strict';
 var Account = require('./../account/model'),
     Thing = require('./../thing/model'),
-    Token = require('./../token/model');
+    Token = require('./../token/model'),
+    winston = require('winston');
+
 /**
  * @api {get} /my/account Returns authenticated account
  * @apiDescription Returns authenticated account
@@ -34,7 +36,7 @@ exports.getAccount = (req, res)=> {
             res.send(data.profil);
         })
         .catch((err)=> {
-            console.log('GET /my/account when finding account', err);
+            winston.debug('GET /my/account when finding account', err);
             res.statusStatus(500);
         });
 };
@@ -72,7 +74,7 @@ exports.getThings = (req, res)=> {
             res.send(data);
         })
         .catch((err)=> {
-            console.log('GET /my/things when finding things', err);
+            winston.debug('GET /my/things when finding things', err);
             res.sendStatus(500);
         })
 };
@@ -110,7 +112,7 @@ exports.getTokens = (req, res)=> {
             res.send(data);
         })
         .catch((err)=> {
-            console.log('GET /my/tokens when finding tokens', err);
+            winston.debug('GET /my/tokens when finding tokens', err);
             res.sendStatus(500);
         })
 };

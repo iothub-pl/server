@@ -1,5 +1,7 @@
 'use strict';
-var Token = require('./model');
+var Token = require('./model'),
+    winston = require('winston');
+
 /**
  * @api {get} /tokens Returns list of tokens
  * @apiDescription Returns list of tokens.
@@ -37,7 +39,7 @@ exports.getAll = (req, res) => {
                 res.json(data);
             })
             .catch((err)=> {
-                console.log('GET /tokens', err);
+                 winston.debug('GET /tokens', err);
                 res.sendStatus(500);
             });
     }
@@ -85,7 +87,7 @@ exports.getById = (req, res) => {
             }
         })
         .catch((err)=> {
-            console.log('GET /tokens/' + req.params.id + 'when finding token', err);
+             winston.debug('GET /tokens/' + req.params.id + 'when finding token', err);
             res.sendStatus(500);
         });
 }
