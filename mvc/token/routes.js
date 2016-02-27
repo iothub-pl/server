@@ -6,9 +6,9 @@ var express = require('express'),
     router = express.Router(),
     passport = require('passport');
 
-router.get('/', passport.authenticate('bearer', {session: false}), require('./controller').getAll);
+router.get('/', passport.authenticate('bearer', {session: false}), controller.getAll);
 
-router.get('/:id', passport.authenticate('bearer', {session: false}), require('./controller').getById);
+router.get('/:id', passport.authenticate('bearer', {session: false}), controller.getById);
 
 
 module.exports = router;

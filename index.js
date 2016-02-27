@@ -10,7 +10,8 @@ var
     passport = require('passport'),
     helmet = require('helmet'),
     responseTime = require('response-time'),
-    compression = require('compression');
+    compression = require('compression'),
+    winston = require('winston');
 
 
 var WebSocketServer = require('ws').Server,
@@ -43,7 +44,7 @@ wss.on('connection', function connection(ws) {
                 }
             }
             clearInterval(x);
-            console.log(e);
+            winston.debug(e);
         }
     }, 100);
 });
@@ -89,13 +90,13 @@ db.on('error', () => {
     console.error.bind(console, 'connection error:');
 });
 db.once('open', () => {
-    console.log('Connection to database established.');
+   winston.debug('Connection to database established.');
 });
 
 
 server.on('request', app);
 server.listen(config.SERVER.PORT, () => {
-    console.log('Server IoTHuB listening on %d', config.SERVER.PORT);
+    winston.debug('Server IoTHuB listening on %d', config.SERVER.PORT);
 });
 
 module.exports = app;

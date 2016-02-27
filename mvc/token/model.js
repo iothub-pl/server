@@ -1,7 +1,5 @@
 'use strict';
 var mongoose = require('mongoose');
-var Account = require('./../account/model');
-
 var TokenSchema = mongoose.Schema({
     content: {
         type: String,
