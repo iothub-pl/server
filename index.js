@@ -13,6 +13,9 @@ var
     compression = require('compression'),
     winston = require('winston');
 
+winston
+    .add(winston.transports.File, {filename: './logs.json', level: 'debug'})
+    .remove(winston.transports.Console);
 
 var WebSocketServer = require('ws').Server,
     url = require('url'),
@@ -23,8 +26,8 @@ wss.on('connection', function connection(ws) {
     /**
      * @TODO fix error when ssl ...received: reserved fields must be empty
      */
-    // you might use location.query.access_token to authenticate or share sessions
-    // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+        // you might use location.query.access_token to authenticate or share sessions
+        // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
     ws.on('message', function incoming(message) {
         console.log('received: %s', message);
@@ -90,7 +93,7 @@ db.on('error', () => {
     console.error.bind(console, 'connection error:');
 });
 db.once('open', () => {
-   winston.debug('Connection to database established.');
+    winston.debug('Connection to database established.');
 });
 
 
