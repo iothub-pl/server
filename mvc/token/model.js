@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var TokenSchema = mongoose.Schema({
     content: {
         type: String,
-        require: true
+        require: true,
+        select:false
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,

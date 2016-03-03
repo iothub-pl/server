@@ -153,6 +153,18 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
+                it('should return Array object with two elements without content field', (done)=> {
+                    request(app)
+                        .get('/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.forEach((item)=> {
+                                item.should.not.have.property('content');
+                            });
+                            done();
+                        });
+                });
             });
         });
     });
@@ -222,13 +234,13 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-                it('should return JSON Object with content field', (done) => {
+                it('should return JSON Object without content field', (done) => {
                     request(app)
                         .get('/tokens/' + tokenId)
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.have.property('content');
+                            res.body.should.not.have.property('content');
                             done();
                         });
                 });
@@ -331,14 +343,14 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-                it('should return JSON Object with content field', (done) => {
+                it('should return JSON Object without content field', (done) => {
                     request(app)
                         .put('/tokens/' + tokenId)
                         .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.have.property('content');
+                            res.body.should.not.have.property('content');
                             done();
                         });
                 });

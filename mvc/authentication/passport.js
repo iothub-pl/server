@@ -10,6 +10,7 @@ exports.setup = (app)=> {
     app.use(passport.initialize());
     passport.use(new BearerStrategy((token, done) => {
         Token.findOne()
+            .select('+content')
             .where('content').equals(token)
             .where('valid').equals(true)
             .then((data)=> {
