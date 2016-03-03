@@ -12,7 +12,6 @@ var Token = require('./model'),
  * @apiHeader {String} Authorization bearer Users unique access-key.
  *
  * @apiSuccess (200) {String} _id Id of the Token.
- * @apiSuccess (200) {String} content  Content of the Token.
  * @apiSuccess (200) {String} owner  Owner of the Token.
  * @apiSuccess (200) {String} valid  Is token valid.
  * @apiSuccessExample {json} Success-Response:
@@ -20,7 +19,6 @@ var Token = require('./model'),
  * [
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
- *   "content": "efqewrqw2r334r34.23r4r234r23r.234r23r4",
  *   "valid": "true",
  *   "owner": "5682773c21ba9d9736e8237b",
  *  }
@@ -51,18 +49,16 @@ exports.getAll = (req, res) => {
  * @apiName GetTokenById
  * @apiGroup Token
  *
- * @apiPermission admin
+ * @apiPermission user
  * @apiHeader {String} Authorization bearer Users unique access-key.
  *
  * @apiSuccess (200) {String} _id Id of the Token.
- * @apiSuccess (200) {String} content  Content of the Token.
  * @apiSuccess (200) {String} owner  Owner of the Token.
  * @apiSuccess (200) {Boolean} valid  Is token valid.
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
- *   "content": "efqewrqw2r334r34.23r4r234r23r.234r23r4",
  *   "valid": "true",
  *   "owner": "5682773c21ba9d9736e8237b",
  *  }
@@ -91,7 +87,31 @@ exports.getById = (req, res) => {
             res.sendStatus(500);
         });
 };
-
+/**
+ * @api {put} /tokens/:id Updates token
+ * @apiDescription Update token valid field.
+ * @apiName GetTokenById
+ * @apiGroup Token
+ *
+ * @apiPermission user
+ * @apiHeader {String} Authorization bearer Users unique access-key.
+ *
+ * @apiSuccess (200) {String} _id Id of the Token.
+ * @apiSuccess (200) {String} owner  Owner of the Token.
+ * @apiSuccess (200) {Boolean} valid  Is token valid.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ *  {
+ *   "_id": "5682773c21ba9d9736e8237b",
+ *   "valid": "true",
+ *   "owner": "5682773c21ba9d9736e8237b",
+ *  }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (404) NotFound Not Found.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
 exports.updateWithId = (req, res) => {
     Token
         .findOne()
