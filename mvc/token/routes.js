@@ -10,5 +10,9 @@ router.get('/', passport.authenticate('bearer', {session: false}), controller.ge
 
 router.get('/:id', passport.authenticate('bearer', {session: false}), controller.getById);
 
+router.put('/:id', passport.authenticate('bearer', {session: false}), controller.updateWithId);
+
+
+
 
 module.exports = router;

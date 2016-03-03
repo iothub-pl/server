@@ -39,7 +39,7 @@ exports.getAll = (req, res) => {
                 res.json(data);
             })
             .catch((err)=> {
-                 winston.debug('GET /tokens', err);
+                winston.debug('GET /tokens', err);
                 res.sendStatus(500);
             });
     }
@@ -87,7 +87,35 @@ exports.getById = (req, res) => {
             }
         })
         .catch((err)=> {
-             winston.debug('GET /tokens/' + req.params.id + 'when finding token', err);
+            winston.debug('GET /tokens/' + req.params.id + 'when finding token', err);
             res.sendStatus(500);
         });
-}
+};
+
+exports.updateWithId = (req, res) => {
+    Token
+        .findOne()
+        .where('_id').equals(req.params.id)
+        .then((data)=> {
+            if (!data) {
+                res.sendStatus(404);
+            }
+            if (req.user.role === 'ADMIN' || req.user._id === data.owner) {
+                data.valid = req.body.valid;
+                data.save()
+                    .then((data)=> {
+                        res.json(data);
+                    })
+                    .catch((err)=> {
+                        winston.debug('GET /tokens/' + req.params.id + 'when updating token', err);
+                        res.sendStatus(500);
+                    });
+            } else {
+                res.status(403).send();
+            }
+        })
+        .catch((err)=> {
+            winston.debug('GET /tokens/' + req.params.id + 'when finding token', err);
+            res.sendStatus(500);
+        });
+};

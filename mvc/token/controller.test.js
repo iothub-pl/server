@@ -19,7 +19,6 @@ describe('ENDPOINT /tokens', () => {
         password: 'beta'
     };
     var tokenId;
-
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {
             if (err) return done(err);
@@ -32,16 +31,13 @@ describe('ENDPOINT /tokens', () => {
             done();
         });
     });
-
     beforeEach('Creates alpha account', (done)=> {
         request(app)
             .post('/accounts')
             .send(alphaData)
             .end((err, res)=> {
                 if (err) return done(err);
-                /**
-                 * Assign alpha user role 1
-                 */
+                //Assign alpha user role 1
                 accountAlpha = res.body;
                 Account.update({_id: res.body._id}, {role: 'ADMIN'}, (err, res)=> {
                     if (err) return done(err);
@@ -91,9 +87,7 @@ describe('ENDPOINT /tokens', () => {
                 done();
             });
     });
-
     describe('when GET request', ()=> {
-
         describe('when account not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -105,9 +99,7 @@ describe('ENDPOINT /tokens', () => {
                     });
             });
         });
-
         describe('when authenticated', ()=> {
-
             describe('when not authorized', ()=> {
                 it('should return HTTP 403 Forbidden', (done) => {
                     request(app)
@@ -120,7 +112,6 @@ describe('ENDPOINT /tokens', () => {
                         });
                 });
             });
-
             describe('when authorized', ()=> {
                 it('should return HTTP 200 OK', (done) => {
                     request(app)
@@ -132,7 +123,6 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-
                 it('should return content in JSON', (done) => {
                     request(app)
                         .get('/tokens')
@@ -143,7 +133,6 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-
                 it('should return Array object', (done)=> {
                     request(app)
                         .get('/tokens')
@@ -167,8 +156,6 @@ describe('ENDPOINT /tokens', () => {
             });
         });
     });
-
-
     describe('when GET request with param', ()=> {
         describe('not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
@@ -265,9 +252,130 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-            })
+            });
 
         });
     });
-
+    describe('when PUT request with param', ()=> {
+        let data = {
+            valid: false
+        };
+        describe('not authenticated', ()=> {
+            it('should return HTTP 401 Unauthorized', (done) => {
+                request(app)
+                    .put('/tokens/' + tokenId)
+                    .send(data)
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            describe('when not authorized', ()=> {
+                it('should return HTTP 403 Forbidden', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .send(data)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+            });
+            describe('when authorized', () => {
+                it('should return HTTP 200 OK', (done)=> {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return content in JSON', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .expect('Content-Type', /json/)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return JSON Object', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.instanceof(Object);
+                            done();
+                        });
+                });
+                it('should return JSON Object with _id field', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('_id');
+                            done();
+                        });
+                });
+                it('should return JSON Object with content field', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('content');
+                            done();
+                        });
+                });
+                it('should return JSON Object with owner field', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('owner');
+                            done();
+                        });
+                });
+                it('should return JSON Object with valid field', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('valid');
+                            done();
+                        });
+                });
+                it('should return JSON Object with valid field with value false', (done) => {
+                    request(app)
+                        .put('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.valid.should.equal(false);
+                            done();
+                        });
+                });
+            });
+        });
+    });
 });
