@@ -1,8 +1,8 @@
 'use strict';
-var Account = require('./../account/model'),
-    Token = require('./../token/model'),
+var Account = require('./../models/account'),
+    Token = require('./../models/token'),
     jwt = require('jsonwebtoken'),
-    config = require('./../../config/config'),
+    config = require('./../config/config'),
     winston = require('winston');
 
 

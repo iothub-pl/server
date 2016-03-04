@@ -1,7 +1,7 @@
 'use strict';
-var Account = require('./../account/model'),
-    Thing = require('./../thing/model'),
-    Token = require('./../token/model'),
+var Account = require('./../models/account'),
+    Thing = require('./../models/thing'),
+    Token = require('./../models/token'),
     winston = require('winston');
 
 /**

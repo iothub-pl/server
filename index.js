@@ -84,7 +84,7 @@ app.use(compression());
 
 mongoose.connect('mongodb://' + config.DATABASE.HOST + ':' + config.DATABASE.PORT + '/' + config.DATABASE.DB);
 
-require('./mvc/authentication/passport').setup(app);
+require('./middlewares/passport').setup(app);
 require('./config/routes')(app);
 
 

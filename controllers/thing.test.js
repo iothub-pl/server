@@ -1,10 +1,10 @@
 'use strict';
-const app = require('../../index'),
+const app = require('../index'),
     request = require('supertest'),
     should = require('should'),
-    Thing = require('./model'),
-    Value = require('./../value/model'),
-    Account = require('./../account/model');
+    Thing = require('./../models/thing'),
+    Value = require('./../models/value'),
+    Account = require('./../models/account');
 
 
 describe('ENDPOINT /things', (done)=> {

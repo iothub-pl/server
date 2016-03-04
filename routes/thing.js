@@ -2,7 +2,7 @@
 
 var express = require('express'),
 
-    controller = require('./controller'),
+    controller = require('./../controllers/thing'),
     router = express.Router(),
     passport = require('passport');
 

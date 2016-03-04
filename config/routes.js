@@ -8,11 +8,11 @@ module.exports = function (app) {
     /**
      * Application
      */
-    app.use('/things', require('./../mvc/thing/routes'));
-    app.use('/accounts', require('./../mvc/account/routes'));
-    app.use('/authentication', require('./../mvc/authentication/routes'));
-    app.use('/my', require('./../mvc/my/routes'));
+    app.use('/things', require('./../routes/thing'));
+    app.use('/accounts', require('./../routes/account'));
+    app.use('/authentication', require('./../routes/authentication'));
+    app.use('/my', require('./../routes/my'));
 
-    app.use('/tokens', require('./../mvc/token/routes'));
+    app.use('/tokens', require('./../routes/token'));
 
 };

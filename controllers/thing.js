@@ -1,6 +1,6 @@
 'use strict'
-var Thing = require('./model'),
-    Value = require('./../value/model'),
+var Thing = require('./../models/thing'),
+    Value = require('./../models/value'),
     winston = require('winston');
 
 /**

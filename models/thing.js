@@ -1,6 +1,6 @@
 'use strict';
 var mongoose = require('mongoose');
-var Value = require('./../value/model');
+var Value = require('./value');
 
 var ThingSchema = mongoose.Schema({
     name: {

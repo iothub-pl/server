@@ -1,5 +1,5 @@
 'use strict';
-var Account = require('./model'),
+var Account = require('./../models/account'),
     validator = require('validator'),
     winston = require('winston');
 /**

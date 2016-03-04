@@ -1,5 +1,5 @@
 'use strict';
-var Token = require('./model'),
+var Token = require('./../models/token'),
     winston = require('winston');
 
 /**
