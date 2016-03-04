@@ -147,6 +147,26 @@ describe('ENDPOINT /me', () => {
                         done();
                     });
             });
+            it('should return object with field createdAt', (done)=> {
+                request(app)
+                    .get('/my/account')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.should.have.property('createdAt');
+                        done();
+                    });
+            });
+            it('should return object with field updatedAt', (done)=> {
+                request(app)
+                    .get('/my/account')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.should.have.property('updatedAt');
+                        done();
+                    });
+            });
         });
     });
     describe('when GET /my/things request', () => {
@@ -259,6 +279,7 @@ describe('ENDPOINT /me', () => {
                         done();
                     });
             });
+            //@TODO create mor test about token, it should check if "content" field is not returned and etc
 
         });
 

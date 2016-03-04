@@ -20,7 +20,7 @@ var ThingSchema = mongoose.Schema({
         ],
         default: 'RECEPTOR'
     }
-});
+}, {timestamps: true});
 ThingSchema.methods = {
     getId: function () {
         return this.get('_id');

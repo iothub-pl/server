@@ -4,7 +4,7 @@ var TokenSchema = mongoose.Schema({
     content: {
         type: String,
         require: true,
-        select:false
+        select: false
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,7 @@ var TokenSchema = mongoose.Schema({
         ],
         default: true
     }
-});
+}, {timestamps: true});
 
 
 TokenSchema.pre('save', function (next) {

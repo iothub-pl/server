@@ -272,6 +272,26 @@ describe('ENDPOINT /accounts', () => {
                             done();
                         });
                 });
+                it('should return object with field createdAt', (done)=> {
+                    request(app)
+                        .post('/accounts')
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('createdAt');
+                            done();
+                        });
+                });
+                it('should return object with field updatedAt', (done)=> {
+                    request(app)
+                        .post('/accounts')
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('updatedAt');
+                            done();
+                        });
+                });
             });
         });
 
@@ -346,6 +366,17 @@ describe('ENDPOINT /accounts', () => {
                         .end((err, res)=> {
                             if (err) return done(err);
                             res.body.email.should.equal(data.email);
+                            done();
+                        });
+                });
+                it('should return object with field updatedAt', (done)=> {
+                    request(app)
+                        .post('/accounts')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .send(data)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('updatedAt');
                             done();
                         });
                 });
@@ -491,12 +522,30 @@ describe('ENDPOINT /accounts', () => {
                             done();
                         });
                 });
+                it('should return object with field createdAt', (done)=> {
+                    request(app)
+                        .get('/accounts/' + accountAlpha._id)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err)
+                                return done(err);
+                            res.body.should.have.property('createdAt');
+                            done();
+                        });
+                });
+                it('should return object with field updatedAt', (done)=> {
+                    request(app)
+                        .get('/accounts/' + accountAlpha._id)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err)
+                                return done(err);
+                            res.body.should.have.property('updatedAt');
+                            done();
+                        });
+                });
             });
-
-
         });
-
-
     });
     describe('when PUT request with param', ()=> {
         var data = {
@@ -610,6 +659,30 @@ describe('ENDPOINT /accounts', () => {
                             acc.password.should.be.equal(res.body.password);
 
                         })
+                        done();
+                    });
+            });
+            it('should return object with field createdAt', (done)=> {
+                request(app)
+                    .put('/accounts/' + account._id)
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .send(data)
+                    .end((err, res)=> {
+                        if (err)
+                            return done(err);
+                        res.body.should.have.property('createdAt');
+                        done();
+                    });
+            });
+            it('should return object with field updatedAt', (done)=> {
+                request(app)
+                    .put('/accounts/' + account._id)
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .send(data)
+                    .end((err, res)=> {
+                        if (err)
+                            return done(err);
+                        res.body.should.have.property('updatedAt');
                         done();
                     });
             });

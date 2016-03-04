@@ -22,7 +22,9 @@ var Account = require('./../models/account'),
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": "USER"
+ *  "role": "USER",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -60,7 +62,9 @@ exports.getAccount = (req, res)=> {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "name": "Temperature sensor",
  *  "owner": "5682773c21ba9d9736e8237b"
- *  "type": "RECEPTOR"
+ *  "type": "RECEPTOR",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -98,7 +102,9 @@ exports.getThings = (req, res)=> {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "content": "c21ba9d9736e8237b.c21ba9d9736e8237b.c21ba9d9736e8237b",
  *  "owner": "5682773c21ba9d9736e8237b"
- *  "valid": true
+ *  "valid": true,
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.

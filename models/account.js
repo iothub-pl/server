@@ -4,43 +4,42 @@ var mongoose = require('mongoose'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator');
 var AccountSchema = mongoose.Schema({
-        email: {
-            type: String,
-            lowercase: true,
-            trim: true,
-            require: true,
-            unique: true,
-            validate: {
-                validator: function (v) {
-                    return validator.isEmail(v);
-                },
-                message: '{VALUE} is not a valid e-mail!'
-            }
-        },
-        salt: {
-            type: String,
-            select: false,
-            require: true
-        },
-        /**
-         * TODO validate password
-         */
-        password: {
-            type: String,
-            select: false,
-            require: true
-        },
-        role: {
-            type: String,
-            require: true,
-            default: 'USER',
-            enum: [
-                'USER',
-                'ADMIN'
-            ]
+    email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        require: true,
+        unique: true,
+        validate: {
+            validator: function (v) {
+                return validator.isEmail(v);
+            },
+            message: '{VALUE} is not a valid e-mail!'
         }
-    })
-    ;
+    },
+    salt: {
+        type: String,
+        select: false,
+        require: true
+    },
+    /**
+     * TODO validate password
+     */
+    password: {
+        type: String,
+        select: false,
+        require: true
+    },
+    role: {
+        type: String,
+        require: true,
+        default: 'USER',
+        enum: [
+            'USER',
+            'ADMIN'
+        ]
+    }
+}, {timestamps: true});
 AccountSchema.virtual('token')
     .get(function () {
         return {
@@ -53,7 +52,9 @@ AccountSchema.virtual('profil')
         return {
             _id: this._id,
             email: this.email,
-            role: this.role
+            role: this.role,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
         };
     });
 

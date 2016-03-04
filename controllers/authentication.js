@@ -4,8 +4,6 @@ var Account = require('./../models/account'),
     jwt = require('jsonwebtoken'),
     config = require('./../config/config'),
     winston = require('winston');
-
-
 /**
  * @api {post} /authentication Creates authentication token
  * @apiDescription Creates authentication token.

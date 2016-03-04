@@ -165,6 +165,30 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
+                it('should return Array object with two elements with createdAt field', (done)=> {
+                    request(app)
+                        .get('/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.forEach((item)=> {
+                                item.should.have.property('createdAt');
+                            });
+                            done();
+                        });
+                });
+                it('should return Array object with two elements with updatedAt field', (done)=> {
+                    request(app)
+                        .get('/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.forEach((item)=> {
+                                item.should.have.property('updatedAt');
+                            });
+                            done();
+                        });
+                });
             });
         });
     });
@@ -261,6 +285,26 @@ describe('ENDPOINT /tokens', () => {
                         .end((err, res)=> {
                             if (err) return done(err);
                             res.body.should.have.property('valid');
+                            done();
+                        });
+                });
+                it('should return JSON Object with createdAt field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('createdAt');
+                            done();
+                        });
+                });
+                it('should return JSON Object with updatedAt field', (done) => {
+                    request(app)
+                        .get('/tokens/' + tokenId)
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('updatedAt');
                             done();
                         });
                 });

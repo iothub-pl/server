@@ -354,6 +354,7 @@ describe('ENDPOINT /things', (done)=> {
                         done();
                     });
             });
+            //@add mor testt about it ^
         });
     });
     describe('on POST /:id/values request', ()=> {

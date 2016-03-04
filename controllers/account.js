@@ -20,7 +20,9 @@ var Account = require('./../models/account'),
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
  *   "email": "test@test.test",
- *   "role": "USER"
+ *   "role": "USER",
+ *   "createdAt": "2016-03-04 20:09:24.000Z",
+ *   "updatedAt": "2016-03-04 20:09:24.000Z"
  *  }
  * ]
  *
@@ -67,7 +69,9 @@ exports.getAll = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": "USER"
+ *  "role": "USER",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (400) BadRequest Bad Request.
@@ -117,7 +121,9 @@ exports.create = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": "USER"
+ *  "role": "USER",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -171,7 +177,9 @@ exports.getById = (req, res)=> {
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
- *  "role": "USER"
+ *  "role": "USER",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
