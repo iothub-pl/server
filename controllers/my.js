@@ -84,6 +84,40 @@ exports.getThings = (req, res)=> {
 };
 
 /**
+ * @api {get} /my/things/count Returns number of things related to authenticated account
+ * @apiDescription Returns number of things related to authenticated account
+ * @apiName countMyThings
+ * @apiGroup My
+ *
+ * @apiPermission user
+ * @apiHeader {String} Authorization bearer User unique access-key.
+ *
+ *
+ * @apiSuccess (200) {Number} things  Number of things related to authenticated account.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *  "things": 8
+ * }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (404) NotFound Not Found.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
+exports.countMyThings = (req, res)=> {
+    Thing.count()
+        .where('owner').equals(req.user._id)
+        .then((data)=> {
+            res.send({things: data});
+        })
+        .catch((err)=> {
+            winston.debug('GET /my/things when finding things', err);
+            res.sendStatus(500);
+        })
+}
+;
+
+/**
  * @api {get} /my/tokens Returns all tokens related to authenticated account
  * @apiDescription Returns all tokens related to authenticated account
  * @apiName GetTokens
@@ -116,6 +150,39 @@ exports.getTokens = (req, res)=> {
         .where('owner').equals(req.user._id)
         .then((data)=> {
             res.send(data);
+        })
+        .catch((err)=> {
+            winston.debug('GET /my/tokens when finding tokens', err);
+            res.sendStatus(500);
+        })
+};
+
+/**
+ * @api {get} /my/tokens/count Returns number of tokens related to authenticated account
+ * @apiDescription Returns  number of tokens related to authenticated account
+ * @apiName countMYTokens
+ * @apiGroup My
+ *
+ * @apiPermission user
+ * @apiHeader {String} Authorization bearer User unique access-key.
+ *
+ * @apiSuccess (200) {Number} tokens  Number of tokens related to authenticated account.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *  "tokens": 8,
+
+ * }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (404) NotFound Not Found.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
+exports.countMyTokens = (req, res)=> {
+    Token.count()
+        .where('owner').equals(req.user._id)
+        .then((data)=> {
+            res.send({tokens: data});
         })
         .catch((err)=> {
             winston.debug('GET /my/tokens when finding tokens', err);

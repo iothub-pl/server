@@ -11,7 +11,7 @@
   "scripts": {
     "serve": "node ./index.js --harmony",
     "test": "mocha ./**/*test.js -t 20000",
-    "apidoc": "apidoc -i mvc/ -o apidoc/",
+    "apidoc": "apidoc -i controllers -o apidoc/",
     "watch": "npm-watch",
     "install": "npm update && npm build",
     "test-specific": "mocha -t 20000"

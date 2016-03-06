@@ -44,6 +44,42 @@ exports.getAll = (req, res) => {
 }
 
 /**
+ * @api {get} /tokens/count Count tokens
+ * @apiDescription Returns number of elements inToken collection.
+ * @apiName countTokens
+ * @apiGroup Token
+ *
+ * @apiPermission admin
+ * @apiHeader {String} Authorization bearer Users unique access-key.
+ *
+ * @apiSuccess (200) {Number} tokens Number of elements in Token collection.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ *  {
+ *   "tokens": 8,
+ *  }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
+exports.countTokens = (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        res.status(403).send();
+    } else {
+        Token.count()
+            .then((data)=> {
+                res.json({tokens: data});
+            })
+            .catch((err)=> {
+                winston.debug('GET /tokens', err);
+                res.sendStatus(500);
+            });
+    }
+}
+
+
+/**
  * @api {get} /tokens/:id Returns token
  * @apiDescription Returns token.
  * @apiName GetTokenById

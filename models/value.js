@@ -14,7 +14,7 @@ var ValueSchema = mongoose.Schema({
         type: Number,
         required: true
     }
-}, {timestamps: true});
+}, {timestamps: true, strict: true});
 ValueSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
     next();

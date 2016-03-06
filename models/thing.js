@@ -1,4 +1,5 @@
 'use strict';
+
 var mongoose = require('mongoose');
 var Value = require('./value');
 
@@ -20,7 +21,7 @@ var ThingSchema = mongoose.Schema({
         ],
         default: 'RECEPTOR'
     }
-}, {timestamps: true});
+}, {timestamps: true, strict: true});
 ThingSchema.methods = {
     getId: function () {
         return this.get('_id');

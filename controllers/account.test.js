@@ -5,17 +5,48 @@ const should = require('should');
 const Account = require('./../models/account');
 
 describe('ENDPOINT /accounts', () => {
+    var NATO = [
+        'alpha',
+        'bravo',
+        'charlie',
+        'delta',
+        'echo',
+        'foxtrot',
+        'golf',
+        'hotel',
+        'india',
+        'juliet',
+        'kilo',
+        'lima',
+        'mike',
+        'november',
+        'oscar',
+        'papa',
+        'quebec',
+        'romeo',
+        'sierra',
+        'tango',
+        'uniform',
+        'victor',
+        'whiskey',
+        'xray',
+        'yankee',
+        'zulu'
+    ];
+
     var userAlphaAuthenticationToken;
     var userBetaAuthenticationToken;
+
     var accountAlpha;
     var accountBeta;
+
     var alphaData = {
-        email: 'alpha@alpha.alpha',
-        password: 'alpha'
+        email: NATO[0] + '@' + NATO[0] + '.' + NATO[0],
+        password: NATO[0]
     };
     var betaData = {
-        email: 'beta@beta.beta',
-        password: 'beta'
+        email: NATO[1] + '@' + NATO[1] + '.' + NATO[1],
+        password: NATO[1]
     };
     beforeEach('Deletes all accounts', (done)=> {
         Account.remove((err)=> {
@@ -24,23 +55,49 @@ describe('ENDPOINT /accounts', () => {
         });
     });
 
-    beforeEach('Creates alpha account', (done)=> {
-        request(app)
-            .post('/accounts')
-            .send(alphaData)
-            .end((err, res)=> {
-                if (err) return done(err);
-                /**
-                 * Assign alpha user role 1
-                 */
-                accountAlpha = res.body;
-                Account.update({_id: res.body._id}, {role: 'ADMIN'}, (err, res)=> {
-                    if (err) return done(err);
-                    accountAlpha.role = res.role;
-                    done();
-                });
+
+    beforeEach('Polulates account collection', (done)=> {
+        var data = [];
+        for (var i = 0; i < 2; i++) {
+            data.push({
+                email: NATO[i] + '@' + NATO[i] + '.' + NATO[i],
+                password: NATO[i]
+            });
+        }
+        Account
+            .create(data)
+            .then((data)=> {
+                accountAlpha = data[0];
+                accountBeta = data[1];
+                done();
+            })
+            .catch((err)=> {
+                return done(err);
+            });
+
+    });
+
+    beforeEach('Upgrades alpha account role', (done)=> {
+        Account
+            .findOne()
+            .where('_id').equals(accountAlpha._id)
+            .then((data)=> {
+                data.role = 'ADMIN';
+                data
+                    .save()
+                    .then((data) => {
+                        accountAlpha = data;
+                        done();
+                    })
+                    .catch((err)=> {
+                        return done(err);
+                    })
+            })
+            .catch((err)=> {
+                return done(err);
             });
     });
+
     beforeEach('Obtains alpha authentication token', (done)=> {
         request(app)
             .post('/authentication')
@@ -51,16 +108,7 @@ describe('ENDPOINT /accounts', () => {
                 done();
             });
     });
-    beforeEach('Creates beta account', (done)=> {
-        request(app)
-            .post('/accounts')
-            .send(betaData)
-            .end((err, res)=> {
-                if (err) return done(err);
-                accountBeta = res.body;
-                done();
-            });
-    });
+
     beforeEach('Obtains alpha authentication token', (done)=> {
         request(app)
             .post('/authentication')
@@ -72,9 +120,10 @@ describe('ENDPOINT /accounts', () => {
             });
     });
 
-    describe('when GET request', ()=> {
 
+    describe('when GET request', ()=> {
         describe('when account not authenticated', ()=> {
+
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
                     .get('/accounts')
@@ -85,9 +134,7 @@ describe('ENDPOINT /accounts', () => {
                     });
             });
         });
-
         describe('when authenticated', ()=> {
-
             describe('when not authorized', ()=> {
                 it('should return HTTP 403 Forbidden', (done) => {
                     request(app)
@@ -100,7 +147,6 @@ describe('ENDPOINT /accounts', () => {
                         });
                 });
             });
-
             describe('when authorized', ()=> {
                 it('should return HTTP 200 OK', (done) => {
                     request(app)
@@ -146,6 +192,102 @@ describe('ENDPOINT /accounts', () => {
 
         });
     });
+    describe('when GET /count request', ()=> {
+        describe('when account not authenticated', ()=> {
+            it('should return HTTP 401 Unauthorized', (done) => {
+                request(app)
+                    .get('/accounts/count')
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            describe('when not authorized', ()=> {
+                it('should return HTTP 403 Forbidden', (done) => {
+                    request(app)
+                        .get('/accounts/count')
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+            });
+            describe('when authorized', ()=> {
+                it('should return HTTP 200 OK', (done) => {
+                    request(app)
+                        .get('/accounts/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return JSON content', (done) => {
+                    request(app)
+                        .get('/accounts/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return Object', (done) => {
+                    request(app)
+                        .get('/accounts/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.instanceOf(Object);
+                            done();
+                        });
+                });
+                describe('when return Object', ()=> {
+                    it('should contain accounts field', (done) => {
+                        request(app)
+                            .get('/accounts/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('accounts');
+                                done();
+                            });
+                    });
+                    it('accounts field should be a Number', (done) => {
+                        request(app)
+                            .get('/accounts/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.accounts.should.be.instanceof(Number);
+                                done();
+                            });
+                    });
+                    it('accounts field should equal to number of elements in Account collection', (done) => {
+                        request(app)
+                            .get('/accounts/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                /**
+                                 * @TODO count tokens from collection
+                                 */
+                                res.body.accounts.should.equal(2);
+                                done();
+                            });
+                    });
+                });
+            });
+        });
+    });
+
+
     /**
      * @todo Zrobić testy jeśli nie ma jednego z pól
      */
@@ -494,8 +636,13 @@ describe('ENDPOINT /accounts', () => {
                         .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
-                            if (err) return done(err);
-                            res.body._id.should.equal(accountAlpha._id);
+                            if (err) {
+                                return done(err);
+                            }
+                            /**
+                             * @WARNING test it  - _id is objectid so it was needed to cast it to string
+                             */
+                            res.body._id.should.equal(accountAlpha._id.toString());
                             done();
                         });
                 });
@@ -504,8 +651,9 @@ describe('ENDPOINT /accounts', () => {
                         .get('/accounts/' + accountAlpha._id)
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
-                            if (err)
+                            if (err) {
                                 return done(err);
+                            }
                             res.body.should.have.property('email');
                             done();
                         });

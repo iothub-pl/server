@@ -1,5 +1,7 @@
 'use strict';
+
 var mongoose = require('mongoose');
+
 var TokenSchema = mongoose.Schema({
     content: {
         type: String,
@@ -19,9 +21,7 @@ var TokenSchema = mongoose.Schema({
         ],
         default: true
     }
-}, {timestamps: true});
-
-
+}, {timestamps: true, strict: true});
 TokenSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
     next();

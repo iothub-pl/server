@@ -233,10 +233,9 @@ describe('ENDPOINT /things', (done)=> {
                         .end((err)=> {
                             if (err) return done(err);
                             done();
-                        })
+                        });
                 });
             });
-
             describe('when authorized', ()=> {
 
                 describe('when there is zero Thing in database', ()=> {

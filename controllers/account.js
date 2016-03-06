@@ -11,6 +11,10 @@ var Account = require('./../models/account'),
  * @apiPermission admin
  * @apiHeader {String} Authorization bearer Users unique access-key.
  *
+ * @apiParam {String} limit.
+ * @apiParam {String} offset.
+
+ *
  * @apiSuccess (200) {String} _id Id of the User.
  * @apiSuccess (200) {String} email  E-mail of the User.
  * @apiSuccess (200) {String} role  Role of the User.
@@ -38,6 +42,41 @@ exports.getAll = (req, res)=> {
             .find()
             .then((data)=> {
                 res.json(data);
+            })
+            .catch((err)=> {
+                winston.debug('GET /accounts when finding accounts', err);
+                res.sendStatus(500);
+            });
+    }
+};
+/**
+ * @api {get} /accounts/count Count Accounts
+ * @apiDescription  Returns number of elements inAccount Collection
+ * @apiName countAccounts
+ * @apiGroup Account
+ *
+ * @apiPermission admin
+ * @apiHeader {String} Authorization bearer Users unique access-key.
+ *
+ * @apiSuccess (200) {Number} accounts  Number of elements in Account collection.
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ *  {
+ *   "accounts": 8
+ *  }
+ *
+ * @apiError (401) Unauthorized Unauthorized.
+ * @apiError (403) Forbidden Forbidden.
+ * @apiError (500) InternalServerError Internal Server Error.
+ */
+exports.countAccounts = (req, res)=> {
+    if (req.user.role !== 'ADMIN') {
+        res.status(403).send();
+    } else {
+        Account
+            .count()
+            .then((data)=> {
+                res.json({accounts: data});
             })
             .catch((err)=> {
                 winston.debug('GET /accounts when finding accounts', err);
@@ -87,7 +126,7 @@ exports.create = (req, res)=> {
                 res.status(201).json(data);
             })
             .catch((err)=> {
-                 winston.debug('POST /accounts when creating account', err);
+                winston.debug('POST /accounts when creating account', err);
 
                 if (err.errors) {
                     res.sendStatus(400);
@@ -145,7 +184,7 @@ exports.getById = (req, res)=> {
             }
         })
         .catch((err)=> {
-             winston.debug('GET /accounts/' + req.params.id + 'when finding account', err);
+            winston.debug('GET /accounts/' + req.params.id + 'when finding account', err);
             res.sendStatus(404);
         });
 };
@@ -165,7 +204,7 @@ exports.getById = (req, res)=> {
  *     {
  *       "id":  "5682773c21ba9d9736e8237b",
  *       "email": "test@test.test",
- *       "test": "test",
+ *       "password": "test",
  *       "role": "USER"
  *     }
  *
@@ -210,7 +249,7 @@ exports.update = (req, res)=> {
                                 res.json(account);
                             })
                             .catch((err)=> {
-                                 winston.debug('PUT /accounts/' + req.params.id + 'when updating account', err);
+                                winston.debug('PUT /accounts/' + req.params.id + 'when updating account', err);
                                 res.sendStatus(500);
                             });
                     }
@@ -219,7 +258,7 @@ exports.update = (req, res)=> {
                 }
             })
             .catch((err)=> {
-                 winston.debug('PUT /accounts/' + req.params.id + 'when finding account', err);
+                winston.debug('PUT /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {
@@ -266,14 +305,14 @@ exports.delete = (req, res)=> {
                                 res.sendStatus(204);
                             })
                             .catch((err)=> {
-                                 winston.debug('DELETE /accounts/' + req.params.id + 'when deleting account', err);
+                                winston.debug('DELETE /accounts/' + req.params.id + 'when deleting account', err);
                                 res.sendStatus(500);
                             });
                     }
                 }
             })
             .catch((err)=> {
-                 winston.debug('DELETE /accounts/' + req.params.id + 'when finding account', err);
+                winston.debug('DELETE /accounts/' + req.params.id + 'when finding account', err);
                 res.sendStatus(500);
             });
     } else {

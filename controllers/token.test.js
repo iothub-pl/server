@@ -192,6 +192,106 @@ describe('ENDPOINT /tokens', () => {
             });
         });
     });
+
+
+    describe('when GET /count request', ()=> {
+        describe('when account not authenticated', ()=> {
+            it('should return HTTP 401 Unauthorized', (done) => {
+                request(app)
+                    .get('/tokens/count')
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            describe('when not authorized', ()=> {
+                it('should return HTTP 403 Forbidden', (done) => {
+                    request(app)
+                        .get('/tokens/count')
+                        .set('Authorization', userBetaAuthenticationToken)
+                        .expect(403)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+            });
+            describe('when authorized', ()=> {
+                it('should return HTTP 200 OK', (done) => {
+                    request(app)
+                        .get('/tokens/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return content in JSON', (done) => {
+                    request(app)
+                        .get('/tokens/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return Object', (done)=> {
+                    request(app)
+                        .get('/tokens/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.instanceOf(Object);
+                            done();
+                        });
+                });
+                describe('when return Object', ()=> {
+                    it('should contain tokens field', (done)=> {
+                        request(app)
+                            .get('/tokens/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('tokens');
+                                done();
+                            });
+                    });
+                    it('tokens field should be a Number', (done)=> {
+                        request(app)
+                            .get('/tokens/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.tokens.should.be.instanceof(Number);
+                                done();
+                            });
+                    });
+                    it('accounts field should equal to number of elements in Token collection', (done) => {
+                        request(app)
+                            .get('/tokens/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                /**
+                                 * @TODO count tokens from collection
+                                 */
+                                res.body.tokens.should.equal(2);
+                                done();
+                            });
+                    });
+
+                });
+
+            });
+        });
+    });
+
+
     describe('when GET request with param', ()=> {
         describe('not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {

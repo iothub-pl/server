@@ -1,8 +1,10 @@
 'use strict';
+
 var mongoose = require('mongoose'),
     crypto = require('crypto'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator');
+
 var AccountSchema = mongoose.Schema({
     email: {
         type: String,
@@ -20,7 +22,8 @@ var AccountSchema = mongoose.Schema({
     salt: {
         type: String,
         select: false,
-        require: true
+        require: true,
+        set: generateSalt
     },
     /**
      * TODO validate password
@@ -39,7 +42,7 @@ var AccountSchema = mongoose.Schema({
             'ADMIN'
         ]
     }
-}, {timestamps: true});
+}, {timestamps: true, strict: true});
 AccountSchema.virtual('token')
     .get(function () {
         return {
@@ -85,33 +88,35 @@ AccountSchema.methods = {
     setRole: function (role) {
         return this.set('role', role);
     },
+
     /**
      * @returns {*}
      */
-    generateSalt: function () {
-        return this.set('salt', crypto.randomBytes(16)
-            .toString('base64'));
+    regenerateSalt: function () {
+        return this.set('salt', generateSalt());
     },
     /**
      * @returns {*}
      */
     getSalt: function () {
-        if (!this.salt) return this.generateSalt().getSalt();
-        else return this.get('salt');
-    },
-    /**
-     * @param {String} password
-     * @returns {*}
-     * @todo przetestować
-     */
-    encryptPassword: function (password) {
-        if (typeof(password) !== "string") {
-            password = '';
+        if (!this.get('salt')) {
+            return this.regenerateSalt().getSalt();
         }
-        return crypto
-            .pbkdf2Sync(password, new Buffer(this.getSalt(), 'base64'), 10000, 64)
-            .toString('base64');
+        return this.get('salt');
     },
+    // /**
+    //  * @param {String} password
+    //  * @returns {*}
+    //  * @todo przetestować
+    //  */
+    // encryptPassword: function (password) {
+    //     if (!password) {
+    //         password = '';
+    //     }
+    //     return crypto
+    //         .pbkdf2Sync(password, new Buffer(this.getSalt(), 'base64'), 10000, 64)
+    //         .toString('base64');
+    // },
     /**
      * @returns {*}
      */
@@ -123,20 +128,47 @@ AccountSchema.methods = {
      * @returns {*}
      */
     setPassword: function (password) {
-        return this.set('password', this.encryptPassword(password));
+        return this.set('password', password);
     },
     /**
      * @param {String} password
      * @returns {boolean}
      */
     authenticate: function (password) {
-        return this.encryptPassword(password) === this.getPassword();
+        return encryptPassword(password, this.getSalt()) === this.getPassword();
     }
 };
+/**
+ * Generates salt
+ * @returns {String}
+ */
+function generateSalt() {
+    return crypto
+        .randomBytes(16)
+        .toString('base64');
+}
+/**
+ * Encrypts password
+ * @param password
+ * @param salt
+ * @returns {String}
+ */
+function encryptPassword(password, salt) {
+    return crypto
+        .pbkdf2Sync(password, new Buffer(salt, 'base64'), 10000, 64)
+        .toString('base64');
+};
+
 AccountSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
+
+    if (this.isModified('password')) {
+        this.set('password', encryptPassword(this.getPassword(), this.regenerateSalt().getSalt()));
+    }
     next();
 });
+
+
 AccountSchema.post('save', function () {
     // if (this.wasNew) {
     // }

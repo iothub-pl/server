@@ -226,6 +226,71 @@ describe('ENDPOINT /me', () => {
             });
         });
     });
+
+    describe('when GET /my/things/count request', () => {
+        describe('when not authenticated', ()=> {
+            it('should return HTTP 401 code', (done)=> {
+                request(app)
+                    .get('/my/things/count')
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            it('should return HTTP 200 code', (done)=> {
+                request(app)
+                    .get('/my/things/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect(200)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return JSON content', (done)=> {
+                request(app)
+                    .get('/my/things/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect('Content-Type', /json/)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return Object', (done)=> {
+                request(app)
+                    .get('/my/things/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.should.be.instanceOf(Object);
+                        done();
+                    });
+            });
+
+            describe('when userAlpha has no things registered', ()=> {
+                describe('when return object', ()=> {
+                    it('tokens field should be exact as number of elements of userAplha Things', (done)=> {
+                        request(app)
+                            .get('/my/things/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                /**
+                                 * @TODO Should get value from DB
+                                 */
+                                res.body.things.should.be.equal(0);
+                                done();
+                            });
+                    });
+                });
+            });
+        });
+    });
+
     describe('when GET /my/tokens request', ()=> {
         describe('when not authenticated', ()=> {
             it('should return HTTP 401 code', (done)=> {
@@ -283,5 +348,70 @@ describe('ENDPOINT /me', () => {
 
         });
 
+    });
+
+
+    describe('when GET /my/tokens/count request', () => {
+        describe('when not authenticated', ()=> {
+            it('should return HTTP 401 code', (done)=> {
+                request(app)
+                    .get('/my/tokens/count')
+                    .expect(401)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+        });
+        describe('when authenticated', ()=> {
+            it('should return HTTP 200 code', (done)=> {
+                request(app)
+                    .get('/my/tokens/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect(200)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return JSON content', (done)=> {
+                request(app)
+                    .get('/my/tokens/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .expect('Content-Type', /json/)
+                    .end((err)=> {
+                        if (err) return done(err);
+                        done();
+                    });
+            });
+            it('should return Object', (done)=> {
+                request(app)
+                    .get('/my/tokens/count')
+                    .set('Authorization', userAlphaAuthenticationToken)
+                    .end((err, res)=> {
+                        if (err) return done(err);
+                        res.body.should.be.instanceOf(Object);
+                        done();
+                    });
+            });
+
+            describe('when userAlpha has no tokens registered', ()=> {
+                describe('when return object', ()=> {
+                    it('tokens field should be exact as number of elements of userAplha tokens', (done)=> {
+                        request(app)
+                            .get('/my/tokens/count')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                /**
+                                 * @TODO Should get value from DB
+                                 */
+                                res.body.tokens.should.be.equal(1);
+                                done();
+                            });
+                    });
+                });
+            });
+        });
     });
 });
