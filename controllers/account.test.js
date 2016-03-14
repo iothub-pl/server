@@ -56,7 +56,7 @@ describe('ENDPOINT /accounts', () => {
     });
 
 
-    beforeEach('Polulates account collection', (done)=> {
+    beforeEach('Polulates 2 account in Account collection', (done)=> {
         var data = [];
         for (var i = 0; i < 2; i++) {
             data.push({
@@ -77,6 +77,7 @@ describe('ENDPOINT /accounts', () => {
 
     });
 
+
     beforeEach('Upgrades alpha account role', (done)=> {
         Account
             .findOne()
@@ -86,7 +87,8 @@ describe('ENDPOINT /accounts', () => {
                 data
                     .save()
                     .then((data) => {
-                        accountAlpha = data;
+                        // console.log(data);
+                        accountAlpha = data
                         done();
                     })
                     .catch((err)=> {
@@ -109,7 +111,7 @@ describe('ENDPOINT /accounts', () => {
             });
     });
 
-    beforeEach('Obtains alpha authentication token', (done)=> {
+    beforeEach('Obtains beta authentication token', (done)=> {
         request(app)
             .post('/authentication')
             .send(betaData)
@@ -178,21 +180,61 @@ describe('ENDPOINT /accounts', () => {
                             done();
                         });
                 });
-                it('should return Array with two elements', (done) => {
-                    request(app)
-                        .get('/accounts')
-                        .set('Authorization', userAlphaAuthenticationToken)
-                        .end((err, res)=> {
-                            if (err) return done(err);
-                            res.body.length.should.equal(2);
-                            done();
-                        });
+                describe('when using pagination options in query', ()=> {
+                    beforeEach('Adds accounts to Account collection', (done)=> {
+                        var data = [];
+                        for (var i = 2; i < NATO.length; i++) {
+                            data.push({
+                                email: NATO[i] + '@' + NATO[i] + '.' + NATO[i],
+                                password: NATO[i]
+                            });
+                        }
+
+                        Account
+                            .create(data)
+                            .then((data)=> {
+                                done();
+                            })
+                            .catch((err)=> {
+                                return done(err);
+                            });
+
+                    });
+                    it('length should equal 20 ', (done) => {
+                        request(app)
+                            .get('/accounts')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                        res.body.length.should.equal(20);
+                                        done();
+                            });
+                    });
+
+                    it('10 elements should be skipped', (done) => {
+                        request(app)
+                            .get('/accounts?skip=10')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                Account
+                                    .count()
+                                    .then((data)=> {
+                                        res.body.length.should.equal(data-10);
+                                        done();
+                                    }).catch((err)=> {
+                                    if (err) return done(err);
+                                });
+                            });
+                    });
                 });
             });
 
         });
     });
-    describe('when GET /count request', ()=> {
+    describe('when GET /accounts/count request', ()=> {
+
+
         describe('when account not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -275,11 +317,14 @@ describe('ENDPOINT /accounts', () => {
                             .set('Authorization', userAlphaAuthenticationToken)
                             .end((err, res)=> {
                                 if (err) return done(err);
-                                /**
-                                 * @TODO count tokens from collection
-                                 */
-                                res.body.accounts.should.equal(2);
-                                done();
+                                Account
+                                    .count()
+                                    .then((data)=> {
+                                        res.body.accounts.should.equal(data);
+                                        done();
+                                    }).catch((err)=> {
+                                    if (err) return done(err);
+                                });
                             });
                     });
                 });
@@ -291,7 +336,7 @@ describe('ENDPOINT /accounts', () => {
     /**
      * @todo Zrobić testy jeśli nie ma jednego z pól
      */
-    describe('when POST request', ()=> {
+    describe('when POST /accounts request', ()=> {
         describe('when not authenticated', ()=> {
             var data = {
                 email: 'test@test.test',
@@ -525,7 +570,7 @@ describe('ENDPOINT /accounts', () => {
             });
         });
     });
-    describe('when GET request with param', ()=> {
+    describe('when GET  /accounts/:id request', ()=> {
         describe('when not authenticated', () => {
             var data = {
                 email: 'test@test.test',
@@ -695,7 +740,7 @@ describe('ENDPOINT /accounts', () => {
             });
         });
     });
-    describe('when PUT request with param', ()=> {
+    describe('when PUT /accounts/:id', ()=> {
         var data = {
             _id: 234234,
             email: 's',
@@ -836,7 +881,7 @@ describe('ENDPOINT /accounts', () => {
             });
         });
     });
-    describe('when DELETE request with param', ()=> {
+    describe('when DELETE /accounts/:id', ()=> {
         var account;
 
         describe('when not authenticated', ()=> {

@@ -4,7 +4,7 @@ const Account = require('./../models/account');
 const Token = require('./../models/token');
 
 var jwt = require('jsonwebtoken');
-var config = require('./../config/config');
+var config = require('./../configs/app');
 
 exports.setup = (app)=> {
     app.use(passport.initialize());

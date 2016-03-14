@@ -1,4 +1,4 @@
-var config = require('././config');
+var config = require('./../configs/app');
 
 module.exports = (req, res, next)=> {
     req.query.skip = Math.abs(parseInt(req.query.skip) || config.REQ.QUERY.DEFAULT.SKIP);

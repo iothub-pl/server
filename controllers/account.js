@@ -2,6 +2,8 @@
 var Account = require('./../models/account'),
     validator = require('validator'),
     winston = require('winston');
+
+
 /**
  * @api {get} /accounts Returns list of users
  * @apiDescription Returns list of users.
@@ -12,7 +14,7 @@ var Account = require('./../models/account'),
  * @apiHeader {String} Authorization bearer Users unique access-key.
  *
  * @apiParam {String} limit.
- * @apiParam {String} offset.
+ * @apiParam {String} skip.
 
  *
  * @apiSuccess (200) {String} _id Id of the User.
@@ -40,6 +42,8 @@ exports.getAll = (req, res)=> {
     } else {
         Account
             .find()
+            .skip(req.query.skip)
+            .limit(req.query.limit)
             .then((data)=> {
                 res.json(data);
             })

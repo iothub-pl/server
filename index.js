@@ -5,7 +5,7 @@ var
     app = require('express')(),
 
     mongoose = require('mongoose'),
-    config = require('./config/config'),
+    config = require('./configs/app'),
     bodyParser = require('body-parser'),
     passport = require('passport'),
     helmet = require('helmet'),
@@ -85,7 +85,7 @@ app.use(compression());
 mongoose.connect('mongodb://' + config.DATABASE.HOST + ':' + config.DATABASE.PORT + '/' + config.DATABASE.DB);
 
 require('./middlewares/passport').setup(app);
-require('./config/routes')(app);
+require('./configs/routes')(app);
 
 
 var db = mongoose.connection;

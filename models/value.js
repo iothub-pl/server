@@ -10,11 +10,13 @@ var ValueSchema = mongoose.Schema({
         ref: 'Value',
         required: true
     },
+    
     value: {
         type: Number,
         required: true
     }
 }, {timestamps: true, strict: true});
+
 ValueSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
     next();
