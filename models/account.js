@@ -3,7 +3,8 @@
 var mongoose = require('mongoose'),
     crypto = require('crypto'),
     validator = require('validator'),
-    uniqueValidator = require('mongoose-unique-validator');
+    uniqueValidator = require('mongoose-unique-validator'),
+    winston = require('winston');
 
 var AccountSchema = mongoose.Schema({
     email: {
@@ -23,7 +24,7 @@ var AccountSchema = mongoose.Schema({
         type: String,
         select: false,
         require: true,
-        set: generateSalt
+        default: generateSalt
     },
     /**
      * TODO validate password
@@ -170,8 +171,25 @@ AccountSchema.pre('save', function (next) {
 
 
 AccountSchema.post('save', function () {
-    // if (this.wasNew) {
-    // }
+    if (this.wasNew) {
+        var nodemailer = require('nodemailer');
+        /**
+         * @TODO create tests
+         */
+        var transporter = nodemailer.createTransport('direct:?name=hostname');
+        var mailOptions = {
+            from: '"Fred Foo" <no-reply@iothub.pl>',
+            to: this.email,
+            subject: 'ioTHub - Account created',
+            html: '<b>Hello ' + this.email + '. Your account has been created!</b>'
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                return winston.log(error);
+            }
+            winston.log('Message sent: ', info);
+        });
+    }
 });
 AccountSchema.plugin(uniqueValidator);
 /**

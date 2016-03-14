@@ -33,6 +33,7 @@
     "mongoose": "^4.2.6",
     "mongoose-unique-validator": "^0.6.2",
     "morgan": "^1.6.1",
+    "nodemailer": "^2.3.0",
     "npm": "^3.5.2",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
