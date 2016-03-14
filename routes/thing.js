@@ -3,9 +3,10 @@
 var express = require('express'),
     controller = require('./../controllers/thing'),
     router = express.Router(),
-    passport = require('passport');
+    passport = require('passport'),
+    pagination = require('./../middlewares/pagination');
 
-router.get('/', passport.authenticate('bearer', {session: false}), controller.getAll);
+router.get('/', passport.authenticate('bearer', {session: false}), pagination, controller.getAll);
 router.get('/count', passport.authenticate('bearer', {session: false}), controller.count);
 router.post('/', passport.authenticate('bearer', {session: false}), controller.register);
 router.get('/:id', passport.authenticate('bearer', {session: false}), controller.getById);
