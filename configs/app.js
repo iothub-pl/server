@@ -24,10 +24,8 @@ module.exports = {
     JWT: {
         SECRET: process.env.SECRET || 'secret'
     },
-    /**
-     * @todo add tests
-     */
-    REQ:{
+
+    REQ: {
         QUERY: {
             DEFAULT: {
                 SKIP: 0,

@@ -121,11 +121,8 @@ describe('ENDPOINT /accounts', () => {
                 done();
             });
     });
-
-
     describe('when GET request', ()=> {
         describe('when account not authenticated', ()=> {
-
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
                     .get('/accounts')

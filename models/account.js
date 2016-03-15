@@ -5,6 +5,9 @@ var mongoose = require('mongoose'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator'),
     winston = require('winston');
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport('direct:?name=hostname');
+
 
 var AccountSchema = mongoose.Schema({
     email: {
@@ -171,25 +174,23 @@ AccountSchema.pre('save', function (next) {
 
 
 AccountSchema.post('save', function () {
-    if (this.wasNew) {
-        var nodemailer = require('nodemailer');
+    // if (this.wasNew) {
         /**
          * @TODO create tests
          */
-        var transporter = nodemailer.createTransport('direct:?name=hostname');
-        var mailOptions = {
-            from: '"Fred Foo" <no-reply@iothub.pl>',
-            to: this.email,
-            subject: 'ioTHub - Account created',
-            html: '<b>Hello ' + this.email + '. Your account has been created!</b>'
-        };
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                return winston.log(error);
-            }
-            winston.log('Message sent: ', info);
-        });
-    }
+        // var mailOptions = {
+        //     from: '"Fred Foo" <no-reply@iothub.pl>',
+        //     to: this.email,
+        //     subject: 'ioTHub - Account created',
+        //     html: '<b>Hello ' + this.email + '. Your account has been created!</b>'
+        // };
+        // transporter.sendMail(mailOptions, function (error, info) {
+        //     if (error) {
+        //         return winston.log(error);
+        //     }
+        //     winston.log('Message sent: ', info);
+        // });
+    // }
 });
 AccountSchema.plugin(uniqueValidator);
 /**
