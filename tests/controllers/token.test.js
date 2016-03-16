@@ -1,9 +1,9 @@
 'use strict';
-const app = require('../index');
+const app = require('../../index');
 const request = require('supertest');
 const should = require('should');
-const Account = require('./../models/account');
-const Token = require('./../models/token');
+const Account = require('./../../models/account');
+const Token = require('./../../models/token');
 
 describe('ENDPOINT /tokens', () => {
     var userAlphaAuthenticationToken;

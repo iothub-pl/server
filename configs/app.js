@@ -24,7 +24,6 @@ module.exports = {
     JWT: {
         SECRET: process.env.SECRET || 'secret'
     },
-
     REQ: {
         QUERY: {
             DEFAULT: {

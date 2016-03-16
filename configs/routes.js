@@ -12,7 +12,6 @@ module.exports = function (app) {
     app.use('/accounts', require('./../routes/account'));
     app.use('/authentication', require('./../routes/authentication'));
     app.use('/my', require('./../routes/my'));
-
     app.use('/tokens', require('./../routes/token'));
 
 };
