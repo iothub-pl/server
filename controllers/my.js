@@ -72,7 +72,10 @@ exports.getAccount = (req, res)=> {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getThings = (req, res)=> {
+
     Thing.find()
+        .skip(req.query.skip)
+        .limit(req.query.limit)
         .where('owner').equals(req.user._id)
         .then((data)=> {
             res.send(data);
@@ -147,6 +150,8 @@ exports.countMyThings = (req, res)=> {
  */
 exports.getTokens = (req, res)=> {
     Token.find()
+        .skip(req.query.skip)
+        .limit(req.query.limit)
         .where('ownerId').equals(req.user._id)
         .then((data)=> {
             res.send(data);

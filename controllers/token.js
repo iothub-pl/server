@@ -33,6 +33,8 @@ exports.getAll = (req, res) => {
         res.status(403).send();
     } else {
         Token.find()
+            .skip(req.query.skip)
+            .limit(req.query.limit)
             .then((data)=> {
                 res.json(data);
             })

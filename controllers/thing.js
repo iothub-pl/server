@@ -36,6 +36,8 @@ exports.getAll = (req, res) => {
         res.sendStatus(403);
     } else {
         Thing.find()
+            .skip(req.query.skip)
+            .limit(req.query.limit)
             .then((data) => {
                 res.json(data);
             })
