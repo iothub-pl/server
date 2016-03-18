@@ -18,7 +18,8 @@
     "apidoc": "apidoc -i controllers -o apidoc/",
     "watch": "npm-watch",
     "install": "npm update && npm build",
-    "test-specific": "mocha -t 20000"
+    "test-specific": "mocha -t 20000",
+    "test-models":"mocha -t 20000 ./tests/models/*"
   },
   "watch": {
     "test": "*/*.js"
@@ -30,6 +31,7 @@
     "cors": "^2.7.1",
     "crypto": "0.0.3",
     "express": "^4.13.3",
+    "express-useragent": "^0.2.4",
     "helmet": "^1.0.1",
     "jsonwebtoken": "^5.4.1",
     "mongodb": "^2.0.48",

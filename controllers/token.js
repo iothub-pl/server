@@ -1,5 +1,5 @@
 'use strict';
-var Token = require('./../models/token'),
+var Token = require('./../models/authentication'),
     winston = require('winston');
 
 /**
@@ -112,7 +112,7 @@ exports.getById = (req, res) => {
             if (!data) {
                 res.sendStatus(404);
             }
-            if (req.user.role === 'ADMIN' || req.user._id === data.owner) {
+            if (req.user.hasRole('ADMIN') || req.user.getId() === data.getOwnerId()) {
                 res.json(data);
             } else {
                 res.status(403).send();
@@ -156,9 +156,10 @@ exports.updateWithId = (req, res) => {
             if (!data) {
                 res.sendStatus(404);
             }
-            if (req.user.role === 'ADMIN' || req.user._id === data.owner) {
-                data.valid = req.body.valid;
-                data.save()
+            if (req.user.hasRole('ADMIN') || req.user.getId() === data.getOwnerId()) {
+                data
+                    .setValid(req.body.valid)
+                    .save()
                     .then((data)=> {
                         res.json(data);
                     })

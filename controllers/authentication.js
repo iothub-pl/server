@@ -1,8 +1,6 @@
 'use strict';
 var Account = require('./../models/account'),
-    Token = require('./../models/token'),
-    jwt = require('jsonwebtoken'),
-    config = require('./../configs/app'),
+    Authentication = require('./../models/authentication'),
     winston = require('winston');
 /**
  * @api {post} /authentication Creates authentication token
@@ -40,13 +38,11 @@ exports.token = (req, res)=> {
                 res.sendStatus(400);
             } else {
                 if (account.authenticate(req.body.password)) {
-
-                    var token = new Token();
-                    token.content = jwt.sign(account.token, config.JWT.SECRET);
-                    token.owner = account._id;
-                    token.save()
-                        .then((data)=> {
-                            res.json({token: data.content});
+                    account
+                        .createAuthenticationEntity()
+                        .save()
+                        .then((authentication)=> {
+                            res.json({token: authentication.getToken()});
                         }).catch((err)=> {
                         winston.debug('POST /authentication when saving token', err);
                         res.sendStatus(500);

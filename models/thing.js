@@ -22,34 +22,79 @@ var ThingSchema = mongoose.Schema({
         default: 'RECEPTOR'
     }
 }, {timestamps: true, strict: true});
-ThingSchema.methods = {
-    getId: function () {
-        return this.get('_id');
-    },
-    getName: function () {
-        return this.get('name');
-    },
-    setName: function (name) {
-        return this.set('name', name);
-    },
-    setOwnerId: function (userId) {
-        return this.set('owner', userId);
-    },
-    setOwner: function (user) {
-        return this.set('owner', user._id);
-    },
-    getValues: function () {
-        return Value.find()
-            .where('thingId').equals(this._id)
-            .exec();
-    }
+/**
+ *
+ * @returns {*}
+ */
+ThingSchema.methods.getId = () => {
+    return this.get('_id');
 };
-ThingSchema.pre('save', function (next) {
+/**
+ *
+ * @returns {*}
+ */
+ThingSchema.methods.getName = () => {
+    return this.get('name');
+};
+/**
+ *
+ * @param name
+ * @returns {*}
+ */
+ThingSchema.methods.setName = (name) => {
+    return this.set('name', name);
+};
+/**
+ *
+ * @returns {*}
+ */
+ThingSchema.methods.getOwnerId = () => {
+    return this.get('owner');
+};
+/**
+ *
+ * @param userId
+ * @returns {*}
+ */
+ThingSchema.methods.setOwnerId = (userId) => {
+    return this.set('owner', userId);
+};
+/**
+ *
+ * @param user
+ * @returns {*}
+ */
+ThingSchema.methods.setOwner = (user) => {
+    return this.set('owner', user.getId());
+};
+/**
+ *
+ * @returns {Promise|*|Array|{index: number, input: string}}
+ */
+ThingSchema.methods.getValues = () => {
+    return this.model('Value').find() .where('thingId').equals(this.getId());
+};
+/**
+ *
+ * @returns Date
+ */
+ThingSchema.methods.getDateOfCreation = () => {
+    return this.get('createdAt');
+};
+/**
+ *
+ * @returns Date
+ */
+ThingSchema.methods.getDateOfLastUpdate = () => {
+    return this.get('updatedAt');
+};
+
+ThingSchema.pre('save', (next) => {
     this.wasNew = this.isNew;
     next();
 });
-ThingSchema.post('save', function () {
+ThingSchema.post('save', () => {
     // if (this.wasNew) {
-    // }
+    //}
 });
 module.exports = mongoose.model('Thing', ThingSchema);

@@ -3,7 +3,7 @@ const app = require('../../index');
 const request = require('supertest');
 const should = require('should');
 const Account = require('./../../models/account');
-const Token = require('./../../models/token');
+const Token = require('./../../models/authentication');
 
 describe('ENDPOINT /tokens', () => {
     var userAlphaAuthenticationToken;
@@ -364,7 +364,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.not.have.property('content');
+                            res.body.should.not.have.property('token');
                             done();
                         });
                 });
@@ -374,7 +374,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.have.property('owner');
+                            res.body.should.have.property('ownerId');
                             done();
                         });
                 });
@@ -498,14 +498,14 @@ describe('ENDPOINT /tokens', () => {
                             done();
                         });
                 });
-                it('should return JSON Object with owner field', (done) => {
+                it('should return JSON Object with ownerId field', (done) => {
                     request(app)
                         .put('/tokens/' + tokenId)
                         .set('Authorization', userAlphaAuthenticationToken)
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.have.property('owner');
+                            res.body.should.have.property('ownerId');
                             done();
                         });
                 });

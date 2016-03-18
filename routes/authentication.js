@@ -1,4 +1,5 @@
 'use strict';
+var useragent = require('express-useragent');
 module.exports = require('express')
     .Router()
-    .post('/', require('./../controllers/authentication').token);
+    .post('/', useragent.express(), require('./../controllers/authentication').token);

@@ -4,7 +4,11 @@ var mongoose = require('mongoose'),
     crypto = require('crypto'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator'),
-    winston = require('winston');
+    winston = require('winston'),
+    config = require('./../configs/app'),
+    jwt = require('jsonwebtoken'),
+    Authentication = require('./authentication');
+
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport('direct:?name=hostname');
 
@@ -47,13 +51,7 @@ var AccountSchema = mongoose.Schema({
         ]
     }
 }, {timestamps: true, strict: true});
-AccountSchema.virtual('token')
-    .get(function () {
-        return {
-            _id: this._id,
-            role: this.role
-        };
-    });
+
 AccountSchema.virtual('profil')
     .get(function () {
         return {
@@ -65,83 +63,112 @@ AccountSchema.virtual('profil')
         };
     });
 
-AccountSchema.methods = {
-    /**
-     * @returns {*}
-     */
-    getEmail: function () {
-        return this.get('email');
-    },
-    /**
-     * @param {String} email
-     * @returns {*}
-     */
-    setEmail: function (str) {
-        return this.set('email', str);
-    },
-    /**
-     * @returns {*}
-     */
-    getRole: function () {
-        return this.get('role');
-    },
-    /**
-     * @param {Number} role
-     * @returns {*}
-     */
-    setRole: function (role) {
-        return this.set('role', role);
-    },
+/**
+ *
+ * @param data
+ * @returns {*}
+ */
+AccountSchema.methods.getId = function () {
+    return this.get('_id');
+}
 
-    /**
-     * @returns {*}
-     */
-    regenerateSalt: function () {
-        return this.set('salt', generateSalt());
-    },
-    /**
-     * @returns {*}
-     */
-    getSalt: function () {
-        if (!this.get('salt')) {
-            return this.regenerateSalt().getSalt();
-        }
+/**
+ * @returns {*}
+ */
+AccountSchema.methods.getEmail = function () {
+    return this.get('email');
+};
+/**
+ * @param {String} email
+ * @returns {*}
+ */
+AccountSchema.methods.setEmail = function (str) {
+    return this.set('email', str);
+};
+/**
+ * @returns {*}
+ */
+AccountSchema.methods.getRole = function () {
+    return this.get('role');
+};
+/**
+ *
+ * @param role
+ * @returns {boolean}
+ */
+AccountSchema.methods.hasRole = function (role) {
+    return this.getRole() === role;
+}
+/**
+ * @param {Number} role
+ * @returns {*}
+ */
+AccountSchema.methods.setRole = function (role) {
+    return this.set('role', role);
+};
+/**
+ * @returns {*}
+ */
+AccountSchema.methods.regenerateSalt = function () {
+    return this.set('salt', generateSalt());
+};
+/**
+ * @returns {*}
+ */
+AccountSchema.methods.getSalt = function () {
+    if (!this.get('salt')) {
+        return this.regenerateSalt().getSalt();
+    } else {
         return this.get('salt');
-    },
-    // /**
-    //  * @param {String} password
-    //  * @returns {*}
-    //  * @todo przetestować
-    //  */
-    // encryptPassword: function (password) {
-    //     if (!password) {
-    //         password = '';
-    //     }
-    //     return crypto
-    //         .pbkdf2Sync(password, new Buffer(this.getSalt(), 'base64'), 10000, 64)
-    //         .toString('base64');
-    // },
-    /**
-     * @returns {*}
-     */
-    getPassword: function () {
-        return this.get('password');
-    },
-    /**
-     * @param {String} password
-     * @returns {*}
-     */
-    setPassword: function (password) {
-        return this.set('password', password);
-    },
-    /**
-     * @param {String} password
-     * @returns {boolean}
-     */
-    authenticate: function (password) {
-        return encryptPassword(password, this.getSalt()) === this.getPassword();
     }
 };
+/**
+ * @returns {*}
+ */
+AccountSchema.methods.getPassword = function () {
+    return this.get('password');
+};
+/**
+ * @param {String} password
+ * @returns {*}
+ */
+AccountSchema.methods.setPassword = function (password) {
+    return this.set('password', password);
+};
+/**
+ * @param {String} password
+ * @returns {boolean}
+ */
+AccountSchema.methods.authenticate = function (password) {
+    return encryptPassword(password, this.getSalt()) === this.getPassword();
+};
+
+
+AccountSchema.methods.createAuthenticationEntity = function () {
+    return new Authentication()
+        .setToken(jwt.sign({
+            _id: this.getId(),
+            role: this.getRole()
+        }, config.JWT.SECRET))
+        .setOwnerId(this.getId());
+};
+
+/**
+ *
+ * @returns Date
+ */
+AccountSchema.methods.getDateOfCreation = function () {
+    return this.get('createdAt');
+}
+/**
+ *
+ * @returns Date
+ */
+AccountSchema.methods.getDateOfLastUpdate = function () {
+    return this.get('updatedAt');
+}
+
+
 /**
  * Generates salt
  * @returns {String}
@@ -175,21 +202,21 @@ AccountSchema.pre('save', function (next) {
 
 AccountSchema.post('save', function () {
     // if (this.wasNew) {
-        /**
-         * @TODO create tests
-         */
-        // var mailOptions = {
-        //     from: '"Fred Foo" <no-reply@iothub.pl>',
-        //     to: this.email,
-        //     subject: 'ioTHub - Account created',
-        //     html: '<b>Hello ' + this.email + '. Your account has been created!</b>'
-        // };
-        // transporter.sendMail(mailOptions, function (error, info) {
-        //     if (error) {
-        //         return winston.log(error);
-        //     }
-        //     winston.log('Message sent: ', info);
-        // });
+    /**
+     * @TODO create tests
+     */
+    // var mailOptions = {
+    //     from: '"Fred Foo" <no-reply@iothub.pl>',
+    //     to: this.email,
+    //     subject: 'ioTHub - Account created',
+    //     html: '<b>Hello ' + this.email + '. Your account has been created!</b>'
+    // };
+    // transporter.sendMail(mailOptions, function (error, info) {
+    //     if (error) {
+    //         return winston.log(error);
+    //     }
+    //     winston.log('Message sent: ', info);
+    // });
     // }
 });
 AccountSchema.plugin(uniqueValidator);

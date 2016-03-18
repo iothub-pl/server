@@ -1,7 +1,7 @@
 'use strict';
 var Account = require('./../models/account'),
     Thing = require('./../models/thing'),
-    Token = require('./../models/token'),
+    Token = require('./../models/authentication'),
     winston = require('winston');
 
 /**
@@ -147,7 +147,7 @@ exports.countMyThings = (req, res)=> {
  */
 exports.getTokens = (req, res)=> {
     Token.find()
-        .where('owner').equals(req.user._id)
+        .where('ownerId').equals(req.user._id)
         .then((data)=> {
             res.send(data);
         })
@@ -180,7 +180,7 @@ exports.getTokens = (req, res)=> {
  */
 exports.countMyTokens = (req, res)=> {
     Token.count()
-        .where('owner').equals(req.user._id)
+        .where('ownerId').equals(req.user._id)
         .then((data)=> {
             res.send({tokens: data});
         })

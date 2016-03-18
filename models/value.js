@@ -10,12 +10,71 @@ var ValueSchema = mongoose.Schema({
         ref: 'Value',
         required: true
     },
-    
+
     value: {
         type: Number,
         required: true
     }
 }, {timestamps: true, strict: true});
+
+/**
+ *
+ * @returns {*}
+ */
+ValueSchema.methods.getId = ()=> {
+    return this.get('_id');
+};
+/**
+ *
+ * @returns {*}
+ */
+ValueSchema.methods.getThingId = ()=> {
+    return this.get('thingId');
+}
+/**
+ *
+ */
+ValueSchema.methods.setThingId = (thingId)=> {
+    return this.set('thingId', thingId);
+}
+/**
+ *
+ * @param thing
+ * @returns {*}
+ */
+ValueSchema.methods.setThing = (thing)=> {
+    return this.setThingId(thing.getId());
+}
+/**
+ *
+ * @returns {*}
+ */
+ValueSchema.getValue = ()=> {
+    return this.get('value');
+}
+/**
+ *
+ * @param value
+ * @returns {*}
+ */
+ValueSchema.setValue = (value)=> {
+    return this.set('value', value);
+}
+
+/**
+ *
+ * @returns Date
+ */
+ValueSchema.methods.getDateOfCreation = function () {
+    return this.get('createdAt');
+}
+/**
+ *
+ * @returns Date
+ */
+ValueSchema.methods.getDateOfLastUpdate = function () {
+    return this.get('updatedAt');
+}
 
 ValueSchema.pre('save', function (next) {
     this.wasNew = this.isNew;

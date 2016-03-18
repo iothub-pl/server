@@ -37,7 +37,7 @@ var Account = require('./../models/account'),
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res)=> {
-    if (req.user.role !== 'ADMIN') {
+    if (!req.user.hasRole('ADMIN')) {
         res.status(403).send();
     } else {
         Account
@@ -74,7 +74,7 @@ exports.getAll = (req, res)=> {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.countAccounts = (req, res)=> {
-    if (req.user.role !== 'ADMIN') {
+    if (!req.user.hasRole('ADMIN')) {
         res.status(403).send();
     } else {
         Account
@@ -181,7 +181,7 @@ exports.getById = (req, res)=> {
             if (!data) {
                 res.sendStatus(404);
             }
-            if (req.user._id === data._id || req.user.role === 'ADMIN') {
+            if (req.user.getId() === data.getId() || req.user.hasRole('ADMIN')) {
                 res.json(data);
             } else {
                 res.sendStatus(403);
@@ -237,11 +237,11 @@ exports.update = (req, res)=> {
         Account.findOne()
             .where('_id').equals(req.params.id)
             .then((account)=> {
-                if (req.user._id === account._id || req.user.role === 'ADMIN') {
+                if (req.user.getId() === account.getId() || req.user.hasRole('ADMIN')) {
                     if (!account) {
                         res.sendStatus(404);
                     } else {
-                        if (req.body.role && req.user.role === 'ADMIN') {
+                        if (req.body.role && req.user.hasRole('ADMIN')) {
                             account.setRole(req.body.role);
                         }
                         if (req.body.password) {
@@ -297,7 +297,7 @@ exports.delete = (req, res)=> {
         Account.findOne()
             .where('_id').equals(req.params.id)
             .then((data)=> {
-                if (req.user._id !== data._id && req.user.role === 'USER') {
+                if (req.user.getId() !== data.getId() && req.user.hasRole('USER')) {
                     res.sendStatus(403);
                 } else {
                     if (!data) {

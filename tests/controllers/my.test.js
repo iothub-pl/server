@@ -3,7 +3,7 @@ const app = require('../../index');
 const request = require('supertest');
 const should = require('should');
 const Account = require('./../../models/account');
-const Token = require('./../../models/token');
+const Token = require('./../../models/authentication');
 
 
 describe('ENDPOINT /me', () => {

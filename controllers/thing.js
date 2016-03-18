@@ -32,7 +32,7 @@ var Thing = require('./../models/thing'),
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.getAll = (req, res) => {
-    if (req.user.role !== 'ADMIN') {
+    if (!req.user.hasRole('ADMIN')) {
         res.sendStatus(403);
     } else {
         Thing.find()
@@ -68,7 +68,7 @@ exports.getAll = (req, res) => {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.count = (req, res)=> {
-    if (req.user.role !== 'ADMIN') {
+    if (!req.user.hasRole('ADMIN')) {
         res.sendStatus(403);
     } else {
         Thing
@@ -118,7 +118,7 @@ exports.getById = (req, res)=> {
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .then((data)=> {
-            if (req.user.role === 'ADMIN' || req.user._id === data.owner) {
+            if (req.user.hasRole( 'ADMIN') || req.user.getId() === data.getOwnerId()) {
                 res.json(data);
             } else {
                 return res.sendStatus(403);
@@ -137,9 +137,9 @@ exports.getById = (req, res)=> {
  * @apiGroup Thing
  */
 exports.register = (req, res)=> {
-    var thing = new Thing(req.body);
-    thing.setOwner(req.user)
-        .save()
+    var x =new Thing(req.body);
+        x.owner = req.user.getId();
+        x.save()
         .then((data) => {
             res.status(201).json(data);
         })
