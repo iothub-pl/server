@@ -121,7 +121,7 @@ exports.countAccounts = (req, res)=> {
  * @apiError (500) InternalServerError Internal Server Error.
  */
 exports.create = (req, res)=> {
-    if (validator.isEmail(req.body.email)) {
+    if (validator.isEmail(String(req.body.email))) {
         Account()
             .setEmail(req.body.email)
             .setPassword(req.body.password)
