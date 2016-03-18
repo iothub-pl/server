@@ -26,14 +26,14 @@ var ThingSchema = mongoose.Schema({
  *
  * @returns {*}
  */
-ThingSchema.methods.getId = () => {
+ThingSchema.methods.getId = function () {
     return this.get('_id');
 };
 /**
  *
  * @returns {*}
  */
-ThingSchema.methods.getName = () => {
+ThingSchema.methods.getName = function () {
     return this.get('name');
 };
 /**
@@ -41,14 +41,14 @@ ThingSchema.methods.getName = () => {
  * @param name
  * @returns {*}
  */
-ThingSchema.methods.setName = (name) => {
-    return this.set('name', name);
+ThingSchema.methods.setName = function (data) {
+    return this.set('name', data);
 };
 /**
  *
  * @returns {*}
  */
-ThingSchema.methods.getOwnerId = () => {
+ThingSchema.methods.getOwnerId = function () {
     return this.get('owner');
 };
 /**
@@ -56,23 +56,23 @@ ThingSchema.methods.getOwnerId = () => {
  * @param userId
  * @returns {*}
  */
-ThingSchema.methods.setOwnerId = (userId) => {
-    return this.set('owner', userId);
+ThingSchema.methods.setOwnerId = function (data) {
+    return this.set('owner', data);
 };
 /**
  *
  * @param user
  * @returns {*}
  */
-ThingSchema.methods.setOwner = (user) => {
-    return this.set('owner', user.getId());
+ThingSchema.methods.setOwner = function (data) {
+    return this.set('owner', data.getId());
 };
 /**
  *
  * @returns {Promise|*|Array|{index: number, input: string}}
  */
-ThingSchema.methods.getValues = () => {
-    return this.model('Value').find() .where('thingId').equals(this.getId());
+ThingSchema.methods.getValues = function () {
+    return this.model('Value').find().where('thingId').equals(this.getId());
 };
 /**
  *

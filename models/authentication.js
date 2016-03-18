@@ -67,17 +67,18 @@ AuthenticationSchema.methods.findOwner = function () {
  */
 AuthenticationSchema.methods.setOwner = function (owner) {
     return this.set('ownerId', owner._id);
-}
+};
 /**
  *
  * @returns {boolean}
  */
 AuthenticationSchema.methods.isValid = function () {
     return this.get('valid') === true;
-}
-AuthenticationSchema.methods.setValid = (val)=> {
-    return this.set('valid', val);
-}
+};
+
+AuthenticationSchema.methods.setValid = function(data) {
+    return this.set('valid', data);
+};
 /**
  *
  * @returns Date

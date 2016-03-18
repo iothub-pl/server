@@ -494,7 +494,7 @@ describe('ENDPOINT /tokens', () => {
                         .send(data)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.not.have.property('content');
+                            res.body.should.not.have.property('token');
                             done();
                         });
                 });
