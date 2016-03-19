@@ -140,11 +140,15 @@ AccountSchema.methods.setPassword = function (password) {
  * @returns {boolean}
  */
 AccountSchema.methods.authenticate = function (password) {
+    if (typeof password === 'undefined') {
+        password = '';
+    }
     return encryptPassword(password, this.getSalt()) === this.getPassword();
 };
 
 
 AccountSchema.methods.createAuthenticationEntity = function () {
+    
     return new Authentication()
         .setToken(jwt.sign({
             _id: this.getId(),
