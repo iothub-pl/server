@@ -1,17 +1,19 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-    crypto = require('crypto'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator'),
     winston = require('winston'),
     config = require('./../configs/app'),
     jwt = require('jsonwebtoken'),
-    Authentication = require('./authentication');
+    Authentication = require('./authentication'),
+    /**
+     * change name
+     */
+    accountHelper = require('./../helpers/account');
 
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport('direct:?name=hostname');
-
 
 var AccountSchema = mongoose.Schema({
     email: {
@@ -31,7 +33,7 @@ var AccountSchema = mongoose.Schema({
         type: String,
         select: false,
         require: true,
-        default: generateSalt
+        default: accountHelper.generateSalt
     },
     /**
      * TODO validate password
@@ -110,7 +112,7 @@ AccountSchema.methods.setRole = function (role) {
  * @returns {*}
  */
 AccountSchema.methods.regenerateSalt = function () {
-    return this.set('salt', generateSalt());
+    return this.set('salt', accountHelper.generateSalt());
 };
 /**
  * @returns {*}
@@ -143,20 +145,8 @@ AccountSchema.methods.authenticate = function (password) {
     if (typeof password === 'undefined') {
         password = '';
     }
-    return encryptPassword(password, this.getSalt()) === this.getPassword();
+    return accountHelper.encryptPassword(password, this.getSalt()) === this.getPassword();
 };
-
-
-AccountSchema.methods.createAuthenticationEntity = function () {
-    
-    return new Authentication()
-        .setToken(jwt.sign({
-            _id: this.getId(),
-            role: this.getRole()
-        }, config.JWT.SECRET))
-        .setOwnerId(this.getId());
-};
-
 /**
  *
  * @returns Date
@@ -171,39 +161,32 @@ AccountSchema.methods.getDateOfCreation = function () {
 AccountSchema.methods.getDateOfLastUpdate = function () {
     return this.get('updatedAt');
 }
-
-
 /**
- * Generates salt
- * @returns {String}
+ *
+ * @returns {*}
  */
-function generateSalt() {
-    return crypto
-        .randomBytes(16)
-        .toString('base64');
-}
-/**
- * Encrypts password
- * @param password
- * @param salt
- * @returns {String}
- */
-function encryptPassword(password, salt) {
-    return crypto
-        .pbkdf2Sync(password, new Buffer(salt, 'base64'), 10000, 64)
-        .toString('base64');
+AccountSchema.methods.createAuthenticationEntity = function () {
+    return new Authentication()
+        .setToken(jwt.sign({
+            _id: this.getId(),
+            role: this.getRole()
+        }, config.JWT.SECRET))
+        .setOwnerId(this.getId());
 };
-
+/**
+ *
+ */
 AccountSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
 
     if (this.isModified('password')) {
-        this.set('password', encryptPassword(this.getPassword(), this.regenerateSalt().getSalt()));
+        this.set('password', accountHelper.encryptPassword(this.getPassword(), this.regenerateSalt().getSalt()));
     }
     next();
 });
-
-
+/**
+ *
+ */
 AccountSchema.post('save', function () {
     // if (this.wasNew) {
     /**
