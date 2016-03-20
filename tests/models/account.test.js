@@ -212,6 +212,9 @@ describe('MODEL: Account', () => {
             account.createAuthenticationEntity().should.be.ok();
             done();
         });
+        /**
+         * @todo check if user.profile
+         */
         describe('when calling createAuthenticationEntity method', ()=> {
             it('should return Authentication object', (done) => {
                 account.createAuthenticationEntity().should.be.instanceOf(Authentication);
@@ -242,7 +245,7 @@ describe('MODEL: Account', () => {
         var data = {
             email: 'test@test.test', password: 'password'
         };
-        beforeEach('Create account', (done)=> {
+        beforeEach('Create and save account', (done)=> {
             account = new Account(data)
                 .save()
                 .then((acc)=> {
@@ -250,7 +253,7 @@ describe('MODEL: Account', () => {
                     done();
                 }).catch((err)=> {
                     return done(err);
-                })
+                });
         });
         /**
          * @TODO create test

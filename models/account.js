@@ -4,13 +4,11 @@ var mongoose = require('mongoose'),
     validator = require('validator'),
     uniqueValidator = require('mongoose-unique-validator'),
     winston = require('winston'),
-    config = require('./../configs/app'),
-    jwt = require('jsonwebtoken'),
     Authentication = require('./authentication'),
     /**
      * change name
      */
-    accountHelper = require('./../helpers/account');
+    authHelper = require('./../helpers/authentication');
 
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport('direct:?name=hostname');
@@ -33,7 +31,7 @@ var AccountSchema = mongoose.Schema({
         type: String,
         select: false,
         require: true,
-        default: accountHelper.generateSalt
+        default: authHelper.generateSalt
     },
     /**
      * TODO validate password
@@ -112,7 +110,7 @@ AccountSchema.methods.setRole = function (role) {
  * @returns {*}
  */
 AccountSchema.methods.regenerateSalt = function () {
-    return this.set('salt', accountHelper.generateSalt());
+    return this.set('salt', authHelper.generateSalt());
 };
 /**
  * @returns {*}
@@ -145,7 +143,7 @@ AccountSchema.methods.authenticate = function (password) {
     if (typeof password === 'undefined') {
         password = '';
     }
-    return accountHelper.encryptPassword(password, this.getSalt()) === this.getPassword();
+    return authHelper.encryptPassword(password, this.getSalt()) === this.getPassword();
 };
 /**
  *
@@ -167,10 +165,10 @@ AccountSchema.methods.getDateOfLastUpdate = function () {
  */
 AccountSchema.methods.createAuthenticationEntity = function () {
     return new Authentication()
-        .setToken(jwt.sign({
+        .setToken({
             _id: this.getId(),
             role: this.getRole()
-        }, config.JWT.SECRET))
+        })
         .setOwnerId(this.getId());
 };
 /**
@@ -180,7 +178,7 @@ AccountSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
 
     if (this.isModified('password')) {
-        this.set('password', accountHelper.encryptPassword(this.getPassword(), this.regenerateSalt().getSalt()));
+        this.set('password', authHelper.encryptPassword(this.getPassword(), this.regenerateSalt().getSalt()));
     }
     next();
 });

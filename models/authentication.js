@@ -1,7 +1,7 @@
 'use strict';
 
-var mongoose = require('mongoose');
-
+var mongoose = require('mongoose'),
+    authHelper = require('./../helpers/authentication');
 var AuthenticationSchema = mongoose.Schema({
     token: {
         type: String,
@@ -22,8 +22,6 @@ var AuthenticationSchema = mongoose.Schema({
         default: true
     }
 }, {timestamps: true, strict: true});
-
-
 /**
  *
  * @returns {*}
@@ -37,7 +35,7 @@ AuthenticationSchema.methods.getToken = function () {
  * @returns {*}
  */
 AuthenticationSchema.methods.setToken = function (token) {
-    return this.set('token', token);
+    return this.set('token', authHelper.encryptToken(token));
 };
 /**
  *
@@ -76,7 +74,7 @@ AuthenticationSchema.methods.isValid = function () {
     return this.get('valid') === true;
 };
 
-AuthenticationSchema.methods.setValid = function(data) {
+AuthenticationSchema.methods.setValid = function (data) {
     return this.set('valid', data);
 };
 /**
@@ -85,14 +83,14 @@ AuthenticationSchema.methods.setValid = function(data) {
  */
 AuthenticationSchema.methods.getDateOfCreation = function () {
     return this.get('createdAt');
-}
+};
 /**
  *
  * @returns Date
  */
 AuthenticationSchema.methods.getDateOfLastUpdate = function () {
     return this.get('updatedAt');
-}
+};
 
 /**
  *
