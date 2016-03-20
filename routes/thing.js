@@ -1,8 +1,7 @@
 'use strict';
 
-var express = require('express'),
-    controller = require('./../controllers/thing'),
-    router = express.Router(),
+var controller = require('./../controllers/thing'),
+    router = require('express').Router(),
     passport = require('passport'),
     pagination = require('./../middlewares/pagination');
 
