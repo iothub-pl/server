@@ -13,7 +13,6 @@ var Account = require('./../models/account'),
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.
  *
- *
  * @apiSuccess (200) {String} _id   Id of the User.
  * @apiSuccess (200) {String} email  E-mail of the User.
  * @apiSuccess (200) {String} role  Role of the User.
@@ -51,6 +50,8 @@ exports.getAccount = (req, res)=> {
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.
  *
+ * @apiParam {String} limit.
+ * @apiParam {String} skip.
  *
  * @apiSuccess (200) {String} _id   Id of the Thing.
  * @apiSuccess (200) {String} name  Name of the Thing.
@@ -125,6 +126,9 @@ exports.countMyThings = (req, res)=> {
  * @apiDescription Returns all tokens related to authenticated account
  * @apiName GetTokens
  * @apiGroup My
+ *
+ * @apiParam {String} limit.
+ * @apiParam {String} skip.
  *
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.

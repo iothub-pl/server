@@ -15,7 +15,6 @@ var Account = require('./../models/account'),
  *
  * @apiParam {String} limit.
  * @apiParam {String} skip.
-
  *
  * @apiSuccess (200) {String} _id Id of the User.
  * @apiSuccess (200) {String} email  E-mail of the User.
