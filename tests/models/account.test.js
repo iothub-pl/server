@@ -3,7 +3,7 @@ const app = require('../../index');
 const should = require('should');
 const Account = require('./../../models/account');
 const Authentication = require('./../../models/authentication');
-
+const mongoose = require('mongoose');
 var sampleAccount = {
     email: 'test@test.test',
     password: 'password',
@@ -18,23 +18,22 @@ describe('MODEL: Account', () => {
             return done(err);
         })
     })
-    it('should create new account', (done)=> {
-        Account
-            .create(sampleAccount)
-            .then((data)=> {
-                done();
-            }).catch((err)=> {
-            return done(err);
-        });
-    });
+    // it('should create new account', (done)=> {
+    //     Account
+    //         .create(sampleAccount)
+    //         .then((data)=> {
+    //             done();
+    //         }).catch((err)=> {
+    //         return done(err);
+    //     });
+    // });
     describe('testing all instance method before save', ()=> {
         var account;
         var data = {
             email: 'test@test.test', password: 'password'
         };
         beforeEach('Create account', (done)=> {
-            account = new Account(data)
-            ;
+            account = new Account(data);
             done();
         });
         /**
@@ -447,7 +446,7 @@ describe('MODEL: Account', () => {
             account.getDateOfCreation().should.be.ok();
             done();
         });
-        describe('when calling getDateOfCreation',()=>{
+        describe('when calling getDateOfCreation', ()=> {
             it('should return Date', (done) => {
                 account.getDateOfCreation().should.be.instanceOf(Date);
                 done();
@@ -457,7 +456,7 @@ describe('MODEL: Account', () => {
             account.getDateOfLastUpdate().should.be.ok();
             done();
         });
-        describe('when calling getDateOfLastUpdate',()=>{
+        describe('when calling getDateOfLastUpdate', ()=> {
             it('should return Date', (done) => {
                 account.getDateOfLastUpdate().should.be.instanceOf(Date);
                 done();

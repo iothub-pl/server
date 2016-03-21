@@ -167,62 +167,97 @@ describe('ENDPOINT /accounts', () => {
                             done();
                         });
                 });
-                it('should return Array', (done) => {
-                    request(app)
-                        .get('/accounts')
-                        .set('Authorization', userAlphaAuthenticationToken)
-                        .end((err, res)=> {
-                            if (err) return done(err);
-                            res.body.should.be.instanceOf(Array);
-                            done();
-                        });
-                });
-                describe('when using pagination options in query', ()=> {
-                    beforeEach('Adds accounts to Account collection', (done)=> {
-                        var data = [];
-                        for (var i = 2; i < NATO.length; i++) {
-                            data.push({
-                                email: NATO[i] + '@' + NATO[i] + '.' + NATO[i],
-                                password: NATO[i]
-                            });
-                        }
+                describe('when obtain JSON content', ()=> {
 
-                        Account
-                            .create(data)
-                            .then((data)=> {
-                                done();
-                            })
-                            .catch((err)=> {
-                                return done(err);
-                            });
-
-                    });
-                    it('length should equal 20 ', (done) => {
+                    it('should return Object', (done) => {
                         request(app)
                             .get('/accounts')
                             .set('Authorization', userAlphaAuthenticationToken)
                             .end((err, res)=> {
                                 if (err) return done(err);
-                                        res.body.length.should.equal(20);
-                                        done();
+                                res.body.should.be.instanceOf(Object);
+                                done();
                             });
                     });
-
-                    it('10 elements should be skipped', (done) => {
+                    it('should have accounts field', (done) => {
                         request(app)
-                            .get('/accounts?skip=10')
+                            .get('/accounts')
                             .set('Authorization', userAlphaAuthenticationToken)
                             .end((err, res)=> {
                                 if (err) return done(err);
-                                Account
-                                    .count()
-                                    .then((data)=> {
-                                        res.body.length.should.equal(data-10);
-                                        done();
-                                    }).catch((err)=> {
-                                    if (err) return done(err);
-                                });
+                                res.body.should.have.property('accounts');
+                                done();
                             });
+                    });
+                    it('should have limit field', (done) => {
+                        request(app)
+                            .get('/accounts')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('limit');
+                                done();
+                            });
+                    });
+
+                    it('should have skip field', (done) => {
+                        request(app)
+                            .get('/accounts')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('skip');
+                                done();
+                            });
+                    });
+
+                    describe('when using pagination options in query', ()=> {
+                        beforeEach('Adds accounts to Account collection', (done)=> {
+                            var data = [];
+                            for (var i = 2; i < NATO.length; i++) {
+                                data.push({
+                                    email: NATO[i] + '@' + NATO[i] + '.' + NATO[i],
+                                    password: NATO[i]
+                                });
+                            }
+
+                            Account
+                                .create(data)
+                                .then((data)=> {
+                                    done();
+                                })
+                                .catch((err)=> {
+                                    return done(err);
+                                });
+
+                        });
+                        it('accounts length should equal 20 ', (done) => {
+                            request(app)
+                                .get('/accounts')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    res.body.accounts.length.should.equal(20);
+                                    done();
+                                });
+                        });
+
+                        it('10 elements should be skipped', (done) => {
+                            request(app)
+                                .get('/accounts?skip=10')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    Account
+                                        .count()
+                                        .then((data)=> {
+                                            res.body.accounts.length.should.equal(data - 10);
+                                            done();
+                                        }).catch((err)=> {
+                                        if (err) return done(err);
+                                    });
+                                });
+                        });
                     });
                 });
             });

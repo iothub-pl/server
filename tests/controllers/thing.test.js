@@ -99,7 +99,6 @@ describe('ENDPOINT /things', (done)=> {
             });
         });
         describe('when authenticated', ()=> {
-
             describe('when not authorized', ()=> {
                 it('should return HTTP 403 Forbidden', (done)=> {
                     request(app)
@@ -113,101 +112,134 @@ describe('ENDPOINT /things', (done)=> {
                 });
             });
             describe('when authorized', ()=> {
-
-
-                describe('when there is zero Thing in database', ()=> {
-                    it('should return HTTP Succesful code 200', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect(200)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return content in JSON', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect('Content-Type', /json/)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return Array object', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .end((err, res)=> {
-                                if (err) return done(err);
-                                res.body.should.be.instanceOf(Array);
-                                done();
-                            });
-                    });
-                    it('should return Array object with zero elements', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .end((err, res)=> {
-                                if (err) return done(err);
-                                res.body.length.should.be.equal(0);
-                                done();
-                            });
-                    });
+                it('should return HTTP Succesful code 200', (done)=> {
+                    request(app)
+                        .get('/things')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
                 });
-                describe('when there is one Thing in database', ()=> {
-                    beforeEach((done)=> {
-                        new Thing({name: 'x'})
-                            .save((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return HTTP Succesful code 200', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect(200)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return content in JSON', (done)=> {
-                        request(app)
-                            .get('/things')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect('Content-Type', /json/)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return Array object', (done)=> {
+                it('should return content in JSON', (done)=> {
+                    request(app)
+                        .get('/things')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                describe('when obtain content', ()=> {
+                    it('should be instance of object', (done)=> {
                         request(app)
                             .get('/things')
                             .set('Authorization', userAlphaAuthenticationToken)
                             .end((err, res)=> {
                                 if (err) return done(err);
-                                res.body.should.be.instanceOf(Array);
+                                res.body.should.be.instanceOf(Object);
                                 done();
                             });
                     });
-                    it('should return Array object with one elements', (done)=> {
+                    it('should have things field', (done)=> {
                         request(app)
                             .get('/things')
                             .set('Authorization', userAlphaAuthenticationToken)
                             .end((err, res)=> {
                                 if (err) return done(err);
-                                res.body.length.should.be.equal(1);
+                                res.body.should.have.property('things');
                                 done();
                             });
+                    });
+                    describe('things field', ()=> {
+                        it('should be instance of Array', (done)=> {
+                            request(app)
+                                .get('/things')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    res.body.things.should.be.instanceOf(Array);
+                                    done();
+                                });
+                        });
+                        it('should return 0 elements', (done)=> {
+                            request(app)
+                                .get('/things')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    res.body.things.length.should.equal(0);
+                                    done();
+                                });
+                        });
+                        describe('when there is one Thing in database', ()=> {
+                            beforeEach((done)=> {
+                                new Thing({name: 'x'})
+                                    .save((err)=> {
+                                        if (err) return done(err);
+                                        done();
+                                    });
+                            });
+                            it('should return 1 elements', (done)=> {
+                                request(app)
+                                    .get('/things')
+                                    .set('Authorization', userAlphaAuthenticationToken)
+                                    .end((err, res)=> {
+                                        if (err) return done(err);
+                                        res.body.things.length.should.equal(1);
+                                        done();
+                                    });
+                            });
+                        });
+                    });
+                    it('should have skip field', (done)=> {
+                        request(app)
+                            .get('/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('skip');
+                                done();
+                            });
+                    });
+                    describe('skip field', ()=> {
+                        it('should be instance of Number', (done)=> {
+                            request(app)
+                                .get('/things')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    res.body.skip.should.be.instanceOf(Number);
+                                    done();
+                                });
+                        });
+                    });
+                    it('should have limit field', (done)=> {
+                        request(app)
+                            .get('/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.should.have.property('limit');
+                                done();
+                            });
+                    });
+                    describe('limit field', ()=> {
+                        it('should be instance of Number', (done)=> {
+                            request(app)
+                                .get('/things')
+                                .set('Authorization', userAlphaAuthenticationToken)
+                                .end((err, res)=> {
+                                    if (err) return done(err);
+                                    res.body.limit.should.be.instanceOf(Number);
+                                    done();
+                                });
+                        });
                     });
                 });
             });
-
         });
     });
     describe('on GET /count request', () => {
@@ -237,40 +269,36 @@ describe('ENDPOINT /things', (done)=> {
                 });
             });
             describe('when authorized', ()=> {
-
-                describe('when there is zero Thing in database', ()=> {
-                    it('should return HTTP Succesful code 200', (done)=> {
-                        request(app)
-                            .get('/things/count')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect(200)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            })
-                    });
-                    it('should return content in JSON', (done)=> {
-                        request(app)
-                            .get('/things/count')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect('Content-Type', /json/)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return zero', (done)=> {
-                        request(app)
-                            .get('/things/count')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .end((err, res)=> {
-                                if (err) return done(err);
-                                res.body.should.be.equal(0);
-                                done();
-                            });
-                    });
+                it('should return HTTP Succesful code 200', (done)=> {
+                    request(app)
+                        .get('/things/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect(200)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        })
                 });
-
+                it('should return content in JSON', (done)=> {
+                    request(app)
+                        .get('/things/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .expect('Content-Type', /json/)
+                        .end((err)=> {
+                            if (err) return done(err);
+                            done();
+                        });
+                });
+                it('should return zero', (done)=> {
+                    request(app)
+                        .get('/things/count')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.be.equal(0);
+                            done();
+                        });
+                });
                 describe('when there is one Thing in database', ()=> {
                     beforeEach('Registers thing', (done)=> {
                         new Thing({name: 'x'})
@@ -279,27 +307,7 @@ describe('ENDPOINT /things', (done)=> {
                                 done();
                             });
                     });
-                    it('should return HTTP Succesful code 200', (done)=> {
-                        request(app)
-                            .get('/things/count')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect(200)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            })
-                    });
-                    it('should return content in JSON', (done)=> {
-                        request(app)
-                            .get('/things/count')
-                            .set('Authorization', userAlphaAuthenticationToken)
-                            .expect('Content-Type', /json/)
-                            .end((err)=> {
-                                if (err) return done(err);
-                                done();
-                            });
-                    });
-                    it('should return one', (done)=> {
+                    it('should return 1', (done)=> {
                         request(app)
                             .get('/things/count')
                             .set('Authorization', userAlphaAuthenticationToken)
@@ -313,9 +321,7 @@ describe('ENDPOINT /things', (done)=> {
             });
         });
     });
-
     describe('on POST /register request', ()=> {
-
         describe('when not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -328,7 +334,6 @@ describe('ENDPOINT /things', (done)=> {
                     });
             });
         });
-
         describe('when authenticated', ()=> {
             it('should return HTTP Succesful code 201', (done)=> {
                 request(app)
@@ -341,7 +346,6 @@ describe('ENDPOINT /things', (done)=> {
                         done();
                     });
             });
-
             it('should return content in JSON', (done)=> {
                 request(app)
                     .post('/things')
@@ -488,7 +492,6 @@ describe('ENDPOINT /things', (done)=> {
 
                 });
                 describe('when id is valid object id', ()=> {
-
                     var thing;
                     beforeEach((done)=> {
                         thing = new Thing({name: 'x'});

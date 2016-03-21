@@ -11,24 +11,34 @@ var Thing = require('./../models/thing'),
  *
  * @apiPermission admin
  * @apiHeader {String} Authorization bearer Users unique access-key.
- * 
+ *
  * @apiParam {String} limit.
  * @apiParam {String} skip.
  *
- * @apiSuccess (200) {String} _id Id of the Thing.
- * @apiSuccess (200) {String} name  Name of the Thing.
- * @apiSuccess (200) {String} owner  Id of the User.
- * @apiSuccess (200) {String} type  Type of the Thing.
+ * @apiSuccess (200) {String} things[]._id Id of the Thing.
+ * @apiSuccess (200) {String} things[].name Name of the Thing.
+ * @apiSuccess (200) {String} things[].owner  Id of the User.
+ * @apiSuccess (200) {String} things[].type  Type of the Thing.
+ * @apiSuccess (200) {Number} skip. How many elements was skiped.
+ * @apiSuccess (200) {Number} limit Results limited to.
+
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
- * [
- *  {
- *   "_id": "5682773c21ba9d9736e8237b",
- *   "name": "Sensor A",
- *   "owner": "5682773c21ba9d9736e8237c",
- *   "type": "RECEPTOR"
- *  }
- * ]
+ * {
+ *  "things": [
+ *   {
+ *    "_id": "5682773c21ba9d9736e8237b",
+ *    "name": "Temperature sensor",
+ *    "owner": "5682773c21ba9d9736e8237b"
+ *    "type": "RECEPTOR",
+ *    "createdAt": "2016-03-04 20:09:24.000Z",
+ *    "updatedAt": "2016-03-04 20:09:24.000Z"
+ *   },
+ *   ...
+ *  ],
+ *  "skip": 0,
+ *  "limit": 20
+ * }
  *
  * @apiError (401) Unauthorized Unauthorized.
  * @apiError (403) Forbidden Forbidden.
@@ -42,7 +52,11 @@ exports.getAll = (req, res) => {
             .skip(req.query.skip)
             .limit(req.query.limit)
             .then((data) => {
-                res.json(data);
+                res.json({
+                    things: data,
+                    skip: req.query.skip,
+                    limit: req.query.limit
+                });
             })
             .catch((err)=> {
                 winston.debug('GET /things', err);
@@ -123,7 +137,7 @@ exports.getById = (req, res)=> {
     Thing.findOne()
         .where('_id').equals(req.params.id)
         .then((data)=> {
-            if (req.user.hasRole( 'ADMIN') || req.user.getId() === data.getOwnerId()) {
+            if (req.user.hasRole('ADMIN') || req.user.getId() === data.getOwnerId()) {
                 res.json(data);
             } else {
                 return res.sendStatus(403);
@@ -142,9 +156,9 @@ exports.getById = (req, res)=> {
  * @apiGroup Thing
  */
 exports.register = (req, res)=> {
-    var x =new Thing(req.body);
-        x.owner = req.user.getId();
-        x.save()
+    new Thing(req.body)
+        .setOwner(req.user)
+        .save()
         .then((data) => {
             res.status(201).json(data);
         })

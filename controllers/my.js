@@ -53,19 +53,28 @@ exports.getAccount = (req, res)=> {
  * @apiParam {String} limit.
  * @apiParam {String} skip.
  *
- * @apiSuccess (200) {String} _id   Id of the Thing.
- * @apiSuccess (200) {String} name  Name of the Thing.
- * @apiSuccess (200) {String} owner  Owner of the Thing.
- * @apiSuccess (200) {String} type  Type of the Thing.
+ * @apiSuccess (200) {String} things[]._id Id of the Thing.
+ * @apiSuccess (200) {String} things[].name Name of the Thing.
+ * @apiSuccess (200) {String} things[].owner  Id of the User.
+ * @apiSuccess (200) {String} things[].type  Type of the Thing.
+ * @apiSuccess (200) {Number} skip. How many elements was skiped.
+ * @apiSuccess (200) {Number} limit Results limited to.
+ *
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
- *  "_id": "5682773c21ba9d9736e8237b",
- *  "name": "Temperature sensor",
- *  "owner": "5682773c21ba9d9736e8237b"
- *  "type": "RECEPTOR",
- *  "createdAt": "2016-03-04 20:09:24.000Z",
- *  "updatedAt": "2016-03-04 20:09:24.000Z"
+ *  "things": [
+ *   {
+ *    "_id": "5682773c21ba9d9736e8237b",
+ *    "name": "Temperature sensor",
+ *    "owner": "5682773c21ba9d9736e8237b"
+ *    "type": "RECEPTOR",
+ *    "createdAt": "2016-03-04 20:09:24.000Z",
+ *    "updatedAt": "2016-03-04 20:09:24.000Z"
+ *   }
+ *  ],
+ *  "skip": 0,
+ *  "limit": 20
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -79,7 +88,11 @@ exports.getThings = (req, res)=> {
         .limit(req.query.limit)
         .where('owner').equals(req.user._id)
         .then((data)=> {
-            res.send(data);
+            res.json({
+                things: data,
+                skip: req.query.skip,
+                limit: req.query.limit
+            });
         })
         .catch((err)=> {
             winston.debug('GET /my/things when finding things', err);
@@ -133,19 +146,29 @@ exports.countMyThings = (req, res)=> {
  * @apiPermission user
  * @apiHeader {String} Authorization bearer User unique access-key.
  *
- * @apiSuccess (200) {String} _id   Id of the Token.
- * @apiSuccess (200) {String} content  Content of the Token.
- * @apiSuccess (200) {String} owner  Owner id of the Token.
- * @apiSuccess (200) {Boolean} valid  Validation of the Token.
+ * @apiSuccess (200) {String} tokens[]._id   Id of the Token.
+ * @apiSuccess (200) {String} tokens[].content  Content of the Token.
+ * @apiSuccess (200) {String} tokens[].owner  Owner id of the Token.
+ * @apiSuccess (200) {Boolean} tokens[].valid  Validation of the Token.
+ * @apiSuccess (200) {Number} skip. How many elements was skiped.
+ * @apiSuccess (200) {Number} limit Results limited to.
+ *
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
- *  "_id": "5682773c21ba9d9736e8237b",
- *  "content": "c21ba9d9736e8237b.c21ba9d9736e8237b.c21ba9d9736e8237b",
- *  "owner": "5682773c21ba9d9736e8237b"
- *  "valid": true,
- *  "createdAt": "2016-03-04 20:09:24.000Z",
- *  "updatedAt": "2016-03-04 20:09:24.000Z"
+ *  "tokens": [
+ *   {
+ *    "_id": "5682773c21ba9d9736e8237b",
+ *    "content": "c21ba9d9736e8237b.c21ba9d9736e8237b.c21ba9d9736e8237b",
+ *    "owner": "5682773c21ba9d9736e8237b"
+ *    "valid": true,
+ *    "createdAt": "2016-03-04 20:09:24.000Z",
+ *    "updatedAt": "2016-03-04 20:09:24.000Z"
+ *   },
+ *   ...
+ *  ],
+ *  "skip": 0,
+ *  "limit": 20
  * }
  *
  * @apiError (401) Unauthorized Unauthorized.
@@ -158,7 +181,11 @@ exports.getTokens = (req, res)=> {
         .limit(req.query.limit)
         .where('ownerId').equals(req.user._id)
         .then((data)=> {
-            res.send(data);
+            res.json({
+                tokens: data,
+                skip: req.query.skip,
+                limit: req.query.limit
+            });
         })
         .catch((err)=> {
             winston.debug('GET /my/tokens when finding tokens', err);

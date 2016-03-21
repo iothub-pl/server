@@ -10,7 +10,7 @@ var Token = require('./../models/authentication'),
  *
  * @apiPermission admin
  * @apiHeader {String} Authorization bearer Users unique access-key.
-
+ * 
  * @apiParam {String} limit.
  * @apiParam {String} skip.
  *

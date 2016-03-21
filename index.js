@@ -11,47 +11,15 @@ var
     helmet = require('helmet'),
     responseTime = require('response-time'),
     compression = require('compression'),
-    winston = require('winston');
+    winston = require('winston'),
+    /**
+     * @todo think about inplementation of it and should we change name of it or place where it its
+     */
+    wss = require('./controllers/websocket')(server, app);
 
 winston
     .add(winston.transports.File, {filename: './logs.json', level: 'debug'})
     .remove(winston.transports.Console);
-
-var WebSocketServer = require('ws').Server,
-    url = require('url'),
-    wss = new WebSocketServer({server: server});
-app.locals.websocket = [];
-wss.on('connection', function connection(ws) {
-    app.locals.websocket.push(ws);
-    /**
-     * @TODO fix error when ssl ...received: reserved fields must be empty
-     */
-        // you might use location.query.access_token to authenticate or share sessions
-        // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-    });
-    ws.on('error', function incoming(message) {
-        console.log('received: %s', message);
-    });
-    var x = setInterval(()=> {
-        try {
-            ws.send('something');
-        }
-        catch (e) {
-
-            for (var i = 0; i < app.locals.websocket.length; i++) {
-                if (app.locals.websocket[i] === ws) {
-                    delete  app.locals.websocket[i];
-                }
-            }
-            clearInterval(x);
-            winston.debug(e);
-        }
-    }, 100);
-});
-
 
 // /**
 //  * * https://github.com/expressjs/morgan

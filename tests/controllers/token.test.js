@@ -83,7 +83,7 @@ describe('ENDPOINT /tokens', () => {
             .set('Authorization', userAlphaAuthenticationToken)
             .end((err, res)=> {
                 if (err) return done(err);
-                tokenId = res.body[0]._id;
+                tokenId = res.body.tokens[0]._id;
                 done();
             });
     });

@@ -2,8 +2,6 @@
 var Account = require('./../models/account'),
     validator = require('validator'),
     winston = require('winston');
-
-
 /**
  * @api {get} /accounts Returns list of users
  * @apiDescription Returns list of users.
@@ -21,15 +19,20 @@ var Account = require('./../models/account'),
  * @apiSuccess (200) {String} role  Role of the User.
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
- * [
- *  {
- *   "_id": "5682773c21ba9d9736e8237b",
- *   "email": "test@test.test",
- *   "role": "USER",
- *   "createdAt": "2016-03-04 20:09:24.000Z",
- *   "updatedAt": "2016-03-04 20:09:24.000Z"
- *  }
- * ]
+ * {
+ *  "accounts": [
+ *   {
+ *    "_id": "5682773c21ba9d9736e8237b",
+ *    "email": "test@test.test",
+ *    "role": "USER",
+ *    "createdAt": "2016-03-04 20:09:24.000Z",
+ *    "updatedAt": "2016-03-04 20:09:24.000Z"
+ *   },
+ *   ...
+ *  ],
+ *  "skip": 0,
+ *  "limit": 20
+ * }
  *
  * @apiError (401) Unauthorized Unauthorized.
  * @apiError (403) Forbidden Forbidden.
@@ -44,7 +47,11 @@ exports.getAll = (req, res)=> {
             .skip(req.query.skip)
             .limit(req.query.limit)
             .then((data)=> {
-                res.json(data);
+                res.json({
+                    accounts: data,
+                    skip: req.query.skip,
+                    limit: req.query.limit
+                });
             })
             .catch((err)=> {
                 winston.debug('GET /accounts when finding accounts', err);

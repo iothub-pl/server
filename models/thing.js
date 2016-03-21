@@ -2,7 +2,11 @@
 
 var mongoose = require('mongoose');
 var Value = require('./value');
+var Account = require('./account');
 
+/**
+ * @todo add field description
+ */
 var ThingSchema = mongoose.Schema({
     name: {
         type: String,
@@ -51,8 +55,9 @@ ThingSchema.methods.setName = function (data) {
 ThingSchema.methods.getOwnerId = function () {
     return this.get('owner');
 };
+
 /**
- *
+ * @TODO add metohd getOwner
  * @param userId
  * @returns {*}
  */
@@ -65,27 +70,32 @@ ThingSchema.methods.setOwnerId = function (data) {
  * @returns {*}
  */
 ThingSchema.methods.setOwner = function (data) {
-    return this.set('owner', data.getId());
+    if (data instanceof Account) {
+        return this.set('owner', data.getId());
+    } else {
+        throw new TypeError();
+    }
 };
 /**
  *
  * @returns {Promise|*|Array|{index: number, input: string}}
  */
 ThingSchema.methods.getValues = function () {
-    return this.model('Value').find().where('thingId').equals(this.getId());
+    return Value.find()
+        .where('thingId').equals(this.getId());
 };
 /**
  *
  * @returns Date
  */
-ThingSchema.methods.getDateOfCreation = () => {
+ThingSchema.methods.getDateOfCreation = function () {
     return this.get('createdAt');
 };
 /**
  *
  * @returns Date
  */
-ThingSchema.methods.getDateOfLastUpdate = () => {
+ThingSchema.methods.getDateOfLastUpdate = function () {
     return this.get('updatedAt');
 };
 

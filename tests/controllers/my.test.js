@@ -202,26 +202,95 @@ describe('ENDPOINT /me', () => {
                         done();
                     });
             });
-            it('should return Array', (done)=> {
-                request(app)
-                    .get('/my/things')
-                    .set('Authorization', userAlphaAuthenticationToken)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        res.body.should.be.instanceOf(Array);
-                        done();
-                    });
-            });
-            describe('when userAlpha has no things registered', ()=> {
-                it('should return zero elements', (done)=> {
+            describe('when obtain content', ()=> {
+
+                it('should return object', (done)=> {
                     request(app)
                         .get('/my/things')
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.length.should.be.equal(0);
+                            res.body.should.be.instanceOf(Object);
                             done();
                         });
+                });
+
+
+                it('should have field things', (done)=> {
+                    request(app)
+                        .get('/my/things')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('things');
+                            done();
+                        });
+                });
+                describe('things field', ()=> {
+                    it('should be instance of Array', (done)=> {
+                        request(app)
+                            .get('/my/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.things.should.be.instanceof(Array);
+                                done();
+                            });
+                    });
+                    it('should have 0 elements', (done)=> {
+                        request(app)
+                            .get('/my/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.things.length.should.be.equal(0);
+                                done();
+                            });
+                    });
+                });
+                it('should have field skip', (done)=> {
+                    request(app)
+                        .get('/my/things')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('skip');
+                            done();
+                        });
+                });
+                describe('field skip', ()=> {
+                    it('should be instance of Number', (done)=> {
+                        request(app)
+                            .get('/my/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.skip.should.be.instanceof(Number);
+                                done();
+                            });
+                    });
+                });
+                it('should have field limit', (done)=> {
+                    request(app)
+                        .get('/my/things')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('limit');
+                            done();
+                        });
+                });
+                describe('limit skip', ()=> {
+                    it('should be instance of Number', (done)=> {
+                        request(app)
+                            .get('/my/things')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.limit.should.be.instanceof(Number);
+                                done();
+                            });
+                    });
                 });
             });
         });
@@ -324,33 +393,89 @@ describe('ENDPOINT /me', () => {
                         done();
                     });
             });
-            it('should return Array', (done)=> {
-                request(app)
-                    .get('/my/tokens')
-                    .set('Authorization', userAlphaAuthenticationToken)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        res.body.should.be.instanceOf(Array);
-                        done();
+            describe('when obtain content', ()=> {
+
+
+                it('should have field skip', (done)=> {
+                    request(app)
+                        .get('/my/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('skip');
+                            done();
+                        });
+                });
+                describe('field skip', ()=> {
+                    it('should be instance of Number', (done)=> {
+                        request(app)
+                            .get('/my/tokens')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.skip.should.be.instanceof(Number);
+                                done();
+                            });
                     });
-            });
-            it('should return Array with one element', (done)=> {
-                request(app)
-                    .get('/my/tokens')
-                    .set('Authorization', userAlphaAuthenticationToken)
-                    .end((err, res)=> {
-                        if (err) return done(err);
-                        res.body.length.should.be.equal(1);
-                        done();
+                });
+                it('should have field limit', (done)=> {
+                    request(app)
+                        .get('/my/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('limit');
+                            done();
+                        });
+                });
+                describe('limit skip', ()=> {
+                    it('should be instance of Number', (done)=> {
+                        request(app)
+                            .get('/my/tokens')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.limit.should.be.instanceof(Number);
+                                done();
+                            });
                     });
+                });
+                it('should have field things', (done)=> {
+                    request(app)
+                        .get('/my/tokens')
+                        .set('Authorization', userAlphaAuthenticationToken)
+                        .end((err, res)=> {
+                            if (err) return done(err);
+                            res.body.should.have.property('tokens');
+                            done();
+                        });
+                });
+                describe('tokens field', ()=> {
+                    it('should be instance of Array', (done)=> {
+                        request(app)
+                            .get('/my/tokens')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.tokens.should.be.instanceof(Array);
+                                done();
+                            });
+                    });
+                    it('should have 0 elements', (done)=> {
+                        request(app)
+                            .get('/my/tokens')
+                            .set('Authorization', userAlphaAuthenticationToken)
+                            .end((err, res)=> {
+                                if (err) return done(err);
+                                res.body.tokens.length.should.be.equal(1);
+                                done();
+                            });
+                    });
+                });
             });
             //@TODO create mor test about token, it should check if "content" field is not returned and etc
-
         });
-
     });
-
-
     describe('when GET /my/tokens/count request', () => {
         describe('when not authenticated', ()=> {
             it('should return HTTP 401 code', (done)=> {

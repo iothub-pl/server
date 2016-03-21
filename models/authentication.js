@@ -64,7 +64,11 @@ AuthenticationSchema.methods.findOwner = function () {
  * @type {{return: *}}
  */
 AuthenticationSchema.methods.setOwner = function (owner) {
-    return this.set('ownerId', owner._id);
+    if (data instanceof Account) {
+        return this.set('ownerId', owner._id);
+    } else {
+        throw new TypeError();
+    }
 };
 /**
  *
