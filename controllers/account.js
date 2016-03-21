@@ -2,22 +2,53 @@
 var Account = require('./../models/account'),
     validator = require('validator'),
     winston = require('winston');
+
 /**
- * @api {get} /accounts Returns list of users
- * @apiDescription Returns list of users.
+ * @apiDefine   400 Error
+ * @apiError    (400)   BadRequest Bad Request
+ */
+/**
+ * @apiDefine   401 Error
+ * @apiError    (401)   Unauthorized Unauthorized access
+ */
+/**
+ * @apiDefine   403 Error
+ * @apiError    (403)   Forbidden Forbidden accesss
+ */
+/**
+ * @apiDefine   404 Error
+ * @apiError    (404)   NotFound Not Found
+ */
+/**
+ * @apiDefine   500 Error
+ * @apiError    (500)   InternalServerError Internal Server Error
+ */
+/**
+ * @apiDefine   AuthenticationToken
+ * @apiHeader   {String}    Authorization bearer account unique access-key
+ */
+/**
+ * @api {get}   /accounts   Returns collection of all accounts
+ * @apiDescription  Returns collection of accounts
  * @apiName GetAccounts
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission admin
- * @apiHeader {String} Authorization bearer Users unique access-key.
+ * @apiPermission   admin
+ * @apiUse  AuthenticationToken
  *
- * @apiParam {String} limit.
- * @apiParam {String} skip.
+ * @apiParam    {Number{0..}}   limit=20    How many results should be returned
+ * @apiParam    {Number{0..}}   skip=0      How many elements should be skipped
  *
- * @apiSuccess (200) {String} _id Id of the User.
- * @apiSuccess (200) {String} email  E-mail of the User.
- * @apiSuccess (200) {String} role  Role of the User.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)    {Object[]}      accounts            Collection of account objects
+ * @apiSuccess  (200)    {MongoID}       accounts._id        Id of the User
+ * @apiSuccess  (200)    {String}        accounts.email      E-mail of the User
+ * @apiSuccess  (200)    {String}        accounts.role       Role of the User
+ * @apiSuccess  (200)    {Date}          accounts.createdAt  Date of the creation
+ * @apiSuccess  (200)    {Date}          accounts.updateAt   Date of last update
+ * @apiSuccess  (200)    {Number{0..}}   skip                How many elements was skipped
+ * @apiSuccess  (200)    {Number{0..}}   limit               To how many elements collection was limited
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
  *  "accounts": [
@@ -34,9 +65,9 @@ var Account = require('./../models/account'),
  *  "limit": 20
  * }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 500
  */
 exports.getAll = (req, res)=> {
     if (!req.user.hasRole('ADMIN')) {
@@ -60,24 +91,25 @@ exports.getAll = (req, res)=> {
     }
 };
 /**
- * @api {get} /accounts/count Count Accounts
- * @apiDescription  Returns number of elements inAccount Collection
+ * @api {get}   /accounts/count Returns number of elements in account collection
+ * @apiDescription  Returns number of elements in account collection
  * @apiName countAccounts
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission admin
- * @apiHeader {String} Authorization bearer Users unique access-key.
+ * @apiPermission   admin
+ * @apiUse  AuthenticationToken
  *
- * @apiSuccess (200) {Number} accounts  Number of elements in Account collection.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {Number{0..}}   accounts    Number of elements in Account collection
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
- *  {
- *   "accounts": 8
- *  }
+ * {
+ *  "accounts": 8
+ * }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 500
  */
 exports.countAccounts = (req, res)=> {
     if (!req.user.hasRole('ADMIN')) {
@@ -95,25 +127,29 @@ exports.countAccounts = (req, res)=> {
     }
 };
 /**
- * @api {post} /accounts Creates account
- * @apiDescription Creates and returns account.
+ * @api {post}  /accounts   Creates new account and returns it
+ * @apiDescription  Creates new account and returns it
  * @apiName CreateAccount
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission none
+ * @apiPermission   none
  *
- * @apiParam {String} email User email.
- * @apiParam {String} password User password.
+ * @apiParam    {String}    email       User email
+ * @apiParam    {String}    password    User password
+ *
  * @apiParamExample {json} Request-Example:
  * {
  *  "email": "test@test.test",
  *  "password": "test",
  * }
  *
- * @apiSuccess (201) {String} _id Id of the User.
- * @apiSuccess (201) {String} email  E-mail of the User.
- * @apiSuccess (201) {String} role  Role of the User.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (201)   {MongoID}   _id         Id of the User
+ * @apiSuccess  (201)   {String}    email       E-mail of the User
+ * @apiSuccess  (201)   {String}    role        Role of the User
+ * @apiSuccess  (201)   {Date}      createdAt   Date of the creation
+ * @apiSuccess  (201)   {Date}      updateAt    Date of last update
+ *
+ * @apiSuccessExample   {json}  Success-Response:
  * HTTP/1.1 201 Created
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
@@ -123,8 +159,8 @@ exports.countAccounts = (req, res)=> {
  *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
- * @apiError (400) BadRequest Bad Request.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 400
+ * @apiUse 500
  */
 exports.create = (req, res)=> {
     if (validator.isEmail(String(req.body.email))) {
@@ -137,7 +173,6 @@ exports.create = (req, res)=> {
             })
             .catch((err)=> {
                 winston.debug('POST /accounts when creating account', err);
-
                 if (err.errors) {
                     res.sendStatus(400);
                 } else {
@@ -149,23 +184,28 @@ exports.create = (req, res)=> {
     }
 };
 /**
- * @api {get} /accounts/:id Returns account with id
- * @apiDescription Returns account with id.
+ * @api {get}   /accounts/:id   Returns account with id
+ * @apiDescription  Returns account with id
  * @apiName GetAccountById
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission user
- * @apiHeader {String} Authorization bearer User unique access-key.
+ * @apiPermission   user
+ * @apiUse  AuthenticationToken
+ *
+ * @apiParam    {MongoID}   id  Account id
  *
  * @apiParamExample {json} Request-Example:
  * {
  *  "id": "5682773c21ba9d9736e8237b"
  * }
  *
- * @apiSuccess (200) {String} _id   Id of the User.
- * @apiSuccess (200) {String} email  E-mail of the User.
- * @apiSuccess (200) {String} role  Role of the User.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {MongoID}   _id         Id of the User
+ * @apiSuccess  (200)   {String}    email       E-mail of the User
+ * @apiSuccess  (200)   {String}    role        Role of the User
+ * @apiSuccess  (200)   {Date}      createdAt   Date of the creation
+ * @apiSuccess  (200)   {Date}      updateAt    Date of last update
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
@@ -175,10 +215,10 @@ exports.create = (req, res)=> {
  *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (404) NotFound Not Found.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.getById = (req, res)=> {
     Account.findOne()
@@ -199,29 +239,33 @@ exports.getById = (req, res)=> {
         });
 };
 /**
- * @api {put} /accounts/:id Updates account with id
- * @apiDescription Updates account with id
+ * @api {put}   /accounts/:id   Updates account with id
+ * @apiDescription  Updates account with id
  * @apiName UpdateAccount
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission user
- * @apiHeader {String} Authorization bearer User unique access-key.
+ * @apiPermission   user
+ * @apiUse  AuthenticationToken
  *
- * @apiParam {String} id User id.
- * @apiParam {String} [password] User password.
- * @apiParam {String} [role] User role.
+ * @apiParam    {MongoId}    id          User id
+ * @apiParam    {String}    [password]  User password
+ * @apiParam    {String}    [role]      User role
+ *
  * @apiParamExample {json} Request-Example:
- *     {
- *       "id":  "5682773c21ba9d9736e8237b",
- *       "email": "test@test.test",
- *       "password": "test",
- *       "role": "USER"
- *     }
+ * {
+ *  "id": "5682773c21ba9d9736e8237b",
+ *  "email": "test@test.test",
+ *  "password": "test",
+ *  "role": "USER"
+ * }
  *
- * @apiSuccess (200) {String} _id   Id of the User.
- * @apiSuccess (200) {String} email  E-mail of the User.
- * @apiSuccess (200) {String} role  Role of the User.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {MongoId}   _id         Id of the User
+ * @apiSuccess  (200)   {String}    email       E-mail of the User
+ * @apiSuccess  (200)   {String}    role        Role of the User
+ * @apiSuccess  (200)   {Date}      createdAt   Date of the creation
+ * @apiSuccess  (200)   {Date}      updateAt    Date of last update
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
  *  "_id": "5682773c21ba9d9736e8237b",
@@ -231,10 +275,10 @@ exports.getById = (req, res)=> {
  *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (404) NotFound Not Found.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.update = (req, res)=> {
     delete req.body.id;
@@ -276,27 +320,28 @@ exports.update = (req, res)=> {
     }
 };
 /**
- * @api {delete} /accounts/:id Deletes account with id
- * @apiDescription Deletes account with id
+ * @api {delete}    /accounts/:id   Deletes account with id
+ * @apiDescription  Deletes account with id
  * @apiName DeleteAccount
- * @apiGroup Account
+ * @apiGroup    Account
  *
- * @apiPermission admin
- * @apiHeader {String} Authorization bearer Users unique access-key.
+ * @apiPermission   admin
+ * @apiUse  AuthenticationToken
  *
- * @apiParam {String} id User id.
+ * @apiParam    {MongoId}   id  User id
+ *
  * @apiParamExample {json} Request-Example:
  * {
  *  "id": "5682773c21ba9d9736e8237b"
  * }
  *
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 204 No Content
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (404) NotFound Not Found.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.delete = (req, res)=> {
     if (validator.isMongoId(req.params.id)) {
