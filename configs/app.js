@@ -1,8 +1,4 @@
 'use strict';
-/**
- *
- * @type {{server: {port: (*|number)}, database: {host: string, port: number, name: string}, secret: (*|string), debug: boolean}}
- */
 
 var ENVIROMENT;
 if (process.env.ENVIROMENT === 'production' || process.env.ENVIROMENT === 'developement') {
@@ -11,6 +7,10 @@ if (process.env.ENVIROMENT === 'production' || process.env.ENVIROMENT === 'devel
 else {
     ENVIROMENT = 'development';
 }
+/**
+ *
+ * @type {{ENVIROMENT: *, SERVER: {PORT: (number|*)}, DATABASE: {HOST: string, PORT: number, DB: string}, JWT: {SECRET: (*|string)}, REQ: {QUERY: {DEFAULT: {SKIP: number, LIMIT: number}}}}}
+ */
 module.exports = {
     ENVIROMENT: ENVIROMENT,
     SERVER: {
@@ -19,7 +19,7 @@ module.exports = {
     DATABASE: {
         HOST: 'localhost',
         PORT: 27017,
-        DB: (ENVIROMENT === 'development') ? 'iothub-development' : 'itohub-production'
+        DB: 'iothub-' + ENVIROMENT
     },
     JWT: {
         SECRET: process.env.SECRET || 'secret'

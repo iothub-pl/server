@@ -150,7 +150,7 @@ exports.countMyThings = (req, res)=> {
  * @apiSuccess (200) {String} tokens[].content  Content of the Token.
  * @apiSuccess (200) {String} tokens[].owner  Owner id of the Token.
  * @apiSuccess (200) {Boolean} tokens[].valid  Validation of the Token.
- * @apiSuccess (200) {Number} skip. How many elements was skiped.
+ * @apiSuccess (200) {Number} skip How many elements was skiped.
  * @apiSuccess (200) {Number} limit Results limited to.
  *
  * @apiSuccessExample {json} Success-Response:

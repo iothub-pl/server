@@ -3,7 +3,7 @@ var Account = require('./../models/account'),
     Authentication = require('./../models/authentication'),
     winston = require('winston');
 /**
- * @api {post} /authentication Creates authentication token
+ * @api {post} /tokens/obtain Creates authentication token
  * @apiDescription Creates authentication token.
  * @apiName AuthenticationToken
  * @apiGroup Authentication
