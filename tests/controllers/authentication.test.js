@@ -5,7 +5,7 @@ const should = require('should');
 const Account = require('./../../models/account');
 
 
-describe('ENDPOINT /authentication', ()=> {
+describe('ENDPOINT /tokens/obtain', ()=> {
     describe('when POST request', ()=> {
         beforeEach('Deletes all accounts', (done)=> {
             Account.remove((err)=> {
@@ -31,7 +31,7 @@ describe('ENDPOINT /authentication', ()=> {
         });
         it('should return HTTP 200 OK', (done) => {
             request(app)
-                .post('/authentication')
+                .post('/tokens/obtain')
                 .send(data)
                 .expect(200)
                 .end((err)=> {
@@ -41,7 +41,7 @@ describe('ENDPOINT /authentication', ()=> {
         });
         it('should return JSON content', (done) => {
             request(app)
-                .post('/authentication')
+                .post('/tokens/obtain')
                 .send(data)
 
                 .expect('Content-Type', /json/)
@@ -53,7 +53,7 @@ describe('ENDPOINT /authentication', ()=> {
 
         it('should return JSON content with field token', (done) => {
             request(app)
-                .post('/authentication')
+                .post('/tokens/obtain')
                 .send(data)
                 .end((err, res)=> {
                     if (err) return done(err);

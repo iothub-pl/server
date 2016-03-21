@@ -57,7 +57,7 @@ describe('ENDPOINT /things', (done)=> {
     });
     beforeEach('Obtains alpha authentication token', (done)=> {
         request(app)
-            .post('/authentication')
+            .post('/tokens/obtain')
             .send(alphaData)
             .end((err, res)=> {
                 if (err) return done(err);
@@ -77,7 +77,7 @@ describe('ENDPOINT /things', (done)=> {
     });
     beforeEach('Obtains alpha authentication token', (done)=> {
         request(app)
-            .post('/authentication')
+            .post('/tokens/obtain')
             .send(betaData)
             .end((err, res)=> {
                 if (err) return done(err);

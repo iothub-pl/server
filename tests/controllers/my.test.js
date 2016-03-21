@@ -46,7 +46,7 @@ describe('ENDPOINT /me', () => {
     });
     beforeEach('Obtains alpha authentication token', (done)=> {
         request(app)
-            .post('/authentication')
+            .post('/tokens/obtain')
             .send(alphaData)
             .end((err, res)=> {
                 if (err) return done(err);
