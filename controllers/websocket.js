@@ -1,17 +1,8 @@
-/**
- * info & example http://code.tutsplus.com/tutorials/using-nodes-event-module--net-35941
- * @param data
- */
-module.exports = function (server, app) {
+var wss;
+function init() {
 
-    var WebSocketServer = require('ws').Server,
-        url = require('url'),
-        wss = new WebSocketServer({server: server, path: 'socket'});
 
-    console.log(wss);
-    app.locals.websocket = [];
     wss.on('connection', (ws) => {
-        app.locals.websocket.push(ws);
         /**
          * @TODO fix error when ssl ...received: reserved fields must be empty
          */
@@ -24,20 +15,24 @@ module.exports = function (server, app) {
         ws.on('error', (message)=> {
             console.log('received: %s', message);
         });
-        var x = setInterval(()=> {
-            try {
-                ws.send('something');
-            }
-            catch (e) {
-
-                for (var i = 0; i < app.locals.websocket.length; i++) {
-                    if (app.locals.websocket[i] === ws) {
-                        delete  app.locals.websocket[i];
-                    }
-                }
-                clearInterval(x);
-                winston.debug(e);
-            }
-        }, 100);
     });
+}
+/**
+ * info & example http://code.tutsplus.com/tutorials/using-nodes-event-module--net-35941
+ * @param data
+ */
+module.exports = function (server) {
+    setInterval(()=> {
+        console.log(wss.clients.length);
+
+    }, 250);
+    if (!wss) {
+        var WebSocketServer = require('ws').Server,
+            url = require('url');
+        wss = new WebSocketServer({server: server});
+        init();
+    }
+
+
+    return wss;
 }

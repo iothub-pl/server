@@ -15,8 +15,7 @@ var
     /**
      * @todo think about inplementation of it and should we change name of it or place where it its
      */
-    wss = require('./controllers/websocket')(server, app);
-
+    wss = require('./controllers/websocket')(server);
 winston
     .add(winston.transports.File, {filename: './logs.json', level: 'debug'})
     .remove(winston.transports.Console);
