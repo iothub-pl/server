@@ -4,23 +4,23 @@ var Account = require('./../models/account'),
     winston = require('winston');
 
 /**
- * @apiDefine   400 Error
+ * @apiDefine   400 400
  * @apiError    (400)   BadRequest Bad Request
  */
 /**
- * @apiDefine   401 Error
+ * @apiDefine   401 401
  * @apiError    (401)   Unauthorized Unauthorized access
  */
 /**
- * @apiDefine   403 Error
+ * @apiDefine   403 403
  * @apiError    (403)   Forbidden Forbidden accesss
  */
 /**
- * @apiDefine   404 Error
+ * @apiDefine   404 404
  * @apiError    (404)   NotFound Not Found
  */
 /**
- * @apiDefine   500 Error
+ * @apiDefine   500 500
  * @apiError    (500)   InternalServerError Internal Server Error
  */
 /**
@@ -29,11 +29,11 @@ var Account = require('./../models/account'),
  */
 /**
  * @apiDefine   SkipParam
- * @apiParam    {Number{0..}}   limit=20    How many results should be returned
+ * @apiParam    {Number{0..}}   [skip=20]    How many results should be returned, use this param in query string
  */
 /**
  * @apiDefine   LimitParam
- * @apiParam    {Number{0..}}   limit=20    How many results should be returned
+ * @apiParam    {Number{0..}}   [limit=20]    How many results should be returned, use this param in query string
  */
 /**
  * @apiDefine   SkipSuccess
