@@ -10,12 +10,15 @@ var ValueSchema = mongoose.Schema({
         ref: 'Value',
         required: true
     },
-
     value: {
         type: Number,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.new
     }
-}, {timestamps: true, strict: true});
+}, {timestamps: false, strict: true});
 
 /**
  *
@@ -26,13 +29,14 @@ ValueSchema.methods.getId = function () {
 };
 /**
  *
- * @returns {*}
+ * @returns {mongoose.Types.MongoID}
  */
 ValueSchema.methods.getThingId = ()=> {
     return this.get('thingId');
 };
 /**
- *
+ * @param String
+ * @returns {Thing}
  */
 ValueSchema.methods.setThingId = (thingId)=> {
     return this.set('thingId', thingId);
@@ -67,13 +71,7 @@ ValueSchema.setValue = function (value) {
 ValueSchema.methods.getDateOfCreation = function () {
     return this.get('createdAt');
 };
-/**
- *
- * @returns Date
- */
-ValueSchema.methods.getDateOfLastUpdate = function () {
-    return this.get('updatedAt');
-};
+
 /**
  *
  */

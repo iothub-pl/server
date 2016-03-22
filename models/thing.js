@@ -28,29 +28,29 @@ var ThingSchema = mongoose.Schema({
 }, {timestamps: true, strict: true});
 /**
  *
- * @returns {*}
+ * @returns {mongoose.Schema.Types.ObjectId}
  */
 ThingSchema.methods.getId = function () {
     return this.get('_id');
 };
 /**
  *
- * @returns {*}
+ * @returns {String}
  */
 ThingSchema.methods.getName = function () {
     return this.get('name');
 };
 /**
  *
- * @param name
- * @returns {*}
+ * @param {String} name
+ * @returns {}
  */
 ThingSchema.methods.setName = function (data) {
     return this.set('name', data);
 };
 /**
  *
- * @returns {*}
+ * @returns {mongoose.Schema.Types.ObjectId}
  */
 ThingSchema.methods.getOwnerId = function () {
     return this.get('owner');
@@ -58,16 +58,17 @@ ThingSchema.methods.getOwnerId = function () {
 
 /**
  * @TODO add metohd getOwner
- * @param userId
- * @returns {*}
+ * @param {mongoose.Schema.Types.ObjectId} userId
+ * @returns {Thing}
  */
 ThingSchema.methods.setOwnerId = function (data) {
     return this.set('owner', data);
 };
 /**
  *
- * @param user
- * @returns {*}
+ * @param {Account} user
+ * @returns {@this}
+ * @throws {TypeError}
  */
 ThingSchema.methods.setOwner = function (data) {
     if (data instanceof Account) {
@@ -86,7 +87,7 @@ ThingSchema.methods.getValues = function () {
 };
 /**
  *
- * @returns Date
+ * @returns {Date}
  */
 ThingSchema.methods.getDateOfCreation = function () {
     return this.get('createdAt');
@@ -98,13 +99,17 @@ ThingSchema.methods.getDateOfCreation = function () {
 ThingSchema.methods.getDateOfLastUpdate = function () {
     return this.get('updatedAt');
 };
-
+/**
+ */
 ThingSchema.pre('save', (next) => {
     this.wasNew = this.isNew;
     next();
 });
+/**
+ */
 ThingSchema.post('save', () => {
     // if (this.wasNew) {
     //}
 });
+
 module.exports = mongoose.model('Thing', ThingSchema);

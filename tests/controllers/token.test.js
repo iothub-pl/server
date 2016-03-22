@@ -87,7 +87,10 @@ describe('ENDPOINT /tokens', () => {
                 done();
             });
     });
-    describe('when GET request', ()=> {
+    describe('when GET request', ()=>{
+        /**
+         * @todo refactor test
+         */
         describe('when account not authenticated', ()=> {
             it('should return HTTP 401 Unauthorized', (done) => {
                 request(app)
@@ -139,7 +142,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.should.be.instanceOf(Array);
+                            res.body.tokens.should.be.instanceOf(Array);
                             done();
                         });
                 });
@@ -149,7 +152,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.length.should.be.equal(2);
+                            res.body.tokens.length.should.be.equal(2);
                             done();
                         });
                 });
@@ -159,7 +162,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.forEach((item)=> {
+                            res.body.tokens.forEach((item)=> {
                                 item.should.not.have.property('content');
                             });
                             done();
@@ -171,7 +174,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.forEach((item)=> {
+                            res.body.tokens.forEach((item)=> {
                                 item.should.have.property('createdAt');
                             });
                             done();
@@ -183,7 +186,7 @@ describe('ENDPOINT /tokens', () => {
                         .set('Authorization', userAlphaAuthenticationToken)
                         .end((err, res)=> {
                             if (err) return done(err);
-                            res.body.forEach((item)=> {
+                            res.body.tokens.forEach((item)=> {
                                 item.should.have.property('updatedAt');
                             });
                             done();
