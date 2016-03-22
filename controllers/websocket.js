@@ -40,5 +40,4 @@ module.exports = function (server, app) {
             }
         }, 100);
     });
-
 }

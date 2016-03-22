@@ -52,18 +52,18 @@ exports.getAccount = (req, res)=> {
  * @apiPermission   user
  * @apiUse  AuthenticationToken
  *
- * @apiParam    {Number{0..}}   limit=20    How many results should be returned
- * @apiParam    {Number{0..}}   skip=0      How many elements should be skipped
+ * @apiUse SkipParam
+ * @apiUse LimitParam
  *
  * @apiSuccess  (200)   {Object[]{0..}} things              Collection of Thing objects
  * @apiSuccess  (200)   {MongoID}       things._id          Id of the Thing
  * @apiSuccess  (200)   {String}        things.name         Name of the Thing
- * @apiSuccess  (200)   {String}        things.owner        Id of the Account
+ * @apiSuccess  (200)   {MongoID}       things.owner        Id of the Account
  * @apiSuccess  (200)   {String}        things.type         Type of the Thing
  * @apiSuccess  (200)   {Date}          things.createdAt    Date of the creation
  * @apiSuccess  (200)   {Date}          things.updateAt     Date of last update
- * @apiSuccess  (200)   {Number{0..}}   skip                How many elements was skipped
- * @apiSuccess  (200)   {Number{0..}}   limit               To how many elements collection was limited
+ * @apiUse SkipSuccess
+ * @apiUse LimitSuccess
  *
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
@@ -144,22 +144,20 @@ exports.countMyThings = (req, res)=> {
  * @apiName GetTokens
  * @apiGroup    My
  *
- * @apiParam    {Number{0..}}   limit=20    How many results should be returned
- * @apiParam    {Number{0..}}   skip=0      How many elements should be skipped
+ * @apiUse SkipParam
+ * @apiUse LimitParam
  *
  * @apiPermission   user
  * @apiUse  AuthenticationToken
  *
  * @apiSuccess  (200)   {Object[]{0..}} tokens              Collection of Token collection
- * @apiSuccess  (200)   {MongoId}       tokens._id          Id of the Token
+ * @apiSuccess  (200)   {MongoID}       tokens._id          Id of the Token
  * @apiSuccess  (200)   {String}        tokens.token        Content of the Token
- * @apiSuccess  (200)   {String}        tokens.owner        Owner id of the Token
+ * @apiSuccess  (200)   {MongoID}       tokens.owner        Owner id of the Token
  * @apiSuccess  (200)   {Boolean}       tokens.valid        Validation of the Token
- * @apiSuccess  (200)   {Date}          tokens.createdAt    Date of the creation
- * @apiSuccess  (200)   {Date}          tokens.updateAt     Date of last update
- * @apiSuccess  (200)   {Number{0..}}   skip                How many elements was skipped
- * @apiSuccess  (200)   {Number{0..}}   limit               To how many elements collection was limited
- *
+ * @apiUse SkipSuccess
+ * @apiUse LimitSuccess
+
  * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {

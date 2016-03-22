@@ -3,30 +3,33 @@ var Account = require('./../models/account'),
     Authentication = require('./../models/authentication'),
     winston = require('winston');
 /**
- * @api {post} /tokens/obtain Creates authentication token
- * @apiDescription Creates authentication token.
- * @apiName AuthenticationToken
- * @apiGroup Authentication
+ * @api {post}  /tokens/obtain  Creates authentication token
+ * @apiDescription  Creates authentication token
+ * @apiName ObtainToken
+ * @apiGroup    Token
  *
  * @apiPermission none
  *
- * @apiParam {String} email User email.
- * @apiParam {String} password User password.
+ * @apiParam    {String}    email       User email
+ * @apiParam    {String}    password    User password
+ *
  * @apiParamExample {json} Request-Example:
  * {
  *  "email": "test@test.test",
  *  "password": "test"
  * }
  *
- * @apiSuccess (200) {String} token Authentication token.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {String}    token   Authentication token
+ * 
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 201 Created
  * {
  *  "token": "5682773c21ba9d9736e8237b"
  * }
  *
- * @apiError (400) BadRequest Bad Request.
- * @apiError (401) Unauthorized Unauthorized.
+ * @apiUse 400
+ * @apiUse 401
+ * @apiUse 500
  */
 exports.token = (req, res)=> {
     Account.findOne()

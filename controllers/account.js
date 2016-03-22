@@ -28,6 +28,23 @@ var Account = require('./../models/account'),
  * @apiHeader   {String}    Authorization bearer account unique access-key
  */
 /**
+ * @apiDefine   SkipParam
+ * @apiParam    {Number{0..}}   limit=20    How many results should be returned
+ */
+/**
+ * @apiDefine   LimitParam
+ * @apiParam    {Number{0..}}   limit=20    How many results should be returned
+ */
+/**
+ * @apiDefine   SkipSuccess
+ * @apiSuccess  (200)   {Number{0..}}   skip                How many elements was skipped
+ */
+/**
+ * @apiDefine   LimitSuccess
+ * @apiSuccess  (200)   {Number{0..}}   limit               To how many elements collection was limited
+ */
+
+/**
  * @api {get}   /accounts   Returns collection of all accounts
  * @apiDescription  Returns collection of accounts
  * @apiName GetAccounts
@@ -36,18 +53,18 @@ var Account = require('./../models/account'),
  * @apiPermission   admin
  * @apiUse  AuthenticationToken
  *
- * @apiParam    {Number{0..}}   limit=20    How many results should be returned
- * @apiParam    {Number{0..}}   skip=0      How many elements should be skipped
+ * @apiUse SkipParam
+ * @apiUse LimitParam
  *
- * @apiSuccess  (200)    {Object[]}      accounts            Collection of account objects
+ * @apiSuccess  (200)    {Object[]{0..}}      accounts            Collection of account objects
  * @apiSuccess  (200)    {MongoID}       accounts._id        Id of the User
  * @apiSuccess  (200)    {String}        accounts.email      E-mail of the User
  * @apiSuccess  (200)    {String}        accounts.role       Role of the User
  * @apiSuccess  (200)    {Date}          accounts.createdAt  Date of the creation
  * @apiSuccess  (200)    {Date}          accounts.updateAt   Date of last update
- * @apiSuccess  (200)    {Number{0..}}   skip                How many elements was skipped
- * @apiSuccess  (200)    {Number{0..}}   limit               To how many elements collection was limited
- *
+ * @apiUse SkipSuccess
+ * @apiUse LimitSuccess
+ * 
  * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
@@ -247,7 +264,7 @@ exports.getById = (req, res)=> {
  * @apiPermission   user
  * @apiUse  AuthenticationToken
  *
- * @apiParam    {MongoId}    id          User id
+ * @apiParam    {MongoID}    id          User id
  * @apiParam    {String}    [password]  User password
  * @apiParam    {String}    [role]      User role
  *
@@ -256,10 +273,12 @@ exports.getById = (req, res)=> {
  *  "id": "5682773c21ba9d9736e8237b",
  *  "email": "test@test.test",
  *  "password": "test",
- *  "role": "USER"
+ *  "role": "USER",
+ *  "createdAt": "2016-03-04 20:09:24.000Z",
+ *  "updatedAt": "2016-03-04 20:09:24.000Z"
  * }
  *
- * @apiSuccess  (200)   {MongoId}   _id         Id of the User
+ * @apiSuccess  (200)   {MongoID}   _id         Id of the User
  * @apiSuccess  (200)   {String}    email       E-mail of the User
  * @apiSuccess  (200)   {String}    role        Role of the User
  * @apiSuccess  (200)   {Date}      createdAt   Date of the creation
@@ -328,7 +347,7 @@ exports.update = (req, res)=> {
  * @apiPermission   admin
  * @apiUse  AuthenticationToken
  *
- * @apiParam    {MongoId}   id  User id
+ * @apiParam    {MongoID}   id  User id
  *
  * @apiParamExample {json} Request-Example:
  * {

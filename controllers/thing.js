@@ -4,25 +4,28 @@ var Thing = require('./../models/thing'),
     winston = require('winston');
 
 /**
- * @api {get} /things Returns list of things
- * @apiDescription Returns list of things.
+ * @api {get}   /things Returns list of things
+ * @apiDescription  Returns list of things.
  * @apiName GetThings
- * @apiGroup Thing
+ * @apiGroup    Thing
  *
- * @apiPermission admin
- * @apiHeader {String} Authorization bearer Users unique access-key.
+ * @apiPermission   admin
+ * @apiUse  AuthenticationToken
  *
- * @apiParam {String} limit.
- * @apiParam {String} skip.
+ * @apiUse SkipParam
+ * @apiUse LimitParam
  *
- * @apiSuccess (200) {String} things[]._id Id of the Thing.
- * @apiSuccess (200) {String} things[].name Name of the Thing.
- * @apiSuccess (200) {String} things[].owner  Id of the User.
- * @apiSuccess (200) {String} things[].type  Type of the Thing.
- * @apiSuccess (200) {Number} skip. How many elements was skiped.
- * @apiSuccess (200) {Number} limit Results limited to.
+ * @apiSuccess  (200)   {Object[]{0..}} things              Collection
+ * @apiSuccess  (200)   {MongoID}       things._id          Id of the Thing
+ * @apiSuccess  (200)   {String}        things.name         Name of the Thing
+ * @apiSuccess  (200)   {MongoID}       things.owner        Id of the User
+ * @apiSuccess  (200)   {String}        things.type         Type of the Thing
+ * @apiSuccess  (200)   {Date}          things.createdAt    Date of the creation
+ * @apiSuccess  (200)   {Date}          things.updateAt     Date of last update
+ * @apiUse  SkipSuccess
+ * @apiUse  LimitSuccess
 
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
  *  "things": [
@@ -40,9 +43,9 @@ var Thing = require('./../models/thing'),
  *  "limit": 20
  * }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 500
  */
 exports.getAll = (req, res) => {
     if (!req.user.hasRole('ADMIN')) {
@@ -66,25 +69,25 @@ exports.getAll = (req, res) => {
     }
 };
 /**
- * @api {get} /things/count Returns length of things
- * @apiDescription Returns length of things.
+ * @api {get}   /things/count   Returns length of things
+ * @apiDescription  Returns length of things
  * @apiName GetThingsCount
- * @apiGroup Thing
+ * @apiGroup    Thing
  *
- * @apiPermission admin
- * @apiHeader {String} Authorization bearer Users unique access-key.
+ * @apiPermission   admin
+ * @apiUse  AuthenticationToken
  *
- * @apiSuccess (200) {String} count Length of the Thing.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {Number{0..}}  things   Length of the Thing
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  *  {
- *   "length": "5",
-
+ *   "things": "5",
  *  }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 500
  */
 exports.count = (req, res)=> {
     if (!req.user.hasRole('ADMIN')) {
@@ -102,36 +105,43 @@ exports.count = (req, res)=> {
     }
 };
 /**
- * @api {get} /things/:id Returns thing with id
- * @apiDescription Returns thing with id.
+ * @api {get}   /things/:id Returns thing with id
+ * @apiDescription  Returns thing with id
  * @apiName GetThingById
- * @apiGroup Thing
+ * @apiGroup    Thing
  *
- * @apiPermission user
- * @apiHeader {String} Authorization bearer User unique access-key.
+ * @apiPermission   user
+ * @apiUse  AuthenticationToken
+ *
+ * @apiParam    {MongoID}   id  Thing id
  *
  * @apiParamExample {json} Request-Example:
  * {
  *  "id": "5682773c21ba9d9736e8237b"
  * }
  *
- * @apiSuccess (200) {String} _id Id of the Thing.
- * @apiSuccess (200) {String} name  Name of the Thing.
- * @apiSuccess (200) {String} owner  Id of the User.
- * @apiSuccess (200) {String} type  Type of the Thing.
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccess  (200)   {MongoID}   _id         Id of the Thing
+ * @apiSuccess  (200)   {String}    name        Name of the Thing
+ * @apiSuccess  (200)   {MongoID}   owner       Id of the User
+ * @apiSuccess  (200)   {String}    type        Type of the Thing
+ * @apiSuccess  (200)   {Date}      createdAt   Date of the creation
+ * @apiSuccess  (200)   {Date}      updateAt    Date of last update
+ *
+ * @apiSuccessExample   {json} Success-Response:
  * HTTP/1.1 200 OK
  *  {
  *   "_id": "5682773c21ba9d9736e8237b",
  *   "name": "Sensor A",
  *   "owner": "5682773c21ba9d9736e8237c",
- *   "type": "RECEPTOR"
+ *   "type": "RECEPTOR",
+ *   "createdAt": "2016-03-04 20:09:24.000Z",
+ *   "updatedAt": "2016-03-04 20:09:24.000Z"
  *  }
  *
- * @apiError (401) Unauthorized Unauthorized.
- * @apiError (403) Forbidden Forbidden.
- * @apiError (404) NotFound Not Found.
- * @apiError (500) InternalServerError Internal Server Error.
+ * @apiUse 401
+ * @apiUse 403
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.getById = (req, res)=> {
     Thing.findOne()
@@ -152,8 +162,12 @@ exports.getById = (req, res)=> {
 /**
  * Registers Thing
  * @api {post} /things/register Registers Thing in system
- * @apiName Registers Thing in system.
+ * @apiDescription  Registers Thing in system
+ * @apiName RegisterThing
  * @apiGroup Thing
+ *
+ * @apiUse 401
+ * @apiUse 500
  */
 exports.register = (req, res)=> {
     new Thing(req.body)
@@ -169,10 +183,33 @@ exports.register = (req, res)=> {
 };
 
 /**
- * Adds Value when Thing exists in system
- * @api {post} /things/:_id/values Adds Value when Thing exists in system
- * @apiName Adds Value when Thing exists in system
- * @apiGroup Thing
+ * @api {post}  /things/:_id/values Adds Value when Thing exists in system
+ * @apiDescription Adds Value when Thing exists in system
+ * @apiName AddValueToThing
+ * @apiGroup    Thing
+ *
+ * @apiPermission   user
+ * @apiUse  AuthenticationToken
+ * @todo uzupełnić
+ *
+ * @apiParam    {MongoID}   id  Thing id
+ * @apiParam    {Number}   value  Value value
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "id": "5682773c21ba9d9736e8237b",
+ *  "value": 1
+ * }
+ *
+ * @apiSuccess  (200)   {MongoID}   _id          Id of the Value
+ * @apiSuccess  (200)   {Number}    value        Value
+ * @apiSuccess  (200)   {MongoID}   thing        Id of the Thing
+ * @apiSuccess  (200)   {Date}      createdAt    Date of the creation
+ * @apiSuccess  (200)   {Date}      updateAt     Date of last update
+ *
+ * @apiUse 401
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.addValue = (req, res)=> {
     Thing.findOne()
@@ -199,10 +236,45 @@ exports.addValue = (req, res)=> {
         });
 };
 /**
- * Returns Values from Thing with specific id
- * @api {get} /things/:id/values Returns Values from Thing with specific id
- * @apiName Returns Values from Thing with specific id
- * @apiGroup Thing
+ * @api {get}   /things/:id/values  Returns Values from Thing with specific id
+ * @apiDescription Returns Values from Thing with specific id
+ * @apiName GetValuesOfThing
+ * @apiGroup    Thing
+ *
+ * @apiPermission   user
+ * @apiUse  AuthenticationToken
+ *
+ * @apiUse SkipParam
+ * @apiUse LimitParam
+ *
+ * @apiSuccess  (200)   {Object[]{0..}} values              Collection
+ * @apiSuccess  (200)   {MongoID}       values._id          Id of the Value
+ * @apiSuccess  (200)   {Number}        values.value        Value
+ * @apiSuccess  (200)   {MongoID}       values.thing        Id of the Thing
+ * @apiSuccess  (200)   {Date}          values.createdAt    Date of the creation
+ * @apiSuccess  (200)   {Date}          values.updateAt     Date of last update
+ * @apiUse  SkipSuccess
+ * @apiUse  LimitSuccess
+ *
+ * @apiSuccessExample   {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *  "values": [
+ *   {
+ *    "_id": "5682773c21ba9d9736e8237b",
+ *    "thing": "5682773c21ba9d9736e8237b"
+ *    "value": 1,
+ *    "createdAt": "2016-03-04 20:09:24.000Z",
+ *    "updatedAt": "2016-03-04 20:09:24.000Z"
+ *   },
+ *   ...
+ *  ],
+ *  "skip": 0,
+ *  "limit": 20
+ * }
+ * @apiUse 401
+ * @apiUse 404
+ * @apiUse 500
  */
 exports.getValues = (req, res)=> {
     Thing.findOne()
@@ -210,8 +282,14 @@ exports.getValues = (req, res)=> {
         .then((thing)=> {
             if (thing) {
                 thing.getValues()
-                    .then((values)=> {
-                        res.json(values);
+                    .skip(req.query.skip)
+                    .limit(req.query.limit)
+                    .then((data)=> {
+                        res.json({
+                            values: data,
+                            skip: req.query.skip,
+                            limit: req.query.limit
+                        });
                     })
                     .catch((err)=> {
                         winston.debug('GET /things' + req.params.id + '/values when finding values', err);
