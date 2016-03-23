@@ -3,10 +3,6 @@ const BearerStrategy = require('passport-http-bearer').Strategy;
 const Account = require('./../models/account');
 const Authentication = require('./../models/authentication');
 const authenticationHelper = require('./../helpers/authentication');
-
-const jwt = require('jsonwebtoken');
-const config = require('./../configs/app');
-
 exports.setup = (app) => {
     app.use(passport.initialize());
     passport.use(new BearerStrategy((token, done) => {
